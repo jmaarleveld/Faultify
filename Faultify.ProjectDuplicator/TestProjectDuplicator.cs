@@ -8,7 +8,7 @@ using NLog;
 
 namespace Faultify.ProjectDuplicator
 {
-    public class TestProjectDuplicator
+    public class TestProjectDuplicator : ITestProjectDuplicator
     {
         private readonly string _testDirectory;
 

@@ -15,7 +15,7 @@ namespace Faultify.ProjectDuplicator
     /// <summary>
     ///     A test project duplication.
     /// </summary>
-    public class TestProjectDuplication : IDisposable
+    public class TestProjectDuplication : IDisposable, ITestProjectDuplication
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -92,6 +92,8 @@ namespace Faultify.ProjectDuplicator
         /// </summary>
         /// <param name="mutationIdentifiers"></param>
         /// <param name="mutationLevel"></param>
+        /// <param name="excludeGroup"></param>
+        /// <param name="excludeSingular"></param>
         /// <returns></returns>
         public IList<MutationVariant> GetMutationVariants(
             IList<MutationVariantIdentifier>? mutationIdentifiers,

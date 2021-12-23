@@ -6,7 +6,7 @@ namespace Faultify.ProjectDuplicator.Util
     /// <summary>
     ///     Wrapper over duplicated testproject files.
     /// </summary>
-    public class FileDuplication : IDisposable
+    public class FileDuplication : IDisposable, IFileDuplication
     {
         private FileStream? _fileStream;
 
