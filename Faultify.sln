@@ -27,8 +27,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Benchmark.NUnit", "Benchmark\Faultify.Benchmark.NUnit\Faultify.Benchmark.NUnit.csproj", "{CC69D0AF-8ADA-48AA-ACF5-D44BB124016A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Analyze", "Faultify.Analyze\Faultify.Analyze.csproj", "{A3D468A0-F3A7-49B0-9405-A5C5C14B2E1B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Report", "Faultify.Report\Faultify.Report.csproj", "{C206A12C-7221-4C5C-85F6-7DF6AD039689}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Benchmark.XUnit", "Benchmark\Faultify.Benchmark.XUnit\Faultify.Benchmark.XUnit.csproj", "{E614C588-556A-4868-BBB3-96D52AC2A848}"
@@ -45,6 +43,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		mutationOptimizations.md = mutationOptimizations.md
 		RefactorChanges.md = RefactorChanges.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationCollector", "Faultify.MutationCollector\Faultify.MutationCollector.csproj", "{CEF3653D-5E66-4476-A1A5-913074F2C2DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.AssemblyDissection", "Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj", "{76B08EE6-1C75-496C-8283-45A6A9921A9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,10 +86,6 @@ Global
 		{CC69D0AF-8ADA-48AA-ACF5-D44BB124016A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC69D0AF-8ADA-48AA-ACF5-D44BB124016A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC69D0AF-8ADA-48AA-ACF5-D44BB124016A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3D468A0-F3A7-49B0-9405-A5C5C14B2E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3D468A0-F3A7-49B0-9405-A5C5C14B2E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3D468A0-F3A7-49B0-9405-A5C5C14B2E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3D468A0-F3A7-49B0-9405-A5C5C14B2E1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C206A12C-7221-4C5C-85F6-7DF6AD039689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C206A12C-7221-4C5C-85F6-7DF6AD039689}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C206A12C-7221-4C5C-85F6-7DF6AD039689}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -108,6 +106,14 @@ Global
 		{B0329651-CF38-48B9-B9D2-B69890C2E2C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0329651-CF38-48B9-B9D2-B69890C2E2C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0329651-CF38-48B9-B9D2-B69890C2E2C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF3653D-5E66-4476-A1A5-913074F2C2DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF3653D-5E66-4476-A1A5-913074F2C2DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF3653D-5E66-4476-A1A5-913074F2C2DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF3653D-5E66-4476-A1A5-913074F2C2DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

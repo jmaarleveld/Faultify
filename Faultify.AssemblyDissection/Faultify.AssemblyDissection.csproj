@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Mono.Cecil, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+        <HintPath>..\..\..\.nuget\packages\mono.cecil\0.11.3\lib\netstandard2.0\Mono.Cecil.dll</HintPath>
+      </Reference>
+      <Reference Include="Mono.Cecil.Mdb, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+        <HintPath>..\..\..\.nuget\packages\mono.cecil\0.11.3\lib\netstandard2.0\Mono.Cecil.Mdb.dll</HintPath>
+      </Reference>
+      <Reference Include="Mono.Cecil.Pdb, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+        <HintPath>..\..\..\.nuget\packages\mono.cecil\0.11.3\lib\netstandard2.0\Mono.Cecil.Pdb.dll</HintPath>
+      </Reference>
+      <Reference Include="Mono.Cecil.Rocks, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+        <HintPath>..\..\..\.nuget\packages\mono.cecil\0.11.3\lib\netstandard2.0\Mono.Cecil.Rocks.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
+    </ItemGroup>
+
+</Project>

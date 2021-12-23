@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Faultify.Analyze;
-using Faultify.Analyze.Analyzers;
-using Faultify.Analyze.AssemblyMutator;
-using Faultify.Analyze.Mutation;
-using Faultify.Analyze.MutationGroups;
+using Faultify.MutationCollector;
+using Faultify.MutationCollector.Analyzers;
+using Faultify.MutationCollector.AssemblyMutator;
+using Faultify.MutationCollector.Mutation;
+using Faultify.MutationCollector.MutationGroups;
 using Faultify.Tests.UnitTests.Utils;
 using NUnit.Framework;
 

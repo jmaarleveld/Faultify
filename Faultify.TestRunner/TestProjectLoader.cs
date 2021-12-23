@@ -1,7 +1,7 @@
 ﻿extern alias MC;
 using System;
 using System.Collections.Generic;
-using Faultify.Analyze.AssemblyMutator;
+using Faultify.MutationCollector.AssemblyMutator;
 using MC::Mono.Cecil;
 
 namespace Faultify.TestRunner

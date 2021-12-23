@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Faultify.Analyze.Analyzers;
+using Faultify.MutationCollector.Analyzers;
 using Faultify.Tests.UnitTests.Utils;
 using NUnit.Framework;
 
