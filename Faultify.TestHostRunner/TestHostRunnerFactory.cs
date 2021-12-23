@@ -1,7 +1,6 @@
 ﻿using System;
 using NLog;
 using Faultify.TestHostRunner.TestHostRunners;
-using Faultify.TestHostRunner.Enums;
 
 namespace Faultify.TestHostRunner
 {

@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NLog;
 using Faultify.TestHostRunner.Results;
 using TestResult = Faultify.TestHostRunner.Results.TestResult;
-using Faultify.TestHostRunner.Enums;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -24,7 +23,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
             _testProjectAssemblyPath = testProjectAssemblyPath;
         }
 
-        public TestFramework TestFramework => TestFramework.XUnit;
+        public TestHost TestHost => TestHost.XUnit;
 
         public async Task<TestResults> RunTests(TimeSpan timeout, IProgress<string> progress, IEnumerable<string> tests)
         {
@@ -81,7 +80,8 @@ namespace Faultify.TestHostRunner.TestHostRunners
 
         private MutationCoverage ReadCoverageFile()
         {
-            MutationCoverage? mutationCoverage = Utils.ReadMutationCoverageFile();
+            MutationCoverage? mutationCoverage = ResultsUtils
+            .ReadMutationCoverageFile();
 
             mutationCoverage.Coverage = mutationCoverage.Coverage
                 .Where(pair => _coverageTests.Contains(pair.Key))

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using NLog;
 using Faultify.TestHostRunner.TestProcess;
 using Faultify.TestHostRunner.Results;
-using Faultify.TestHostRunner.Enums;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -36,7 +35,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
             _testAdapterPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         }
 
-        public TestFramework TestFramework => TestFramework.None;
+        public TestHost TestHost => TestHost.DotnetTest;
 
         /// <summary>
         ///     Runs the given tests and returns the results.
@@ -119,7 +118,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
                     throw new ExitCodeException(process.ExitCode);
                 }
 
-                return Utils.ReadMutationCoverageFile();
+                return ResultsUtils.ReadMutationCoverageFile();
             }
             catch (FileNotFoundException e)
             {

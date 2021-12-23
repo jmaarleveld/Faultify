@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Faultify.TestRunner.Shared;
+using Faultify.TestHostRunner.Results;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using TestResult = Faultify.TestRunner.Shared.TestResult;
+using TestResult = Faultify.TestHostRunner.Results.TestResult;
 
-namespace Faultify.TestRunner.Collector
+namespace Faultify.TestHostRunner.Collector
 {
     /// <summary>
     ///     Collects test run results and flushes those to a file.

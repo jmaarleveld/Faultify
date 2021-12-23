@@ -5,7 +5,7 @@ using NLog;
 
 namespace Faultify.TestHostRunner.Results
 {
-    public static class Utils
+    public static class ResultsUtils
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 

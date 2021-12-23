@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Faultify.TestHostRunner.Results;
-using Faultify.TestHostRunner.Enums;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -15,7 +14,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
         /// <summary>
         ///     Identifies what test framework is being used
         /// </summary>
-        public TestFramework TestFramework { get; }
+        public TestHost TestHost { get; }
 
         /// <summary>
         ///     Runs the given tests and returns the results.
