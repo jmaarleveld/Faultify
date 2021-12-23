@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Faultify.TestRunner.Shared
+namespace Faultify.TestHostRunner.Results
 {
     public class RegisteredCoverage
     {

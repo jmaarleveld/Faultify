@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using NLog;
 
-namespace Faultify.TestRunner.TestProcess
+namespace Faultify.TestHostRunner.TestProcess
 {
     /// <summary>
     ///     Async process runner.

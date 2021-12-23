@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using NLog;
 
-namespace Faultify.TestRunner.Shared
+namespace Faultify.TestHostRunner.Results
 {
     public static class Utils
     {

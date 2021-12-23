@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Faultify.MemoryTest.TestInformation;
-using Faultify.TestRunner.Shared;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using TestResult = Faultify.TestRunner.Shared.TestResult;
 using NLog;
+using Faultify.TestHostRunner.Results;
+using TestResult = Faultify.TestHostRunner.Results.TestResult;
+using Faultify.TestHostRunner.Enums;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner.TestHostRunners
 {
     public class XUnitTestHostRunner : ITestHostRunner
     {

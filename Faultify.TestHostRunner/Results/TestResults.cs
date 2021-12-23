@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
-namespace Faultify.TestRunner.Shared
+namespace Faultify.TestHostRunner.Results
 {
     /// <summary>
     ///     Test results from a test session.

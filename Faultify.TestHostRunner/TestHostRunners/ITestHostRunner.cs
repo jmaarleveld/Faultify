@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Faultify.TestRunner.Shared;
+using Faultify.TestHostRunner.Results;
+using Faultify.TestHostRunner.Enums;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner.TestHostRunners
 {
     /// <summary>
     ///     Interface for running tests and code coverage on some test host.

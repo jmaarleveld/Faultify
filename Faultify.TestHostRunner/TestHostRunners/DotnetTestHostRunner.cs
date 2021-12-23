@@ -6,11 +6,12 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Faultify.TestRunner.Shared;
-using Faultify.TestRunner.TestProcess;
 using NLog;
+using Faultify.TestHostRunner.TestProcess;
+using Faultify.TestHostRunner.Results;
+using Faultify.TestHostRunner.Enums;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner.TestHostRunners
 {
     /// <summary>
     ///     Runs the mutation test with 'dotnet test'.

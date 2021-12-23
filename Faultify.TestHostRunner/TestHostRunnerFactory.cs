@@ -1,7 +1,9 @@
 ﻿using System;
 using NLog;
+using Faultify.TestHostRunner.TestHostRunners;
+using Faultify.TestHostRunner.Enums;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner
 {
     /// <summary>
     ///     Static factory class for creating testRunners
