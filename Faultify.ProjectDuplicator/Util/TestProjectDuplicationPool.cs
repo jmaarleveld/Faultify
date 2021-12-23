@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Faultify.TestRunner.ProjectDuplication
+namespace Faultify.ProjectDuplicator.Util
 {
     /// <summary>
     ///     A pool that grands access to a test project that can be used for mutation testing.
