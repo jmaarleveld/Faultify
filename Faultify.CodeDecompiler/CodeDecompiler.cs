@@ -5,7 +5,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.Metadata;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.CodeDecompiler
 {
     public class CodeDecompiler : ICodeDecompiler
     {

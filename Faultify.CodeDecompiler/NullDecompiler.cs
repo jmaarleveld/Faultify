@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Text;
+﻿using System.Reflection.Metadata;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.CodeDecompiler
 {
     /// <summary>
     /// A dummy decompiler to use when a proper one is not available.
