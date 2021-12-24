@@ -1,34 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Faultify.TestRunner.Shared
+namespace Faultify.TestHostRunner.Results
 {
-    public class RegisteredCoverage
-    {
-        public RegisteredCoverage(string assemblyName, int entityHandle)
-        {
-            AssemblyName = assemblyName;
-            EntityHandle = entityHandle;
-        }
-
-        public string AssemblyName { get; }
-        public int EntityHandle { get; }
-
-        public override int GetHashCode()
-        {
-            return (AssemblyName + ":" + EntityHandle).GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is RegisteredCoverage objCast
-                && AssemblyName == objCast.AssemblyName
-                && EntityHandle == objCast.EntityHandle;
-        }
-    }
-
     // External packages are somehow not working with test data collectors.
-    public class MutationCoverage
+    public class MutationCoverage : IMutationCoverage
     {
         /// <summary>
         ///     Collection with test names as key and the covered method entity handles as value.

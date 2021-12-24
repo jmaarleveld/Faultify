@@ -6,11 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Faultify.TestRunner.Shared;
-using Faultify.TestRunner.TestProcess;
 using NLog;
+using Faultify.TestHostRunner.TestProcess;
+using Faultify.TestHostRunner.Results;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner.TestHostRunners
 {
     /// <summary>
     ///     Runs the mutation test with 'dotnet test'.
@@ -35,7 +35,7 @@ namespace Faultify.TestRunner.TestRun.TestHostRunners
             _testAdapterPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         }
 
-        public TestFramework TestFramework => TestFramework.None;
+        public TestHost TestHost => TestHost.DotnetTest;
 
         /// <summary>
         ///     Runs the given tests and returns the results.
@@ -118,7 +118,7 @@ namespace Faultify.TestRunner.TestRun.TestHostRunners
                     throw new ExitCodeException(process.ExitCode);
                 }
 
-                return Utils.ReadMutationCoverageFile();
+                return ResultsUtils.ReadMutationCoverageFile();
             }
             catch (FileNotFoundException e)
             {

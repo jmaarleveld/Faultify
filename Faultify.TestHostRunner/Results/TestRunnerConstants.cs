@@ -1,4 +1,4 @@
-﻿namespace Faultify.TestRunner.Shared
+﻿namespace Faultify.TestHostRunner.Results
 {
     public static class TestRunnerConstants
     {

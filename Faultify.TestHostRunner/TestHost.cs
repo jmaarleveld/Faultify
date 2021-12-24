@@ -1,4 +1,4 @@
-﻿namespace Faultify.TestRunner
+﻿namespace Faultify.TestHostRunner
 {
     public enum TestHost
     {

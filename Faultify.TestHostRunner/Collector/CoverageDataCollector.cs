@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Faultify.TestRunner.Shared;
+using Faultify.TestHostRunner.Results;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
-namespace Faultify.TestRunner.Collector
+namespace Faultify.TestHostRunner.Collector
 {
     /// <summary>
     ///     Collects test methods that ran in a test session.
@@ -64,14 +64,15 @@ namespace Faultify.TestRunner.Collector
             {
                 if (_coverageFlushed) return;
 
-                MutationCoverage mutationCoverage = Utils.ReadMutationCoverageFile();
+                MutationCoverage mutationCoverage = ResultsUtils
+                .ReadMutationCoverageFile();
 
                 // Filter out functions that are not tests
                 mutationCoverage.Coverage = mutationCoverage.Coverage
                     .Where(pair => _testNames.Contains(pair.Key))
                     .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                Utils.WriteMutationCoverageFile(mutationCoverage);
+                ResultsUtils.WriteMutationCoverageFile(mutationCoverage);
 
                 _coverageFlushed = true;
             }

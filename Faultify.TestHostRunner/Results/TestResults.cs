@@ -2,13 +2,13 @@
 using System.IO;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
-namespace Faultify.TestRunner.Shared
+namespace Faultify.TestHostRunner.Results
 {
     /// <summary>
     ///     Test results from a test session.
     /// </summary>
     // External packages are somehow not working with test data collectors.
-    public class TestResults
+    public class TestResults : ITestResults
     {
         /// <summary>
         ///     A list of the test result from each test in the session.

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Faultify.TestRunner.Shared;
+using Faultify.TestHostRunner.Results;
 
-namespace Faultify.TestRunner.TestRun.TestHostRunners
+namespace Faultify.TestHostRunner.TestHostRunners
 {
     /// <summary>
     ///     Interface for running tests and code coverage on some test host.
@@ -14,7 +14,7 @@ namespace Faultify.TestRunner.TestRun.TestHostRunners
         /// <summary>
         ///     Identifies what test framework is being used
         /// </summary>
-        public TestFramework TestFramework { get; }
+        public TestHost TestHost { get; }
 
         /// <summary>
         ///     Runs the given tests and returns the results.
