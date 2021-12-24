@@ -2,12 +2,12 @@
 using Microsoft.Extensions.Logging;
 using NLog;
 
-namespace Faultify.TestRunner.Logging
+namespace Faultify.MutationSessionProgressTracker
 {
     /// <summary>
     ///     Helper class for tracking the mutation test logs and percentual progress.
     /// </summary>
-    public class MutationSessionProgressTracker : IProgress<string>
+    public class MutationSessionProgressTracker : IProgress<string>, IMutationSessionProgressTracker
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IProgress<MutationRunProgress> _progress;
