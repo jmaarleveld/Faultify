@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Metadata;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.CodeDecompiler
 {
     public interface ICodeDecompiler
     {
