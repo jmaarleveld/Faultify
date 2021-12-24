@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Faultify.Analyze;
+using Faultify.MutationCollector;
 using Faultify.TestRunner.Shared;
 using NLog;
 
@@ -185,7 +185,7 @@ namespace Faultify.TestRunner.TestRun
         /// <param name="allMutations"></param>
         /// <param name="assembly"></param>
         /// <param name="method"></param>
-        private void GetAllMutations(Dictionary<RegisteredCoverage, HashSet<string>> coverage, HashSet<string> excludeGroup, HashSet<string> excludeSingular, MutationLevel mutationLevel, List<MutationVariantIdentifier> allMutations, Analyze.AssemblyMutator.AssemblyMutator assembly, Analyze.AssemblyMutator.MethodScope method)
+        private void GetAllMutations(Dictionary<RegisteredCoverage, HashSet<string>> coverage, HashSet<string> excludeGroup, HashSet<string> excludeSingular, MutationLevel mutationLevel, List<MutationVariantIdentifier> allMutations, MutationCollector.AssemblyMutator.AssemblyMutator assembly, MutationCollector.AssemblyMutator.MethodScope method)
         {
             var methodMutationId = 0;
             KeyValuePair<RegisteredCoverage, HashSet<string>> registeredMutation = coverage.FirstOrDefault(x =>

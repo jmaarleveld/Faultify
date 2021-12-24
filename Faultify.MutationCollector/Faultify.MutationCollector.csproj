@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <PackageVersion>0.1.0</PackageVersion>
+	  <PackageId>Faultify.MutationCollector</PackageId>
+	  <Description>Fualtify Mutation Analyzers</Description>
+
+	  <Authors>Timon</Authors>
+	  <ProjectUrl>https://github.com/Faultify/Faultify</ProjectUrl>
+	  <PackageTags>Test;Mutation;Mutation Testing;Testing</PackageTags>
+	  <RepositoryUrl>https://github.com/Faultify/Faultify.git</RepositoryUrl>
+	  <Title>Dotnet, byte level, mutation analyzers</Title>
+	  <Product>Mutation Testing</Product>
+
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<Version>0.2.0</Version>
+		<PackageIcon>small-logo.png</PackageIcon>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\docs\small-logo.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+    <PackageReference Include="MonoMod.Utils" Version="21.4.21.3" />
+    <PackageReference Include="NLog" Version="4.7.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Faultify.Core\Faultify.Core.csproj" />
+  </ItemGroup>
+
+</Project>

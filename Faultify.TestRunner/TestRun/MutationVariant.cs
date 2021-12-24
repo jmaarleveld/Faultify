@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Metadata;
-using Faultify.Analyze.AssemblyMutator;
-using Faultify.Analyze.Mutation;
+using Faultify.MutationCollector.AssemblyMutator;
+using Faultify.MutationCollector.Mutation;
 
 namespace Faultify.TestRunner.TestRun
 {
