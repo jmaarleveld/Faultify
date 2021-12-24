@@ -6,6 +6,10 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
     /// <summary>
     ///     Analyzer that searches for possible bitwise mutations inside a method definition.
     ///     Mutations such as such as 'and' and 'xor'.
+    ///
+    ///     Note that this class also mutates logical operators such as || and &&.
+    ///     This is because the logical operators are compiled to bitwise operations
+    ///     in IL-code.
     /// </summary>
     public class BitwiseAnalyzer : OpCodeAnalyzer
     {
