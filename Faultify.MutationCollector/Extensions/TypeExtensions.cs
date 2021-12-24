@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Faultify.Core.Extensions
+namespace Faultify.MutationCollector.Extensions
 {
     public static class TypeExtensions
     {
