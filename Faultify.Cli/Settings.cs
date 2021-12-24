@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using CommandLine;
-using Faultify.Analyze;
+using Faultify.MutationCollector;
 using Faultify.TestRunner;
 using System.Text.Json;
 using System.Collections.Generic;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Faultify.Analyze;
-using Faultify.Analyze.AssemblyMutator;
+using Faultify.MutationCollector;
+using Faultify.MutationCollector.AssemblyMutator;
 using Faultify.Core.ProjectAnalyzing;
 using Faultify.TestRunner.TestRun;
 using ICSharpCode.Decompiler.Metadata;

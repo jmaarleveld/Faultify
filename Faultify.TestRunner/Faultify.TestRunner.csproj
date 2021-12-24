@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Faultify.Analyze\Faultify.Analyze.csproj" />
+    <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
     <ProjectReference Include="..\Faultify.Core\Faultify.Core.csproj" />
     <ProjectReference Include="..\Faultify.Injection\Faultify.Injection.csproj" />
     <ProjectReference Include="..\Faultify.Report\Faultify.Report.csproj" />
