@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationCollector"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.AssemblyDissection", "Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj", "{76B08EE6-1C75-496C-8283-45A6A9921A9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionProgressTracker", "Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj", "{30C7D3B8-3D41-4B93-8C91-88645551D8A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +116,10 @@ Global
 		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76B08EE6-1C75-496C-8283-45A6A9921A9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
