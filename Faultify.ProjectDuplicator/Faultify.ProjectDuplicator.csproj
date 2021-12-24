@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="ICSharpCode.Decompiler" Version="6.2.1.6137" />
+        <PackageReference Include="NLog" Version="4.7.9" />
+    </ItemGroup>
+
+</Project>

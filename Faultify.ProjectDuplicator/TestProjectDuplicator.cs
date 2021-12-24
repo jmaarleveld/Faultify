@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using Faultify.Core.ProjectAnalyzing;
 using NLog;
 
-namespace Faultify.TestRunner.ProjectDuplication
+namespace Faultify.ProjectDuplicator
 {
-    public class TestProjectDuplicator
+    public class TestProjectDuplicator : ITestProjectDuplicator
     {
         private readonly string _testDirectory;
 

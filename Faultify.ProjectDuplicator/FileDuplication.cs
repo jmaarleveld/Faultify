@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 
-namespace Faultify.TestRunner.ProjectDuplication
+namespace Faultify.ProjectDuplicator
 {
     /// <summary>
     ///     Wrapper over duplicated testproject files.
     /// </summary>
-    public class FileDuplication : IDisposable
+    public class FileDuplication : IDisposable, IFileDuplication
     {
         private FileStream? _fileStream;
 

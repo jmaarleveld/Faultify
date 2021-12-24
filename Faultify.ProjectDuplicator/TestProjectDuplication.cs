@@ -9,12 +9,12 @@ using Faultify.TestRunner.TestRun;
 using ICSharpCode.Decompiler.Metadata;
 using NLog;
 
-namespace Faultify.TestRunner.ProjectDuplication
+namespace Faultify.ProjectDuplicator
 {
     /// <summary>
     ///     A test project duplication.
     /// </summary>
-    public class TestProjectDuplication : IDisposable
+    public class TestProjectDuplication : IDisposable, ITestProjectDuplication
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -91,6 +91,8 @@ namespace Faultify.TestRunner.ProjectDuplication
         /// </summary>
         /// <param name="mutationIdentifiers"></param>
         /// <param name="mutationLevel"></param>
+        /// <param name="excludeGroup"></param>
+        /// <param name="excludeSingular"></param>
         /// <returns></returns>
         public IList<MutationVariant> GetMutationVariants(
             IList<MutationVariantIdentifier>? mutationIdentifiers,
