@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Faultify.ProjectDuplicator.Util
+namespace Faultify.ProjectDuplicator
 {
     public interface IFileDuplication
     {

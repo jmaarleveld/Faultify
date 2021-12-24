@@ -8,7 +8,6 @@ using Faultify.Core.ProjectAnalyzing;
 using Faultify.TestRunner.TestRun;
 using ICSharpCode.Decompiler.Metadata;
 using NLog;
-using Faultify.ProjectDuplicator.Util;
 
 namespace Faultify.ProjectDuplicator
 {

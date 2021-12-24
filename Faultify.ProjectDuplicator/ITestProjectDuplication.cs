@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System;
-using Faultify.ProjectDuplicator.Util;
 
 namespace Faultify.ProjectDuplicator
 {

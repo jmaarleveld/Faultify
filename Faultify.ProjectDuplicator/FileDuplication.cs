@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Faultify.ProjectDuplicator.Util
+namespace Faultify.ProjectDuplicator
 {
     /// <summary>
     ///     Wrapper over duplicated testproject files.
