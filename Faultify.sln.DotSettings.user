@@ -1,4 +1,9 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002EMdb_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002Epdb/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002EPdb_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002ERocks_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=04f8c78c_002Db102_002D4bae_002D8bdf_002D1a213fe4c644/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="OpenWriteStream" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;And&gt;&#xD;
@@ -27,4 +32,5 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cb050727_002Dc0ea_002D48a4_002D8178_002D166995f6c472/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="HasTwoMethodMutations_False" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="D:\Projects\rug\softwareEngineering\Faultify\Faultify.Tests" Presentation="&amp;lt;Faultify.Tests&amp;gt;" /&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Faultify/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
