@@ -2,7 +2,7 @@
 using System.IO;
 using Buildalyzer;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.ProjectDuplicator.ProjectAnalyzing
 {
     public class ProjectInfo : IProjectInfo
     {

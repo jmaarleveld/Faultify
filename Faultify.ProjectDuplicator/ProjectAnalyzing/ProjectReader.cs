@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Buildalyzer;
 using Buildalyzer.Environment;
-using Faultify.Core.Exceptions;
+using Faultify.ProjectDuplicator.Exceptions;
 using NLog;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.ProjectDuplicator.ProjectAnalyzing
 {
     public class ProjectReader : IProjectReader
     {
