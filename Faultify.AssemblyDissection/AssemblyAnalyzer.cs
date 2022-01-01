@@ -20,11 +20,11 @@ namespace Faultify.AssemblyDissection
     ///     If you add your analyzer to one of those collections then it will be used in the process of analyzing.
     ///     Unfortunately, if your analyzer does not fit the interfaces, it can not be used with the `AssemblyMutator`.
     /// </summary>
-    public class AssemblyMutator : IDisposable
+    public class AssemblyAnalyzer : IDisposable
     {
 
         [Obsolete("Use AssemblyMutator(string assemblyPath)")]
-        private AssemblyMutator(Stream stream)
+        private AssemblyAnalyzer(Stream stream)
         {
             Module = ModuleDefinition.ReadModule(
                 stream,
@@ -37,7 +37,7 @@ namespace Faultify.AssemblyDissection
             Types = LoadTypes();
         }
 
-        public AssemblyMutator(string assemblyPath)
+        public AssemblyAnalyzer(string assemblyPath)
         {
             var assemblyResolver = new DefaultAssemblyResolver();
             assemblyResolver.AddSearchDirectory(Path.GetDirectoryName(assemblyPath));
