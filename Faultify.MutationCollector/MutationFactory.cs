@@ -27,7 +27,7 @@ namespace Faultify.MutationCollector {
                 new VariableAnalyzer()
             };
 
-        public static IEnumerable<IMutation> GetFieldMutations(
+        public static IEnumerable<IEnumerable<IMutation>> GetFieldMutations(
             FieldDefinition field,
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
@@ -39,10 +39,10 @@ namespace Faultify.MutationCollector {
                 into mutations 
                 where mutations.Any() 
                 select mutations;
-            return mutationGroups.SelectMany(x => x);
+            return mutationGroups;
         }
 
-        public static IEnumerable<IMutation> GetMethodMutations(
+        public static IEnumerable<IEnumerable<IMutation>> GetMethodMutations(
             MethodDefinition method,
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
@@ -55,7 +55,7 @@ namespace Faultify.MutationCollector {
                 into mutations 
                 where mutations.Any() 
                 select mutations;
-            return mutationGroups.SelectMany(x => x);
+            return mutationGroups;
         }
     }
 }

@@ -11,9 +11,12 @@ namespace Faultify.AssemblyDissection
     {
         /// <summary>
         ///     Returns all possible mutations.
+        ///     Every enumerable of mutations contained in the main enumerable
+        ///     applies to the same opcode and was found by the same
+        ///     analyzer.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IMutation> AllMutations(
+        IEnumerable<IEnumerable<IMutation>> AllMutations(
             MutationLevel mutationLevel, 
             HashSet<string> excludeGroup, 
             HashSet<string> excludeSingular);
