@@ -4,15 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Buildalyzer;
 using Buildalyzer.Environment;
-using Faultify.Core.Exceptions;
 using NLog;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.ProjectBuilder
 {
     public class ProjectReader : IProjectReader
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public Task<IProjectInfo> ReadProjectAsync(string path, IProgress<string> progress)
+        public Task<IProjectInfo> ReadAndBuildProjectAsync(string path, IProgress<string> progress)
         {
             return Task.Run(() =>  AnalyzeProject(path, progress));
         }
