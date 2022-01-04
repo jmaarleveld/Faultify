@@ -8,7 +8,7 @@ using Faultify.TestRunner.ProjectDuplication;
 using Faultify.TestRunner.Shared;
 using Faultify.TestRunner.TestRun.TestHostRunners;
 
-namespace Faultify.TestRunner.TestRun
+namespace Faultify.MutationSessionScheduler
 {
     /// <summary>
     ///     Executes the mutation test run on a test project.

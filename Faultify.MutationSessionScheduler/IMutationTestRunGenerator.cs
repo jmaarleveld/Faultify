@@ -2,7 +2,7 @@
 using Faultify.MutationCollector;
 using Faultify.TestRunner.Shared;
 
-namespace Faultify.TestRunner.TestRun
+namespace Faultify.MutationSessionScheduler
 {
     /// <summary>
     ///     Interface for defining a mutation test run generator that returns mutation test run instances for the mutation test

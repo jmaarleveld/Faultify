@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Faultify.TestRunner.Logging;
 using Faultify.TestRunner.ProjectDuplication;
 
-namespace Faultify.TestRunner.TestRun
+namespace Faultify.MutationSessionScheduler
 {
     /// <summary>
     ///     Defines an interface for a test run that executes mutations and returns the test results.

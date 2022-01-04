@@ -4,7 +4,7 @@ using Faultify.MutationCollector;
 using Faultify.TestRunner.Shared;
 using NLog;
 
-namespace Faultify.TestRunner.TestRun
+namespace Faultify.MutationSessionScheduler
 {
     public class DefaultMutationTestRunGenerator : IMutationTestRunGenerator
     {
