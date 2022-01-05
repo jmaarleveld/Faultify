@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Faultify.Core.Exceptions
+namespace Faultify.ProjectBuilder
 {
     public class ProjectNotBuiltException : Exception { }
 }
