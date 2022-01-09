@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.ProjectDuplicator.ProjectAnalyzing
 {
     /// <summary>
     ///     Reading the project in an Asyncronous manner

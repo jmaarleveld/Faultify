@@ -1,19 +1,21 @@
 ﻿extern alias MC;
 using System;
 using System.Collections.Generic;
-using Faultify.MutationCollector.AssemblyMutator;
-using MC::Mono.Cecil;
+using Faultify.AssemblyDissection;
+using Mono.Cecil;
+using Faultify.TestHostRunner;
 
-namespace Faultify.TestRunner
+namespace Faultify.ProjectDuplicator
 {
     public class TestProjectInfo : IDisposable
     {
-        public TestProjectInfo(TestFramework testFramework, ModuleDefinition testModule)
+        public TestProjectInfo(TestHost testFramework, ModuleDefinition 
+        testModule)
         {
             TestFramework = testFramework;
             TestModule = testModule;
         }
-        public TestFramework TestFramework { get; set; }
+        public TestHost TestFramework { get; set; }
         public ModuleDefinition TestModule { get; set; }
         public List<AssemblyMutator> DependencyAssemblies { get; set; } = new List<AssemblyMutator>();
 

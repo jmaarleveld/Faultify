@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Tests", "Faultify.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Core", "Faultify.Core\Faultify.Core.csproj", "{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Injection", "Faultify.Injection\Faultify.Injection.csproj", "{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestProcess", "TestProcess", "{3ECCAFB9-AFBD-4E9D-AB4F-42069EF87863}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.TestRunner", "Faultify.TestRunner\Faultify.TestRunner.csproj", "{8E7217CA-510D-4545-B7E8-96C663F045F4}"
@@ -54,6 +52,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionPro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionScheduler", "Faultify.MutationSessionScheduler\Faultify.MutationSessionScheduler.csproj", "{3412AB57-16C7-4DF2-A19A-FADE77B65912}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.CoverageCollector", "Faultify.CoverageCollector\Faultify.CoverageCollector.csproj", "{80532D97-7E64-43B3-9ACB-138FB24981BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.ProjectBuilder", "Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj", "{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,10 +74,6 @@ Global
 		{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8E7217CA-510D-4545-B7E8-96C663F045F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E7217CA-510D-4545-B7E8-96C663F045F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E7217CA-510D-4545-B7E8-96C663F045F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -132,12 +130,19 @@ Global
 		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{41DFFA4B-C0AE-47B0-BB5D-7755BB9F67F0} = {3ECCAFB9-AFBD-4E9D-AB4F-42069EF87863}
 		{8E7217CA-510D-4545-B7E8-96C663F045F4} = {3ECCAFB9-AFBD-4E9D-AB4F-42069EF87863}
 		{CC69D0AF-8ADA-48AA-ACF5-D44BB124016A} = {0EAACBAA-2F1D-4E80-82B0-CE32404832AD}
 		{E614C588-556A-4868-BBB3-96D52AC2A848} = {0EAACBAA-2F1D-4E80-82B0-CE32404832AD}

@@ -4,6 +4,10 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002Epdb/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002EPdb_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005CJesse_005C_002Enuget_005Cpackages_005Cmono_002Ececil_005C0_002E11_002E3_005Clib_005Cnetstandard2_002E0_005CMono_002ECecil_002ERocks_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\arjan\.nuget\packages\mono.cecil\0.11.3\lib\netstandard2.0\Mono.Cecil.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\arjan\.nuget\packages\nunit.engine\3.12.0\lib\netcoreapp3.1\testcentric.engine.metadata.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=04f8c78c_002Db102_002D4bae_002D8bdf_002D1a213fe4c644/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="OpenWriteStream" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;And&gt;&#xD;

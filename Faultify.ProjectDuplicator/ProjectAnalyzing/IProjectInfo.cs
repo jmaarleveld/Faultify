@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Faultify.Core.ProjectAnalyzing
+namespace Faultify.ProjectDuplicator.ProjectAnalyzing
 {
     public interface IProjectInfo
     {
