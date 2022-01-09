@@ -1,27 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Faultify.MutationCollector;
-using Faultify.TestRunner.Shared;
+using Faultify.MutationCollector.Mutation;
 
 namespace Faultify.MutationSessionScheduler
 {
     /// <summary>
-    ///     Interface for defining a mutation test run generator that returns mutation test run instances for the mutation test
-    ///     session.
+    ///     Interface for defining a mutation test run generator that
+    ///     compute the grouping for the mutation test runs.
     /// </summary>
     public interface IMutationTestRunGenerator
     {
         /// <summary>
         ///     Generates mutation test runs for the mutation test session.
         /// </summary>
-        /// <param name="testsPerMethod"></param>
-        /// <param name="testProjectInfo"></param>
-        /// <returns></returns>
-        public IEnumerable<IMutationTestRun> GenerateMutationTestRuns(
+        public IEnumerable<IEnumerable<IEnumerable<IMutation>>> GenerateMutationTestRuns(
+            // TODO: How will we handle registered coverage with the new architecture?
             Dictionary<RegisteredCoverage, HashSet<string>> testsPerMethod,
-            TestProjectInfo testProjectInfo,
-            MutationLevel mutationLevel,
-            HashSet<string> excludeGroup,
-            HashSet<string> excludeSingular
-        );
+            IEnumerable<IEnumerable<IMutation>> mutations);
     }
 }

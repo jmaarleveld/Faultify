@@ -7,9 +7,9 @@ using Faultify.TestRunner.ProjectDuplication;
 namespace Faultify.MutationSessionScheduler
 {
     /// <summary>
-    ///     Defines an interface for a test run that executes mutations and returns the test results.
+    ///     Defines an interface for a test run group.
     /// </summary>
-    public interface IMutationTestRun
+    public interface IMutationTestRunGroup
     {
         public int RunId { get; set; }
 

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using Faultify.MutationCollector;
-using Faultify.TestRunner.Shared;
+using Faultify.MutationCollector.Mutation;
 using NLog;
 
 namespace Faultify.MutationSessionScheduler
@@ -12,17 +12,11 @@ namespace Faultify.MutationSessionScheduler
 
         public IEnumerable<IMutationTestRun> GenerateMutationTestRuns(
             Dictionary<RegisteredCoverage, HashSet<string>> testsPerMethod,
-            TestProjectInfo testProjectInfo,
-            MutationLevel mutationLevel,
-            HashSet<string> excludeGroup,
-            HashSet<string> excludeSingular
-        )
+            IEnumerable<IEnumerable<IMutation>> mutations)
         {
             Logger.Info("Generating mutation test runs");
-
-            IList<MutationVariantIdentifier>? allMutations =
-                GetMutationsForCoverage(testsPerMethod, testProjectInfo, excludeGroup, excludeSingular, mutationLevel);
-            IEnumerable<IList<MutationVariantIdentifier>>? mutationGroups = GetTestGroups(allMutations);
+            
+            IEnumerable<IEnumerable<IList<IMutation>>> testRunGroups = GetTestGroups(mutations);
 
             var i = 0;
             return mutationGroups.Select(mutationGroup =>
@@ -64,7 +58,7 @@ namespace Faultify.MutationSessionScheduler
         /// </summary>
         /// <param name="buckets"></param>
         /// <param name="mutation"></param>
-        private static void InsertOrMakeNew(List<MutationBucket> buckets, MutationVariantIdentifier mutation)
+        private static void InsertOrMakeNew(List<MutationBucket> buckets, IMutation mutation)
         {
             // Attempt to add the mutation to a bucket
             var wasInserted = false;
@@ -118,7 +112,8 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="allMutations"></param>
         /// <param name="freeTests"></param>
         /// <param name="mutationsForThisRun"></param>
-        private static void RemoveFreeSlots(List<MutationVariantIdentifier> allMutations, HashSet<string> freeTests, List<MutationVariantIdentifier> mutationsForThisRun)
+        private static void RemoveFreeSlots(List<MutationVariantIdentifier> allMutations, HashSet<string> freeTests,
+            List<MutationVariantIdentifier> mutationsForThisRun)
         {
             foreach (MutationVariantIdentifier mutation in allMutations.ToArray())
             {
@@ -172,6 +167,7 @@ namespace Faultify.MutationSessionScheduler
             {
                 GetAllMutations(coverage, excludeGroup, excludeSingular, mutationLevel, allMutations, assembly, method);
             }
+
             return allMutations;
         }
 
@@ -185,7 +181,10 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="allMutations"></param>
         /// <param name="assembly"></param>
         /// <param name="method"></param>
-        private void GetAllMutations(Dictionary<RegisteredCoverage, HashSet<string>> coverage, HashSet<string> excludeGroup, HashSet<string> excludeSingular, MutationLevel mutationLevel, List<MutationVariantIdentifier> allMutations, MutationCollector.AssemblyMutator.AssemblyMutator assembly, MutationCollector.AssemblyMutator.MethodScope method)
+        private void GetAllMutations(Dictionary<RegisteredCoverage, HashSet<string>> coverage,
+            HashSet<string> excludeGroup, HashSet<string> excludeSingular, MutationLevel mutationLevel,
+            List<MutationVariantIdentifier> allMutations, MutationCollector.AssemblyMutator.AssemblyMutator assembly,
+            MutationCollector.AssemblyMutator.MethodScope method)
         {
             var methodMutationId = 0;
             KeyValuePair<RegisteredCoverage, HashSet<string>> registeredMutation = coverage.FirstOrDefault(x =>
@@ -207,52 +206,6 @@ namespace Faultify.MutationSessionScheduler
 
                     mutationGroupId += 1;
                 }
-            }
-        }
-
-        /// <summary>
-        ///     Helper class used for the test coverage analysis.
-        /// </summary>
-        private class MutationBucket
-        {
-            /// <summary>
-            ///     Safely create a new bucket with an initial mutation in it
-            /// </summary>
-            /// <param name="initialMutation"></param>
-            public MutationBucket(MutationVariantIdentifier initialMutation)
-            {
-                Tests = new HashSet<string>(initialMutation.TestCoverage);
-                Mutations = new List<MutationVariantIdentifier> { initialMutation };
-            }
-
-            /// <summary>
-            ///     Set of tests that the contained mutations cover
-            /// </summary>
-            private HashSet<string> Tests { get; }
-
-            /// <summary>
-            ///     List of mutations in the bucket
-            /// </summary>
-            public List<MutationVariantIdentifier> Mutations { get; }
-
-            /// <summary>
-            ///     Adds a new mutation to the bucket.
-            /// </summary>
-            /// <param name="mutation"></param>
-            public void AddMutation(MutationVariantIdentifier mutation)
-            {
-                Tests.Union(mutation.TestCoverage);
-                Mutations.Add(mutation);
-            }
-
-            /// <summary>
-            ///     Returns wether or not the bucket tests intersect with the provided set of tests
-            /// </summary>
-            /// <param name="tests">Tests to check for intersection with</param>
-            /// <returns>True if the provided set of tests overlaps with the set of tests in the bucket</returns>
-            public bool IntersectsWith(HashSet<string> tests)
-            {
-                return !tests.AsParallel().Any(test => Tests.Contains(test));
             }
         }
     }
