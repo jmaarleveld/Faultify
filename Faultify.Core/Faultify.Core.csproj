@@ -24,4 +24,9 @@
     <PackageReference Include="NLog" Version="4.7.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions" />
+    <Folder Include="ProjectAnalyzing" />
+  </ItemGroup>
+
 </Project>

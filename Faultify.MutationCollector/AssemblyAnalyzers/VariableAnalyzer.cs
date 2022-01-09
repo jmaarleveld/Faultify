@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Faultify.Core.Extensions;
+using Faultify.MutationCollector.Extensions;
 using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;
 using Mono.Cecil.Cil;

@@ -28,7 +28,7 @@ namespace Faultify.AssemblyDissection
         public string Name => _fieldDefinition.Name;
         public EntityHandle Handle => MetadataTokens.EntityHandle(_fieldDefinition.MetadataToken.ToInt32());
 
-        public IEnumerable<IMutation> AllMutations(
+        public IEnumerable<IEnumerable<IMutation>> AllMutations(
             MutationLevel mutationLevel,
             HashSet<string> excludeGroup,
             HashSet<string> excludeSingular)

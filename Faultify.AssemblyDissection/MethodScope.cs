@@ -40,15 +40,18 @@ namespace Faultify.AssemblyDissection
 
         /// <summary>
         ///     Returns all available mutations within the scope of this method.
+        ///     Every list of mutations contained in the main list
+        ///     applies to the same opcode and was found by the same
+        ///     analyzer.
         /// </summary>
-        public IEnumerable<IMutation> AllMutations(
+        public IEnumerable<IEnumerable<IMutation>> AllMutations(
             MutationLevel mutationLevel, 
             HashSet<string> excludeGroup, 
             HashSet<string> excludeSingular)
         {
             if (MethodDefinition.Body == null)
             {
-                return Enumerable.Empty<IMutation>();
+                return new List<IList<IMutation>>();
             }
 
             MethodDefinition.Body.SimplifyMacros();
@@ -71,7 +74,7 @@ namespace Faultify.AssemblyDissection
         ///     Return all mutations which can be applied in the
         ///     method body.
         /// </summary>
-        private IEnumerable<IMutation> GetMethodMutations(
+        private IEnumerable<IEnumerable<IMutation>> GetMethodMutations(
             MutationLevel mutationLevel,
             HashSet<string> excludeGroup,
             HashSet<string> excludeSingular)
@@ -87,14 +90,15 @@ namespace Faultify.AssemblyDissection
         ///     Return all mutations that can be applied to
         ///     fields in the method.
         /// </summary>
-        private IEnumerable<IMutation> GetFieldMutations(
+        private IEnumerable<IEnumerable<IMutation>> GetFieldMutations(
             MutationLevel mutationLevel, 
             HashSet<string> excludeGroup, 
             HashSet<string> excludeSingular)
         {
             IEnumerable<FieldReference> fieldReferences = MethodDefinition.Body.Instructions
                 .OfType<FieldReference>();
-            List<IEnumerable<IMutation>> fieldMutationLists = new List<IEnumerable<IMutation>>();
+            List<IEnumerable<IEnumerable<IMutation>>> fieldMutationLists =
+                new List<IEnumerable<IEnumerable<IMutation>>>();
             foreach (FieldReference field in fieldReferences) {
                 var mutations = MutationFactory.GetFieldMutations(
                     field.Resolve(),

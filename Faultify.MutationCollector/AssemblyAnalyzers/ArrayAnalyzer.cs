@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Faultify.Core.Extensions;
+using Faultify.MutationCollector.Extensions;
 using Faultify.MutationCollector.ArrayMutationStrategy;
 using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;

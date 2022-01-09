@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Faultify.Core.Extensions;
+using Faultify.MutationCollector.Extensions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
