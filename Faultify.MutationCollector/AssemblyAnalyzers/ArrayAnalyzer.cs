@@ -34,6 +34,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         )
         {
             // Filter and map arrays
+            var entityHandle = method.MetadataToken.ToInt32();
             IEnumerable<ArrayMutation> arrayMutations =
                 from instruction
                     in method.Body.Instructions
@@ -44,7 +45,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     Name, 
                     Description,
                     assemblyName,
-                    method.MetadataToken.ToInt32());
+                    entityHandle);
 
             return arrayMutations;
         }

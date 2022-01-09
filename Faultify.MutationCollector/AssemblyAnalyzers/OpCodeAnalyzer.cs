@@ -43,6 +43,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
                 if (_mappedOpCodes.ContainsKey(original))
                 {
+                    var entityHandle = scope.MetadataToken.ToInt32();
                     IEnumerable<(MutationLevel, OpCode, string)> targets = _mappedOpCodes[original];
                     mutations =
                         from target in targets
@@ -55,7 +56,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             Name,
                             Description,
                             assemblyName,
-                            scope.MetadataToken.ToInt32());
+                            entityHandle);
                     
                     mutationGroup.Add(mutations);
                 }

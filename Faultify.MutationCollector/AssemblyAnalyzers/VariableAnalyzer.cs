@@ -56,6 +56,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
                     // If the value is mapped then mutate it.
                     if (TypeChecker.IsVariableType(type)) {
+                        var entityHandle = method.MetadataToken.ToInt32();
                         var mutation = new VariableMutation(
                             variableInstruction,
                             type,
@@ -63,7 +64,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             Name,
                             Description,
                             assemblyName,
-                            method.MetadataToken.ToInt32());
+                            entityHandle);
                         mutations.Add(mutation);
                     }
                 }

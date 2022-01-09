@@ -35,7 +35,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             // If the type is valid, create a mutation and add it to the list
             Type type = field.Constant.GetType();
 
-            if (TypeChecker.IsConstantType(type))
+            if (TypeChecker.IsConstantType(type)) 
             {
                 mutations.Add(new ConstantMutation(
                     field, 
