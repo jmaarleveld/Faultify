@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.CodeDecompiler", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionProgressTracker", "Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj", "{30C7D3B8-3D41-4B93-8C91-88645551D8A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionScheduler", "Faultify.MutationSessionScheduler\Faultify.MutationSessionScheduler.csproj", "{3412AB57-16C7-4DF2-A19A-FADE77B65912}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.CoverageCollector", "Faultify.CoverageCollector\Faultify.CoverageCollector.csproj", "{80532D97-7E64-43B3-9ACB-138FB24981BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.ProjectBuilder", "Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj", "{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}"
@@ -124,6 +126,10 @@ Global
 		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30C7D3B8-3D41-4B93-8C91-88645551D8A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3412AB57-16C7-4DF2-A19A-FADE77B65912}.Release|Any CPU.Build.0 = Release|Any CPU
 		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80532D97-7E64-43B3-9ACB-138FB24981BD}.Release|Any CPU.ActiveCfg = Release|Any CPU

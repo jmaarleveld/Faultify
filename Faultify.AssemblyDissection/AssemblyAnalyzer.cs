@@ -78,7 +78,7 @@ namespace Faultify.AssemblyDissection
                 from type
                     in Module.Types
                 where !type.FullName.StartsWith("<")
-                select new TypeScope(type)
+                select new TypeScope(type, Module.Assembly.Name.Name)
             ).ToList();
         }
 

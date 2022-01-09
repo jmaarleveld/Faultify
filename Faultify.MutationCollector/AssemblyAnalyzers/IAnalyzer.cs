@@ -30,11 +30,13 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         ///     Analyzes possible mutations in the given scope.
         ///     Returns the mutation that can be either executed or reverted.
         /// </summary>
+        /// <param name="assemblyName">Name of the assembly containing this mutation</param> 
         /// <param name="scope">Scope in which to evaluate mutations</param>
         /// <param name="mutationLevel">Optimization and coverage level</param>
         /// <param name="exclusions"> List of excluded mutations</param>
         /// <returns>A <see cref="IMutationGroup{T}" /> containing the mutations</returns>
         IEnumerable<TMutation> GenerateMutations(
+            string assemblyName,
             TScope scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,

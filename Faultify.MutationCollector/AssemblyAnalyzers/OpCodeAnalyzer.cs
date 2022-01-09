@@ -28,6 +28,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public abstract string Id { get; }
 
         public IEnumerable<OpCodeMutation> GenerateMutations(
+            string assemblyName,
             MethodDefinition scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -42,6 +43,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
                 if (_mappedOpCodes.ContainsKey(original))
                 {
+                    var entityHandle = scope.MetadataToken.ToInt32();
                     IEnumerable<(MutationLevel, OpCode, string)> targets = _mappedOpCodes[original];
                     mutations =
                         from target in targets
@@ -52,7 +54,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             instruction,
                             scope,
                             Name,
-                            Description);
+                            Description,
+                            assemblyName,
+                            entityHandle);
                     
                     mutationGroup.Add(mutations);
                 }

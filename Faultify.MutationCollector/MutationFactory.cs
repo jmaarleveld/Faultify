@@ -28,6 +28,7 @@ namespace Faultify.MutationCollector {
             };
 
         public static IEnumerable<IEnumerable<IMutation>> GetFieldMutations(
+            string assemblyName,
             FieldDefinition field,
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
@@ -35,7 +36,7 @@ namespace Faultify.MutationCollector {
             IEnumerable<IEnumerable<IMutation> > mutationGroups =
                 from analyzer in FieldAnalyzers 
                 where !excludedAnalyzers.Contains(analyzer.Id) 
-                select analyzer.GenerateMutations(field, level, excludedCategories) 
+                select analyzer.GenerateMutations(assemblyName, field, level, excludedCategories) 
                 into mutations 
                 where mutations.Any() 
                 select mutations;
@@ -43,6 +44,7 @@ namespace Faultify.MutationCollector {
         }
 
         public static IEnumerable<IEnumerable<IMutation>> GetMethodMutations(
+            string assemblyName,
             MethodDefinition method,
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
@@ -51,7 +53,7 @@ namespace Faultify.MutationCollector {
                 from 
                 analyzer in MethodAnalyzers 
                 where !excludedAnalyzers.Contains(analyzer.Id) 
-                select analyzer.GenerateMutations(method, level, excludedCategories) 
+                select analyzer.GenerateMutations(assemblyName, method, level, excludedCategories) 
                 into mutations 
                 where mutations.Any() 
                 select mutations;

@@ -24,6 +24,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public string Id => "Variable";
 
         public IEnumerable<VariableMutation> GenerateMutations(
+            string assemblyName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -55,12 +56,15 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
                     // If the value is mapped then mutate it.
                     if (TypeChecker.IsVariableType(type)) {
+                        var entityHandle = method.MetadataToken.ToInt32();
                         var mutation = new VariableMutation(
                             variableInstruction,
                             type,
                             method,
                             Name,
-                            Description);
+                            Description,
+                            assemblyName,
+                            entityHandle);
                         mutations.Add(mutation);
                     }
                 }
