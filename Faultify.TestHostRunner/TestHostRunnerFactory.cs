@@ -7,7 +7,7 @@ namespace Faultify.TestHostRunner
     /// <summary>
     ///     Static factory class for creating testRunners
     /// </summary>
-    internal static class TestHostRunnerFactory
+    public static class TestHostRunnerFactory
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 

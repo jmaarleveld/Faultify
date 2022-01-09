@@ -1,4 +1,6 @@
-﻿namespace Faultify.ProjectDuplicator
+﻿using Faultify.ProjectDuplicator.ProjectAnalyzing;
+
+namespace Faultify.ProjectDuplicator
 {
     public interface ITestProjectDuplicator
     {

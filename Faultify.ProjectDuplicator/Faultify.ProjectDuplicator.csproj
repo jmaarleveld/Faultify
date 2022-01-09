@@ -1,14 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
     
     <ItemGroup>
         <PackageReference Include="ICSharpCode.Decompiler" Version="6.2.1.6137" />
         <PackageReference Include="NLog" Version="4.7.9" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj" />
+      <ProjectReference Include="..\Faultify.TestHostRunner\Faultify.TestHostRunner.csproj" />
     </ItemGroup>
 
 </Project>
