@@ -22,9 +22,12 @@ namespace Faultify.AssemblyDissection
         /// </summary>
         public readonly MethodDefinition MethodDefinition;
 
-        public MethodScope(MethodDefinition methodDefinition)
+        private string AssemblyName { get;  }    
+        
+        public MethodScope(MethodDefinition methodDefinition, string assemblyName)
         {
             MethodDefinition = methodDefinition;
+            AssemblyName = assemblyName;
         }
 
         public int IntHandle => MethodDefinition.MetadataToken.ToInt32();
@@ -80,6 +83,7 @@ namespace Faultify.AssemblyDissection
             HashSet<string> excludeSingular)
         {
             return MutationFactory.GetMethodMutations(
+                    AssemblyName,
                     MethodDefinition, 
                     mutationLevel, 
                     excludeGroup, 
@@ -101,6 +105,7 @@ namespace Faultify.AssemblyDissection
                 new List<IEnumerable<IEnumerable<IMutation>>>();
             foreach (FieldReference field in fieldReferences) {
                 var mutations = MutationFactory.GetFieldMutations(
+                    AssemblyName,
                     field.Resolve(),
                     mutationLevel,
                     excludeGroup,

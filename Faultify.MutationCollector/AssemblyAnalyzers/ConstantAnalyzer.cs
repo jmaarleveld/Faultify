@@ -22,6 +22,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public string Id => "Constant";
 
         public IEnumerable<ConstantMutation> GenerateMutations(
+            string assemblyName,
             FieldDefinition field,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -36,7 +37,13 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
             if (TypeChecker.IsConstantType(type))
             {
-                mutations.Add(new ConstantMutation(field, type, Name, Description));
+                mutations.Add(new ConstantMutation(
+                    field, 
+                    type, 
+                    Name, 
+                    Description, 
+                    assemblyName, 
+                    null));
             }
 
             return mutations;

@@ -12,7 +12,9 @@ namespace Faultify.MutationCollector.Mutation
             FieldDefinition field, 
             Type type,
             string analyzerName,
-            string analyzerDescription)
+            string analyzerDescription,
+            string assemblyName,
+            int? parentMethodEntityHandle)
         {
             Name = field.Name;
             Original = field.Constant;
@@ -20,6 +22,8 @@ namespace Faultify.MutationCollector.Mutation
             ConstantField = field;
             AnalyzerName = analyzerName;
             AnalyzerDescription = analyzerDescription;
+            AssemblyName = assemblyName;
+            ParentMethodEntityHandle = parentMethodEntityHandle;
         }
         
         /// <summary>
@@ -31,6 +35,22 @@ namespace Faultify.MutationCollector.Mutation
         ///     Description of the analyze this mutation was found by.
         /// </summary>
         public string AnalyzerDescription { get; }
+        
+        /// <summary>
+        ///     Name of the assembly containing this mutation.
+        /// </summary>
+        public string AssemblyName { get; }
+
+        /// <summary>
+        ///     EntityHandle referencing the method containing
+        ///     this mutation.
+        ///
+        ///     This field may be null, in case the mutation does
+        ///     not occur in a method.
+        ///     An example of this would be a mutation of a
+        ///     class variable.
+        /// </summary>
+        public int? ParentMethodEntityHandle { get; }
 
         /// <summary>
         ///     The name of the constant.

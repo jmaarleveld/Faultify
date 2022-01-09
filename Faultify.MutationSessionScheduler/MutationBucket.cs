@@ -14,11 +14,14 @@ namespace Faultify.MutationSessionScheduler
         ///     Safely create a new bucket with an initial mutation in it
         /// </summary>
         /// <param name="initialMutation"></param>
-        public MutationBucket(IMutation initialMutation)
+        public MutationBucket(
+            IMutation initialMutation, 
+            HashSet<string> testForMutation,
+            int initialMutationGroupId)
         {
             // TODO: How will coverage be handled in the new architecture?
-            Tests = new HashSet<string>(initialMutation.TestCoverage);
-            Mutations = new List<IMutation> { initialMutation };
+            Tests = new HashSet<string>(testForMutation);
+            Mutations = new List<(IMutation, int)> { (initialMutation, initialMutationGroupId) };
         }
 
         /// <summary>
@@ -29,18 +32,18 @@ namespace Faultify.MutationSessionScheduler
         /// <summary>
         ///     List of mutations in the bucket
         /// </summary>
-        public List<IMutation> Mutations { get; }
+        public List<(IMutation, int)> Mutations { get; }
 
         /// <summary>
         ///     Adds a new mutation to the bucket.
         /// </summary>
-        /// <param name="mutation"></param>
-        public void AddMutation(IMutation mutation)
+        public void AddMutation(
+            IMutation mutation, 
+            HashSet<string> testsForMutation,
+            int groupId)
         {
-            // TODO: fix coverage 
-            // TODO: is this a bug?
-            Tests.Add(mutation.TestCoverage);
-            Mutations.Add(mutation);
+            Tests.UnionWith(testsForMutation);
+            Mutations.Add((mutation, groupId));
         }
 
         /// <summary>

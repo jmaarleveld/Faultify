@@ -14,9 +14,7 @@ namespace Faultify.MutationSessionScheduler
         /// <summary>
         ///     Generates mutation test runs for the mutation test session.
         /// </summary>
-        public IEnumerable<IEnumerable<IEnumerable<IMutation>>> GenerateMutationTestRuns(
-            // TODO: How will we handle registered coverage with the new architecture?
-            Dictionary<RegisteredCoverage, HashSet<string>> testsPerMethod,
-            IEnumerable<IEnumerable<IMutation>> mutations);
+        public IEnumerable<Dictionary<int, IMutation>> GenerateMutationTestRuns(
+            IEnumerable<(IMutation, HashSet<string>, int)> testsPerMutation);
     }
 }

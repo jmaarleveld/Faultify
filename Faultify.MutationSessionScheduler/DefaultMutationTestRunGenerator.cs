@@ -10,44 +10,66 @@ namespace Faultify.MutationSessionScheduler
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public IEnumerable<IMutationTestRun> GenerateMutationTestRuns(
-            Dictionary<RegisteredCoverage, HashSet<string>> testsPerMethod,
-            IEnumerable<IEnumerable<IMutation>> mutations)
+        // Magic number, optimal run size not yet clear
+        private const int CONSTANT_OPTIMAL_DIVISION_ALGORITHM_THRESHOLD = 500; 
+
+        public IEnumerable<Dictionary<int, IMutation>> GenerateMutationTestRuns(
+            IEnumerable<(IMutation, HashSet<string>, int)> testsPerMutation)
         {
             Logger.Info("Generating mutation test runs");
             
-            IEnumerable<IEnumerable<IList<IMutation>>> testRunGroups = GetTestGroups(mutations);
+            IEnumerable<IList<(IMutation, int)>> testRunGroups = GetTestGroups(testsPerMutation.ToList());
 
-            var i = 0;
-            return mutationGroups.Select(mutationGroup =>
-            {
-                return new DefaultMutationTestRun
-                {
-                    MutationIdentifiers = mutationGroup,
-                    RunId = i++,
-                    MutationLevel = mutationLevel,
-                };
-            });
+            foreach (var testRunGroup in testRunGroups) {
+                yield return testRunGroup.ToDictionary(
+                    pair => pair.Item2, pair => pair.Item1);
+            }
         }
+        
+        /// <summary>
+        ///     Groups mutations into groups that can be run in parallel
+        /// </summary>
+        /// <param name="mutationVariants"></param>
+        /// <returns></returns>
+        private static IEnumerable<IList<(IMutation, int)>> GetTestGroups(
+            IList<(IMutation, HashSet<string>, int)> testsPerMutation
+        )
+        {
+            Logger.Info("Building mutation groups for test groups");
+
+            if (testsPerMutation.Count > CONSTANT_OPTIMAL_DIVISION_ALGORITHM_THRESHOLD)
+            {
+                // Faster but non-optimal
+                return GreedyCoverageAlgorithm(testsPerMutation);
+            }
+
+            // Very poor time scaling
+            return OptimalCoverageAlgorithm(testsPerMutation);
+        }
+        
+        /*****************************************************************************************
+         * Greedy Coverage Algorithm
+         */
 
         /// <summary>
-        ///     Greedy algorithm for the set cover problem of test coverage. It iterates through the list of mutations, adding them
-        ///     to
-        ///     the first bucket where it doesn't overlap with any tests. If there are no valid buckets, a new one is created.
+        ///     Greedy algorithm for the set cover problem of test coverage.
+        ///     It iterates through the list of mutations, adding them to
+        ///     the first bucket where it doesn't overlap with any tests.
+        ///     If there are no valid buckets, a new one is created.
         /// </summary>
         /// <param name="mutationVariants">List of mutation variants to group</param>
         /// <returns>A collection of collections containing the non-overlapping sets.</returns>
-        private static IEnumerable<IList<MutationVariantIdentifier>> GreedyCoverageAlgorithm(
-            IList<MutationVariantIdentifier> mutationVariants
+        private static IEnumerable<IList<(IMutation, int)>> GreedyCoverageAlgorithm(
+            IList<(IMutation, HashSet<string>, int)> testsPerMutation
         )
         {
-            List<MutationBucket>? buckets = new List<MutationBucket>();
-            IOrderedEnumerable<MutationVariantIdentifier>? mutations =
-                mutationVariants.OrderByDescending(mutation => mutation.TestCoverage.Count);
+            List<MutationBucket> buckets = new List<MutationBucket>();
+            IOrderedEnumerable<(IMutation, HashSet<string>, int)> orderedTestsPerMutation =
+                testsPerMutation.OrderByDescending(triple => triple.Item2.Count);
 
-            foreach (MutationVariantIdentifier mutation in mutations)
+            foreach (var triple in orderedTestsPerMutation)
             {
-                InsertOrMakeNew(buckets, mutation);
+                InsertOrMakeNew(buckets, triple);
             }
 
             return buckets.Select(bucket => bucket.Mutations);
@@ -56,50 +78,60 @@ namespace Faultify.MutationSessionScheduler
         /// <summary>
         ///     Adding a mutation to the buckets, if there is no bucket for it yet, make a new bucket
         /// </summary>
-        /// <param name="buckets"></param>
-        /// <param name="mutation"></param>
-        private static void InsertOrMakeNew(List<MutationBucket> buckets, IMutation mutation)
+        private static void InsertOrMakeNew(
+            List<MutationBucket> buckets, 
+            (IMutation, HashSet<string>, int) triple)
         {
+            var mutation = triple.Item1;
+            var testsForMutation = triple.Item2;
+            var groupId = triple.Item3;
+            
             // Attempt to add the mutation to a bucket
             var wasInserted = false;
-            foreach (MutationBucket bucket in buckets)
-            {
-                if (!bucket.IntersectsWith(mutation.TestCoverage))
+            
+            foreach (MutationBucket bucket in buckets) {
+                if (bucket.IntersectsWith(testsForMutation)) 
                 {
-                    bucket.AddMutation(mutation);
-                    wasInserted = true;
-                    break;
+                    continue;
                 }
+                
+                bucket.AddMutation(mutation, testsForMutation, groupId);
+                wasInserted = true;
+                break;
             }
 
             // If it fails, make a new bucket
             if (!wasInserted)
             {
-                buckets.Add(new MutationBucket(mutation));
+                buckets.Add(new MutationBucket(mutation, testsForMutation, groupId));
             }
         }
 
+        /*****************************************************************************************
+         * Optimal Coverage Algorithm
+         */
 
         /// <summary>
-        ///     Optimal algorithm for the set cover problem of test coverage. This is extgremely slow for large problem sizes, but
-        ///     it is optimal
+        ///     Optimal algorithm for the set cover problem of test coverage.
+        ///     This is extremely slow for large problem sizes, but it is optimal
         ///     so it should be used for small test runs where it is not likely to slow things down.
         /// </summary>
-        /// <param name="mutationVariants">List of mutation variants to group</param>
         /// <returns>A collection of collections containing the non-overlapping sets.</returns>
-        private static IEnumerable<IList<MutationVariantIdentifier>> OptimalCoverageAlgorithm(
-            IList<MutationVariantIdentifier> mutationVariants
+        private static IEnumerable<IList<(IMutation, int)>> OptimalCoverageAlgorithm(
+            IList<(IMutation, HashSet<string>, int)> testsPerMutation
         )
         {
             // Get all MutationsInfo
-            List<MutationVariantIdentifier>? allMutations = new List<MutationVariantIdentifier>(mutationVariants);
+            List<(IMutation, HashSet<string>, int)> allMutations = 
+                new List<(IMutation, HashSet<string>, int)>(testsPerMutation);
 
             while (allMutations.Count > 0)
             {
                 // Mark all tests as free slots
-                HashSet<string>? freeTests = new HashSet<string>(mutationVariants.SelectMany(x => x.TestCoverage));
+                HashSet<string> freeTests = new HashSet<string>(
+                    allMutations.SelectMany(triple => triple.Item2));
 
-                List<MutationVariantIdentifier>? mutationsForThisRun = new List<MutationVariantIdentifier>();
+                List<(IMutation, int)> mutationsForThisRun = new List<(IMutation, int)>();
                 RemoveFreeSlots(allMutations, freeTests, mutationsForThisRun);
 
                 yield return mutationsForThisRun;
@@ -112,99 +144,29 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="allMutations"></param>
         /// <param name="freeTests"></param>
         /// <param name="mutationsForThisRun"></param>
-        private static void RemoveFreeSlots(List<MutationVariantIdentifier> allMutations, HashSet<string> freeTests,
-            List<MutationVariantIdentifier> mutationsForThisRun)
+        private static void RemoveFreeSlots(
+            List<(IMutation, HashSet<string>, int)> allMutations, 
+            HashSet<string> freeTests,
+            List<(IMutation, int)> mutationsForThisRun)
         {
-            foreach (MutationVariantIdentifier mutation in allMutations.ToArray())
-            {
-                if (freeTests.IsSupersetOf(mutation.TestCoverage))
+            foreach (var triple in allMutations.ToArray()) {
+                var mutation = triple.Item1;
+                var testsForMutation = triple.Item2;
+                var groupId = triple.Item3;
+                
+                if (freeTests.IsSupersetOf(testsForMutation))
                 {
-                    foreach (string test in mutation.TestCoverage) freeTests.Remove(test);
-
-                    mutationsForThisRun.Add(mutation);
-                    allMutations.Remove(mutation);
-                }
-
-                if (freeTests.Count == 0) break;
-            }
-        }
-
-        /// <summary>
-        ///     Groups mutations into groups that can be run in parallel
-        /// </summary>
-        /// <param name="mutationVariants"></param>
-        /// <returns></returns>
-        private static IEnumerable<IList<MutationVariantIdentifier>> GetTestGroups(
-            IList<MutationVariantIdentifier> mutationVariants
-        )
-        {
-            Logger.Info("Building mutation groups for test groups");
-
-            if (mutationVariants.Count > 500) // Magic number, optimal run size not yet clear
-            {
-                // Faster but non-optimal
-                return GreedyCoverageAlgorithm(mutationVariants);
-            }
-
-            // Very poor time scaling
-            return OptimalCoverageAlgorithm(mutationVariants);
-        }
-
-        private IList<MutationVariantIdentifier> GetMutationsForCoverage(
-            Dictionary<RegisteredCoverage, HashSet<string>> coverage,
-            TestProjectInfo testProjectInfo,
-            HashSet<string> excludeGroup,
-            HashSet<string> excludeSingular,
-            MutationLevel mutationLevel
-        )
-        {
-            Logger.Info("Generating dummy mutations for test coverage");
-            List<MutationVariantIdentifier>? allMutations = new List<MutationVariantIdentifier>();
-
-            foreach (var assembly in testProjectInfo.DependencyAssemblies)
-            foreach (var type in assembly.Types)
-            foreach (var method in type.Methods)
-            {
-                GetAllMutations(coverage, excludeGroup, excludeSingular, mutationLevel, allMutations, assembly, method);
-            }
-
-            return allMutations;
-        }
-
-        /// <summary>
-        ///     Getting all the mutations, group by group
-        /// </summary>
-        /// <param name="coverage"></param>
-        /// <param name="excludeGroup"></param>
-        /// <param name="excludeSingular"></param>
-        /// <param name="mutationLevel"></param>
-        /// <param name="allMutations"></param>
-        /// <param name="assembly"></param>
-        /// <param name="method"></param>
-        private void GetAllMutations(Dictionary<RegisteredCoverage, HashSet<string>> coverage,
-            HashSet<string> excludeGroup, HashSet<string> excludeSingular, MutationLevel mutationLevel,
-            List<MutationVariantIdentifier> allMutations, MutationCollector.AssemblyMutator.AssemblyMutator assembly,
-            MutationCollector.AssemblyMutator.MethodScope method)
-        {
-            var methodMutationId = 0;
-            KeyValuePair<RegisteredCoverage, HashSet<string>> registeredMutation = coverage.FirstOrDefault(x =>
-                x.Key.AssemblyName == assembly.Module.Assembly.Name.Name && x.Key.EntityHandle == method.IntHandle);
-            var mutationGroupId = 0;
-
-            if (registeredMutation.Key != null)
-            {
-                foreach (var group in method.AllMutations(mutationLevel, excludeGroup, excludeSingular))
-                {
-                    foreach (var mutation in group)
+                    foreach (var test in testsForMutation)
                     {
-                        allMutations.Add(new MutationVariantIdentifier(registeredMutation.Value,
-                            method.AssemblyQualifiedName,
-                            methodMutationId, mutationGroupId));
-
-                        methodMutationId++;
+                        freeTests.Remove(test);
                     }
 
-                    mutationGroupId += 1;
+                    mutationsForThisRun.Add((mutation, groupId));
+                    allMutations.Remove(triple);
+                }
+
+                if (freeTests.Count == 0) {
+                    break;
                 }
             }
         }

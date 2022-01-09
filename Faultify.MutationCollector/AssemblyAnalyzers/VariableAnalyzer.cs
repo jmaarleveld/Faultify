@@ -24,6 +24,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public string Id => "Variable";
 
         public IEnumerable<VariableMutation> GenerateMutations(
+            string assemblyName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -60,7 +61,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             type,
                             method,
                             Name,
-                            Description);
+                            Description,
+                            assemblyName,
+                            method.MetadataToken.ToInt32());
                         mutations.Add(mutation);
                     }
                 }

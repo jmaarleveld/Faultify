@@ -14,20 +14,23 @@ namespace Faultify.AssemblyDissection
     public class TypeScope : IMemberScope, IMutationProvider
     {
 
-        public TypeScope(TypeDefinition typeDefinition)
+        public TypeScope(TypeDefinition typeDefinition, string assemblyName)
         {
             TypeDefinition = typeDefinition;
+            AssemblyName = assemblyName;
 
             Fields = TypeDefinition.Fields.Select(x =>
-                    new FieldScope(x)
+                    new FieldScope(x, assemblyName)
                 )
                 .ToList();
 
             Methods = TypeDefinition.Methods.Select(x =>
-                    new MethodScope(x)
+                    new MethodScope(x, assemblyName)
                 )
                 .ToList();
         }
+        
+        private string AssemblyName { get;  }
 
         /// <summary>
         ///     The fields in this type.
@@ -53,6 +56,7 @@ namespace Faultify.AssemblyDissection
             var mutations =
                 from field in TypeDefinition.Fields
                 select MutationFactory.GetFieldMutations(
+                    AssemblyName,
                     field, 
                     mutationLevel, 
                     excludeGroup, 

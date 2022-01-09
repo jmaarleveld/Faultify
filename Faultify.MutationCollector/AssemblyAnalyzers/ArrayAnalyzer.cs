@@ -26,6 +26,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public string Id => "Array";
 
         public IEnumerable<ArrayMutation> GenerateMutations(
+            string assemblyName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -41,7 +42,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     new DynamicArrayRandomizerStrategy(method), 
                     method, 
                     Name, 
-                    Description);
+                    Description,
+                    assemblyName,
+                    method.MetadataToken.ToInt32());
 
             return arrayMutations;
         }

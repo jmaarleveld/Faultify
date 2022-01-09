@@ -28,6 +28,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
         public abstract string Id { get; }
 
         public IEnumerable<OpCodeMutation> GenerateMutations(
+            string assemblyName,
             MethodDefinition scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
@@ -52,7 +53,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             instruction,
                             scope,
                             Name,
-                            Description);
+                            Description,
+                            assemblyName,
+                            scope.MetadataToken.ToInt32());
                     
                     mutationGroup.Add(mutations);
                 }

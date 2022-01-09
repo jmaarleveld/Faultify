@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Faultify.MutationCollector;
@@ -18,10 +19,13 @@ namespace Faultify.AssemblyDissection
         ///     Underlying Mono.Cecil FieldDefinition.
         /// </summary>
         private readonly FieldDefinition _fieldDefinition;
+        
+        private string AssemblyName { get;  }
 
-        public FieldScope(FieldDefinition fieldDefinition)
+        public FieldScope(FieldDefinition fieldDefinition, string assemblyName)
         {
             _fieldDefinition = fieldDefinition;
+            AssemblyName = assemblyName;
         }
 
         public string AssemblyQualifiedName => _fieldDefinition.FullName;
@@ -34,6 +38,7 @@ namespace Faultify.AssemblyDissection
             HashSet<string> excludeSingular)
         {
             return MutationFactory.GetFieldMutations(
+                AssemblyName,
                 _fieldDefinition,
                 mutationLevel, 
                 excludeGroup, 
