@@ -30,6 +30,7 @@ namespace Faultify.CoverageCollector
             GetCoverageResult(
                 MutationSessionProgressTracker.MutationSessionProgressTracker progressTracker,
                 string testProjectPath,
+                ITestProjectDuplication testProjectDuplication,
                 CancellationToken cancellationToken = default)
         {
             // Build project
