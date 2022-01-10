@@ -2,7 +2,7 @@
 
 namespace Faultify.ProjectDuplicator
 {
-    public interface IFileDuplication
+    public interface IFileDuplication: IDisposable
     {
         string Name { get; set; }
         string Directory { get; set; }

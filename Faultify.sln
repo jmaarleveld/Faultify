@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Cli", "Faultify.Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Tests", "Faultify.Tests\Faultify.Tests.csproj", "{4D790638-A2BF-4D1C-8244-785E9E68DE2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.Core", "Faultify.Core\Faultify.Core.csproj", "{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Faultify.MutationApplier", "Faultify.MutationApplier\Faultify.MutationApplier.csproj", "{8D7B5223-DDE3-4B3C-9142-B7A21EAFF2CC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestProcess", "TestProcess", "{3ECCAFB9-AFBD-4E9D-AB4F-42069EF87863}"
 EndProject
