@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
+      <ProjectReference Include="..\Faultify.TestHostRunner\Faultify.TestHostRunner.csproj" />
     </ItemGroup>
 
 </Project>
