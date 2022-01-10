@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
-    <ProjectReference Include="..\Faultify.Core\Faultify.Core.csproj" />
+    <ProjectReference Include="..\Faultify.MutationApplier\Faultify.MutationApplier.csproj" />
     <ProjectReference Include="..\Faultify.Injection\Faultify.Injection.csproj" />
     <ProjectReference Include="..\Faultify.Report\Faultify.Report.csproj" />
     <ProjectReference Include="..\Faultify.TestRunner.Shared\Faultify.TestRunner.Shared.csproj" />

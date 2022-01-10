@@ -3,7 +3,7 @@ using System;
 
 namespace Faultify.ProjectDuplicator
 {
-    public interface ITestProjectDuplication
+    public interface ITestProjectDuplication: IDisposable
     {
         IEnumerable<FileDuplication> TestProjectReferences { get; set; }
         FileDuplication TestProjectFile { get; set; }
@@ -13,14 +13,5 @@ namespace Faultify.ProjectDuplicator
 
         void MarkAsFree();
         void DeleteTestProject();
-
-        IList<MutationVariant> GetMutationVariants(
-            IList<MutationVariantIdentifier>? mutationIdentifiers,
-            MutationLevel mutationLevel,
-            HashSet<string> excludeGroup,
-            HashSet<string> excludeSingular
-        );
-
-        void FlushMutations(IList<MutationVariant> mutationVariants);
     }
 }

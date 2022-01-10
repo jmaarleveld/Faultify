@@ -14,7 +14,10 @@
 
 	<TargetFramework>netcoreapp3.1</TargetFramework>
 	<PreserveCompilationContext>true</PreserveCompilationContext>
-	<NoWarn>NU1701</NoWarn><!--To dissable html to pdf lib warning-->
+	<NoWarn>NU1701</NoWarn>
+	<AssemblyName>Faultify.MutationApplier</AssemblyName>
+	<RootNamespace>Faultify.MutationApplier</RootNamespace>
+	<Nullable>enable</Nullable><!--To dissable html to pdf lib warning-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,8 +28,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions" />
-    <Folder Include="ProjectAnalyzing" />
+    <Compile Remove="Exceptions\**" />
+    <Compile Remove="ProjectAnalyzing\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Exceptions\**" />
+    <EmbeddedResource Remove="ProjectAnalyzing\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Exceptions\**" />
+    <None Remove="ProjectAnalyzing\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj" />
+    <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
+    <ProjectReference Include="..\Faultify.ProjectDuplicator\Faultify.ProjectDuplicator.csproj" />
   </ItemGroup>
 
 </Project>
