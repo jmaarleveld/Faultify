@@ -7,9 +7,12 @@ namespace Faultify.CodeDecompiler
     /// </summary>
     public class NullDecompiler : ICodeDecompiler
     {
+        
+        public static readonly string CONSTANT_NULL_CODE = "SOURCE CODE COULD NOT BE GENERATED";
+        
         public string Decompile(EntityHandle entityHandle)
         {
-            return "SOURCE CODE COULD NOT BE GENERATED";
+            return CONSTANT_NULL_CODE;
         }
     }
 }

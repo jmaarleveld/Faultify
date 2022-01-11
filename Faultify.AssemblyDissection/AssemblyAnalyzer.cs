@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;
 
 namespace Faultify.AssemblyDissection
@@ -22,21 +21,6 @@ namespace Faultify.AssemblyDissection
     /// </summary>
     public class AssemblyAnalyzer : IDisposable
     {
-
-        [Obsolete("Use AssemblyMutator(string assemblyPath)")]
-        private AssemblyAnalyzer(Stream stream)
-        {
-            Module = ModuleDefinition.ReadModule(
-                stream,
-                new ReaderParameters
-                {
-                    InMemory = true,
-                    ReadSymbols = false,
-                }
-            );
-            Types = LoadTypes();
-        }
-
         public AssemblyAnalyzer(string assemblyPath)
         {
             var assemblyResolver = new DefaultAssemblyResolver();
@@ -51,7 +35,13 @@ namespace Faultify.AssemblyDissection
                 }
             );
             Types = LoadTypes();
+            AssemblyPath = assemblyPath;
         }
+
+        /// <summary>
+        ///     Path of the assembly 
+        /// </summary>
+        public string AssemblyPath { get; }
 
         /// <summary>
         ///     Underlying Mono.Cecil ModuleDefinition.
