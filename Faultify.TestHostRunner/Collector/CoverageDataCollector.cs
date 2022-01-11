@@ -64,11 +64,11 @@ namespace Faultify.TestHostRunner.Collector
             {
                 if (_coverageFlushed) return;
 
-                MutationCoverage mutationCoverage = ResultsUtils
+                Dictionary<string, List<Tuple<string, int>>> mutationCoverage = ResultsUtils
                 .ReadMutationCoverageFile();
 
                 // Filter out functions that are not tests
-                mutationCoverage.Coverage = mutationCoverage.Coverage
+                mutationCoverage = mutationCoverage
                     .Where(pair => _testNames.Contains(pair.Key))
                     .ToDictionary(pair => pair.Key, pair => pair.Value);
 

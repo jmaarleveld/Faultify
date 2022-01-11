@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using Faultify.TestHostRunner.Results;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using TestResult = Faultify.TestHostRunner.Results.TestResult;
 
 namespace Faultify.TestHostRunner.Collector
 {
@@ -16,7 +16,7 @@ namespace Faultify.TestHostRunner.Collector
     [DataCollectorTypeUri("my://test/datacollector")]
     public class TestDataCollector : DataCollector
     {
-        private readonly TestResults _testResults = new TestResults();
+        private readonly List<Tuple<string, TestOutcome>> _testResults = new();
         private DataCollectionLogger _logger;
         private DataCollectionEnvironmentContext context;
 
@@ -47,7 +47,8 @@ namespace Faultify.TestHostRunner.Collector
         {
             try
             {
-                byte[] serialized = _testResults.Serialize();
+                byte[] serialized = ResultsUtils.SerializeTestResults
+                    (_testResults);
                 File.WriteAllBytes(TestRunnerConstants.TestsFileName, serialized);
             }
             catch (Exception ex)
@@ -63,8 +64,8 @@ namespace Faultify.TestHostRunner.Collector
             _logger.LogWarning(context.SessionDataCollectionContext, $"Test Case Start: {e.TestCaseName}");
 
             // Register this test because there is a possibility for the test host to crash before the end event. 
-            _testResults.Tests.Add(new TestResult
-                { Outcome = TestOutcome.None, Name = e.TestElement.FullyQualifiedName });
+            _testResults.Add(new Tuple<string, TestOutcome>(e
+                .TestElement.FullyQualifiedName, TestOutcome.None));
         }
 
         private void EventsOnTestCaseEnd(object sender, TestCaseEndEventArgs e)
@@ -72,16 +73,16 @@ namespace Faultify.TestHostRunner.Collector
             _logger.LogWarning(context.SessionDataCollectionContext, $"Test Case End: {e.TestCaseName}");
 
             // Find the test and set the correct test outcome.
-            TestResult test = _testResults.Tests.FirstOrDefault(x => x.Name == e.TestElement.FullyQualifiedName);
+            int idx = _testResults.FindIndex(x => x.Item1 == e.TestElement.FullyQualifiedName);
 
-            if (test == null)
+            if (idx == -1)
             {
                 _logger.LogError(context.SessionDataCollectionContext,
                     "Test case end event received but no test case start was recorded earlier.");
                 return;
             }
-
-            test.Outcome = e.TestOutcome;
+            
+            _testResults[idx] = new Tuple<string, TestOutcome>(e.TestElement.FullyQualifiedName, e.TestOutcome);
         }
     }
 }

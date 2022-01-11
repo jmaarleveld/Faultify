@@ -129,7 +129,7 @@ namespace Faultify.TestRunner
             coverageProject.MarkAsFree();
 
             // Start test session.
-            Dictionary<RegisteredCoverage, HashSet<string>>? testsPerMutation = GroupMutationsWithTests(coverage);
+            Dictionary<Tuple<string, int>, HashSet<string>>? testsPerMutation = GroupMutationsWithTests(coverage);
             return StartMutationTestSession(coverageProjectInfo, testsPerMutation, progressTracker,
                 timeout, testProjectCopier, _testHost);
         }
@@ -291,12 +291,12 @@ namespace Faultify.TestRunner
         /// </summary>
         /// <param name="coverage"></param>
         /// <returns></returns>
-        private Dictionary<RegisteredCoverage, HashSet<string>> GroupMutationsWithTests(MutationCoverage coverage)
+        private Dictionary<Tuple<string, int>, HashSet<string>> GroupMutationsWithTests(MutationCoverage coverage)
         {
             Logger.Info("Grouping mutations with registered tests");
             // Group mutations with tests.
-            Dictionary<RegisteredCoverage, HashSet<string>>? testsPerMutation =
-                new Dictionary<RegisteredCoverage, HashSet<string>>();
+            Dictionary<Tuple<string, int>, HashSet<string>>? testsPerMutation =
+                new Dictionary<Tuple<string, int>, HashSet<string>>();
             foreach (var (testName, mutationIds) in coverage.Coverage)
             {
                 foreach (var registeredCoverage in mutationIds)
@@ -325,7 +325,7 @@ namespace Faultify.TestRunner
         /// <returns></returns>
         private TestProjectReportModel StartMutationTestSession(
             TestProjectInfo testProjectInfo,
-            Dictionary<RegisteredCoverage, HashSet<string>> testsPerMutation,
+            Dictionary<Tuple<string, int>, HashSet<string>> testsPerMutation,
             MutationSessionProgressTracker sessionProgressTracker,
             TimeSpan coverageTestRunTime,
             TestProjectDuplicator testProjectDuplicator,

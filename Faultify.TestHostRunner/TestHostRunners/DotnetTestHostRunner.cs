@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using NLog;
 using Faultify.TestHostRunner.TestProcess;
 using Faultify.TestHostRunner.Results;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -41,7 +42,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
         ///     Runs the given tests and returns the results.
         /// </summary>
         /// <returns></returns>
-        public async Task<TestResults> RunTests(
+        public async Task<List<Tuple<string, TestOutcome>>> RunTests(
             TimeSpan timeout,
             IProgress<string> progress,
             IEnumerable<string> tests
@@ -50,7 +51,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
             Logger.Info("Running tests");
             string testResultOutputPath = Path.Combine(_testDirectoryInfo.FullName, TestRunnerConstants.TestsFileName);
 
-            List<TestResult>? testResults = new List<TestResult>();
+            List<Tuple<string, TestOutcome>>? testResults = new();
             HashSet<string>? remainingTests = new HashSet<string>(tests);
 
             while (remainingTests.Any())
@@ -64,14 +65,17 @@ namespace Faultify.TestHostRunner.TestHostRunners
                     byte[] testResultsBinary = await File.ReadAllBytesAsync(testResultOutputPath,
                         new CancellationTokenSource(timeout).Token);
 
-                    TestResults deserializedTestResults = TestResults.Deserialize(testResultsBinary);
+                    List<Tuple<string, TestOutcome>> deserializedTestResults
+                        = ResultsUtils
+                            .DeserializeTestResults(testResultsBinary);
 
-                    if (deserializedTestResults.Tests.Count == 0)
+                    if (deserializedTestResults.Count == 0)
                         throw new Exception("Dotnet cannot find the target file");
 
-                    remainingTests.RemoveWhere(x => deserializedTestResults.Tests.Any(y => y.Name == x));
+                    remainingTests.RemoveWhere(x => deserializedTestResults
+                    .Any(y => y.Item1 == x));
 
-                    foreach (TestResult testResult in deserializedTestResults.Tests)
+                    foreach (Tuple<string, TestOutcome> testResult in deserializedTestResults)
                     {
                         testResults.Add(testResult);
                     }
@@ -96,7 +100,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
                 }
             }
 
-            return new TestResults { Tests = testResults };
+            return testResults;
         }
 
         /// <summary>
@@ -105,7 +109,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<MutationCoverage> RunCodeCoverage(CancellationToken cancellationToken)
+        public async Task<Dictionary<string, List<Tuple<string, int>>>> RunCodeCoverage(CancellationToken cancellationToken)
         {
             Logger.Info("Running code coverage");
             try
@@ -135,7 +139,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
                 Logger.Error(e, "Error running code coverage.");
             }
 
-            return new MutationCoverage();
+            return new Dictionary<string, List<Tuple<string, int>>>();
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Faultify.CoverageCollector
     /// </summary>
     public static class CoverageRegistry
     {
-        private static readonly MutationCoverage MutationCoverage = new();
+        private static readonly Dictionary<string, List<Tuple<string, int>>> MutationCoverage = new();
         private static string _currentTestCoverage = "NONE";
         private static readonly object RegisterMutex = new();
         private static MemoryMappedFile _mmf;
@@ -53,14 +53,14 @@ namespace Faultify.CoverageCollector
             {
                 try
                 {
-                    if (!MutationCoverage.Coverage.TryGetValue(_currentTestCoverage,
-                        out List<RegisteredCoverage> targetHandles))
+                    if (!MutationCoverage.TryGetValue(_currentTestCoverage,
+                        out List<Tuple<string, int>> targetHandles))
                     {
-                        targetHandles = new List<RegisteredCoverage>();
-                        MutationCoverage.Coverage[_currentTestCoverage] = targetHandles;
+                        targetHandles = new List<Tuple<string, int>>();
+                        MutationCoverage[_currentTestCoverage] = targetHandles;
                     }
 
-                    targetHandles.Add(new RegisteredCoverage(assemblyName, entityHandle));
+                    targetHandles.Add(new Tuple<string, int>(assemblyName, entityHandle));
 
                     ResultsUtils.WriteMutationCoverageFile(MutationCoverage, _mmf);
                 }
