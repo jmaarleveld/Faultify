@@ -11,9 +11,10 @@ namespace Faultify.CoverageCollector
     /// </summary>
     public static class CoverageRegistry
     {
-        private static readonly Dictionary<string, List<Tuple<string, int>>> MutationCoverage = new();
+        private static readonly Dictionary<string, List<Tuple<string, int>>> MethodsPerTest
+            = new Dictionary<string, List<Tuple<string, int>>>();
         private static string _currentTestCoverage = "NONE";
-        private static readonly object RegisterMutex = new();
+        private static readonly object RegisterMutex = new object();
         private static MemoryMappedFile _mmf;
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Faultify.CoverageCollector
         {
             try
             {
-                ResultsUtils.WriteMutationCoverageFile(MutationCoverage, _mmf);
+                ResultsUtils.WriteMethodsPerTestFile(MethodsPerTest, _mmf);
             }
             catch (Exception)
             {
@@ -53,16 +54,16 @@ namespace Faultify.CoverageCollector
             {
                 try
                 {
-                    if (!MutationCoverage.TryGetValue(_currentTestCoverage,
+                    if (!MethodsPerTest.TryGetValue(_currentTestCoverage,
                         out List<Tuple<string, int>> targetHandles))
                     {
                         targetHandles = new List<Tuple<string, int>>();
-                        MutationCoverage[_currentTestCoverage] = targetHandles;
+                        MethodsPerTest[_currentTestCoverage] = targetHandles;
                     }
 
                     targetHandles.Add(new Tuple<string, int>(assemblyName, entityHandle));
 
-                    ResultsUtils.WriteMutationCoverageFile(MutationCoverage, _mmf);
+                    ResultsUtils.WriteMethodsPerTestFile(MethodsPerTest, _mmf);
                 }
                 catch (Exception ex)
                 {

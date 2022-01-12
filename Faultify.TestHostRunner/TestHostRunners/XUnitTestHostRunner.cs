@@ -15,7 +15,8 @@ namespace Faultify.TestHostRunner.TestHostRunners
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly HashSet<string> _coverageTests = new HashSet<string>();
         private readonly string _testProjectAssemblyPath;
-        private readonly List<Tuple<string, TestOutcome>> _testResults = new();
+        private readonly List<Tuple<string, TestOutcome>> _testResults
+            = new List<Tuple<string, TestOutcome>>();
 
         public XUnitTestHostRunner(string testProjectAssemblyPath)
         {
@@ -79,14 +80,14 @@ namespace Faultify.TestHostRunner.TestHostRunners
 
         private Dictionary<string, List<Tuple<string, int>>> ReadCoverageFile()
         {
-            Dictionary<string, List<Tuple<string, int>>>? mutationCoverage = ResultsUtils
-            .ReadMutationCoverageFile();
+            Dictionary<string, List<Tuple<string, int>>>? methodsPerTest = ResultsUtils
+            .ReadMethodsPerTestFile();
 
-            mutationCoverage = mutationCoverage
+            methodsPerTest = methodsPerTest
                 .Where(pair => _coverageTests.Contains(pair.Key))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            return mutationCoverage;
+            return methodsPerTest;
         }
     }
 }

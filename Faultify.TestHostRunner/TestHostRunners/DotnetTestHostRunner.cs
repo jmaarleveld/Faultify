@@ -51,7 +51,8 @@ namespace Faultify.TestHostRunner.TestHostRunners
             Logger.Info("Running tests");
             string testResultOutputPath = Path.Combine(_testDirectoryInfo.FullName, TestRunnerConstants.TestsFileName);
 
-            List<Tuple<string, TestOutcome>>? testResults = new();
+            List<Tuple<string, TestOutcome>>? testResults
+                = new List<Tuple<string, TestOutcome>>();
             HashSet<string>? remainingTests = new HashSet<string>(tests);
 
             while (remainingTests.Any())
@@ -122,7 +123,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
                     throw new ExitCodeException(process.ExitCode);
                 }
 
-                return ResultsUtils.ReadMutationCoverageFile();
+                return ResultsUtils.ReadMethodsPerTestFile();
             }
             catch (FileNotFoundException e)
             {

@@ -16,7 +16,8 @@ namespace Faultify.TestHostRunner.Collector
     [DataCollectorTypeUri("my://test/datacollector")]
     public class TestDataCollector : DataCollector
     {
-        private readonly List<Tuple<string, TestOutcome>> _testResults = new();
+        private readonly List<Tuple<string, TestOutcome>> _testResults
+            = new List<Tuple<string, TestOutcome>>();
         private DataCollectionLogger _logger;
         private DataCollectionEnvironmentContext context;
 

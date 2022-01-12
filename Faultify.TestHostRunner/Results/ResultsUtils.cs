@@ -15,7 +15,7 @@ namespace Faultify.TestHostRunner.Results
         ///     Reads the mutation coverage from the <see cref="TestRunnerConstants.CoverageFileName" /> file.
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<string, List<Tuple<string, int>>> ReadMutationCoverageFile()
+        public static Dictionary<string, List<Tuple<string, int>>> ReadMethodsPerTestFile()
         {
             Logger.Info("Reading mutation coverage file");
             try
@@ -26,7 +26,7 @@ namespace Faultify.TestHostRunner.Results
                 stream.CopyTo(memoryStream);
                 memoryStream.Position = 0;
 
-                return DeserializeMutationCoverage(memoryStream.ToArray());
+                return DeserializeMethodsPerTest(memoryStream.ToArray());
             }
             catch (Exception e)
             {
@@ -40,21 +40,21 @@ namespace Faultify.TestHostRunner.Results
         ///     Write the mutation coverage to the <see cref="TestRunnerConstants.CoverageFileName" /> file.
         /// </summary>
         /// <returns></returns>
-        public static void WriteMutationCoverageFile(Dictionary<string, List<Tuple<string, int>>> mutationCoverage)
+        public static void WriteMethodsPerTestFile(Dictionary<string, List<Tuple<string, int>>> methodsPerTest)
         {
             using MemoryMappedFile mmf =
                 MemoryMappedFile.OpenExisting("CoverageFile", MemoryMappedFileRights.ReadWrite);
-            WriteMutationCoverageFile(mutationCoverage, mmf);
+            WriteMethodsPerTestFile(methodsPerTest, mmf);
         }
 
         /// <summary>
         ///     Write the mutation coverage to the <see cref="TestRunnerConstants.CoverageFileName" /> file.
         /// </summary>
         /// <returns></returns>
-        public static void WriteMutationCoverageFile(Dictionary<string, List<Tuple<string, int>>> mutationCoverage, MemoryMappedFile coverageFile)
+        public static void WriteMethodsPerTestFile(Dictionary<string, List<Tuple<string, int>>> methodsPerTest, MemoryMappedFile coverageFile)
         {
             using MemoryMappedViewStream stream = coverageFile.CreateViewStream();
-            stream.Write(SerializeMutationCoverage(mutationCoverage));
+            stream.Write(SerializeMethodsPerTest(methodsPerTest));
             stream.Flush();
         }
 
@@ -69,7 +69,7 @@ namespace Faultify.TestHostRunner.Results
                 HandleInheritability.None, true);
         }
         
-        public static byte[] SerializeMutationCoverage(Dictionary<string, 
+        public static byte[] SerializeMethodsPerTest(Dictionary<string, 
         List<Tuple<string, int>>> coverage)
         {
             MemoryStream memoryStream = new MemoryStream();
@@ -89,9 +89,10 @@ namespace Faultify.TestHostRunner.Results
             return memoryStream.ToArray();
         }
         
-        public static Dictionary<string, List<Tuple<string, int>>> DeserializeMutationCoverage(byte[] data)
+        public static Dictionary<string, List<Tuple<string, int>>> DeserializeMethodsPerTest(byte[] data)
         {
-            Dictionary<string, List<Tuple<string, int>>> mutationCoverage = new();
+            Dictionary<string, List<Tuple<string, int>>> methodsPerTest
+                = new Dictionary<string, List<Tuple<string, int>>>();
             MemoryStream memoryStream = new MemoryStream(data);
             BinaryReader binaryReader = new BinaryReader(memoryStream);
 
@@ -108,10 +109,10 @@ namespace Faultify.TestHostRunner.Results
                     entityHandles.Add(new Tuple<string, int>(fullQualifiedName, entityHandle));
                 }
 
-                mutationCoverage.Add(key, entityHandles);
+                methodsPerTest.Add(key, entityHandles);
             }
 
-            return mutationCoverage;
+            return methodsPerTest;
         }
         
         public static byte[] SerializeTestResults(List<Tuple<string, 
@@ -131,7 +132,8 @@ namespace Faultify.TestHostRunner.Results
         
         public static List<Tuple<string, TestOutcome>> DeserializeTestResults(byte[] data)
         {
-            List<Tuple<string, TestOutcome>> testResults = new();
+            List<Tuple<string, TestOutcome>> testResults
+                = new List<Tuple<string, TestOutcome>>();
             MemoryStream memoryStream = new MemoryStream(data);
             BinaryReader binaryReader = new BinaryReader(memoryStream);
             int count = binaryReader.ReadInt32();
@@ -139,7 +141,8 @@ namespace Faultify.TestHostRunner.Results
             {
                 string name = binaryReader.ReadString();
                 TestOutcome testOutcome = (TestOutcome) binaryReader.ReadInt32();
-                Tuple<string, TestOutcome> testResult = new(name, testOutcome);
+                Tuple<string, TestOutcome> testResult
+                    = new Tuple<string, TestOutcome>(name, testOutcome);
                 testResults.Add(testResult);
             }
 
