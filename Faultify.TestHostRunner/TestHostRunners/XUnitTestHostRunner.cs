@@ -7,7 +7,6 @@ using Faultify.MemoryTest.TestInformation;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NLog;
 using Faultify.TestHostRunner.Results;
-using TestResult = Faultify.TestHostRunner.Results.TestResult;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -16,7 +15,8 @@ namespace Faultify.TestHostRunner.TestHostRunners
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly HashSet<string> _coverageTests = new HashSet<string>();
         private readonly string _testProjectAssemblyPath;
-        private readonly TestResults _testResults = new TestResults();
+        private readonly List<Tuple<string, TestOutcome>> _testResults
+            = new List<Tuple<string, TestOutcome>>();
 
         public XUnitTestHostRunner(string testProjectAssemblyPath)
         {
@@ -25,7 +25,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
 
         public TestHost TestHost => TestHost.XUnit;
 
-        public async Task<TestResults> RunTests(TimeSpan timeout, IProgress<string> progress, IEnumerable<string> tests)
+        public async Task<List<Tuple<string, TestOutcome>>> RunTests(TimeSpan timeout, IProgress<string> progress, IEnumerable<string> tests)
         {
             HashSet<string>? hashedTests = new HashSet<string>(tests);
 
@@ -38,7 +38,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
             return _testResults;
         }
 
-        public async Task<MutationCoverage> RunCodeCoverage(CancellationToken cancellationToken)
+        public async Task<Dictionary<string, List<Tuple<string, int>>>> RunCodeCoverage(CancellationToken cancellationToken)
         {
             MemoryTest.XUnit.XUnitTestHostRunner? xunitHostRunner =
                 new MemoryTest.XUnit.XUnitTestHostRunner(_testProjectAssemblyPath);
@@ -51,7 +51,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
 
         private void OnTestEnd(object? sender, TestEnd e)
         {
-            _testResults.Tests.Add(new TestResult { Name = e.TestName, Outcome = ParseTestOutcome(e.TestOutcome) });
+            _testResults.Add(new Tuple<string, TestOutcome>(e.TestName, ParseTestOutcome(e.TestOutcome)));
         }
 
         private void OnTestEndCoverage(object? sender, TestEnd e)
@@ -78,16 +78,16 @@ namespace Faultify.TestHostRunner.TestHostRunners
             }
         }
 
-        private MutationCoverage ReadCoverageFile()
+        private Dictionary<string, List<Tuple<string, int>>> ReadCoverageFile()
         {
-            MutationCoverage? mutationCoverage = ResultsUtils
-            .ReadMutationCoverageFile();
+            Dictionary<string, List<Tuple<string, int>>>? methodsPerTest = ResultsUtils
+            .ReadMethodsPerTestFile();
 
-            mutationCoverage.Coverage = mutationCoverage.Coverage
+            methodsPerTest = methodsPerTest
                 .Where(pair => _coverageTests.Contains(pair.Key))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            return mutationCoverage;
+            return methodsPerTest;
         }
     }
 }

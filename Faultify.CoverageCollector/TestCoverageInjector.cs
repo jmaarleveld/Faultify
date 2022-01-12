@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -151,7 +152,7 @@ namespace Faultify.CoverageCollector
         public void InjectAssemblyReferences(ModuleDefinition module)
         {
             // Find the references for `Faultify.TestRunner.Shared` and copy it over to the module directory and add it as reference.
-            Assembly assembly = typeof(MutationCoverage).Assembly;
+            Assembly assembly = typeof(Dictionary<string, List<Tuple<string, int>>>).Assembly;
 
             string dest = Path.Combine(Path.GetDirectoryName(module.FileName), Path.GetFileName(assembly.Location));
             File.Copy(assembly.Location, dest, true);
