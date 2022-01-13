@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Faultify.TestHostRunner.Results;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Faultify.TestHostRunner.TestHostRunners
 {
@@ -22,8 +23,10 @@ namespace Faultify.TestHostRunner.TestHostRunners
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
         /// <param name="tests"></param>
-        /// <returns></returns>
-        Task<TestResults> RunTests(
+        /// <returns>
+        ///     A list of the test result from each test in the session.
+        /// </returns>
+        Task<List<Tuple<string, TestOutcome>>> RunTests(
             TimeSpan timeout,
             IProgress<string> progress,
             IEnumerable<string> tests
@@ -34,7 +37,9 @@ namespace Faultify.TestHostRunner.TestHostRunners
         ///     This process finds out which tests cover which mutations.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<MutationCoverage> RunCodeCoverage(CancellationToken cancellationToken);
+        /// <returns>
+        ///     Collection with test names as key and the covered method entity handles as value.
+        /// </returns>
+        Task<Dictionary<string, List<Tuple<string, int>>>> RunCodeCoverage(CancellationToken cancellationToken);
     }
 }

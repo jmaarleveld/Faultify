@@ -11,9 +11,10 @@ namespace Faultify.CoverageCollector
     /// </summary>
     public static class CoverageRegistry
     {
-        private static readonly MutationCoverage MutationCoverage = new();
+        private static readonly Dictionary<string, List<Tuple<string, int>>> MethodsPerTest
+            = new Dictionary<string, List<Tuple<string, int>>>();
         private static string _currentTestCoverage = "NONE";
-        private static readonly object RegisterMutex = new();
+        private static readonly object RegisterMutex = new object();
         private static MemoryMappedFile _mmf;
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Faultify.CoverageCollector
         {
             try
             {
-                ResultsUtils.WriteMutationCoverageFile(MutationCoverage, _mmf);
+                ResultsUtils.WriteMethodsPerTestFile(MethodsPerTest, _mmf);
             }
             catch (Exception)
             {
@@ -53,16 +54,16 @@ namespace Faultify.CoverageCollector
             {
                 try
                 {
-                    if (!MutationCoverage.Coverage.TryGetValue(_currentTestCoverage,
-                        out List<RegisteredCoverage> targetHandles))
+                    if (!MethodsPerTest.TryGetValue(_currentTestCoverage,
+                        out List<Tuple<string, int>> targetHandles))
                     {
-                        targetHandles = new List<RegisteredCoverage>();
-                        MutationCoverage.Coverage[_currentTestCoverage] = targetHandles;
+                        targetHandles = new List<Tuple<string, int>>();
+                        MethodsPerTest[_currentTestCoverage] = targetHandles;
                     }
 
-                    targetHandles.Add(new RegisteredCoverage(assemblyName, entityHandle));
+                    targetHandles.Add(new Tuple<string, int>(assemblyName, entityHandle));
 
-                    ResultsUtils.WriteMutationCoverageFile(MutationCoverage, _mmf);
+                    ResultsUtils.WriteMethodsPerTestFile(MethodsPerTest, _mmf);
                 }
                 catch (Exception ex)
                 {

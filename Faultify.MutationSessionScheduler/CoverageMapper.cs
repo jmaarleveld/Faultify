@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Faultify.MutationCollector.Mutation;
-using Faultify.TestHostRunner.Results;
 
 namespace Faultify.MutationSessionScheduler
 {
@@ -27,7 +27,7 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="mutations"></param>
         /// <returns></returns>
         static IEnumerable<(IMutation, HashSet<string>, int)> MapCoverageToMutations(
-            Dictionary<RegisteredCoverage, HashSet<string>> testsPerMethod,
+            Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod,
             IEnumerable<IEnumerable<IMutation>> mutations)
         {
             int currentMutationGroupId = 1;
@@ -43,8 +43,9 @@ namespace Faultify.MutationSessionScheduler
                         continue;
                     }
                     if (methods == null) {
-                        KeyValuePair<RegisteredCoverage, HashSet<string>> pair = testsPerMethod.FirstOrDefault(pair => 
-                            pair.Key.AssemblyName == mutation.AssemblyName && pair.Key.EntityHandle == mutation.ParentMethodEntityHandle);
+                        KeyValuePair<Tuple<string, int>, HashSet<string>> pair = testsPerMethod.FirstOrDefault(pair => 
+                            pair.Key.Item1 == mutation.AssemblyName && pair.Key
+                            .Item2 == mutation.ParentMethodEntityHandle);
                         methods = pair.Value;
                     }
 

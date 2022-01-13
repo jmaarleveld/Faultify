@@ -26,7 +26,7 @@ namespace Faultify.CoverageCollector
         private readonly TestHost _testHost;
         private readonly TimeSpan _timeOut;
         
-        public async Task<Dictionary<RegisteredCoverage, HashSet<string>>>
+        public async Task<Dictionary<Tuple<string, int>, HashSet<string>>>
             GetCoverageResult(
                 MutationSessionProgressTracker.MutationSessionProgressTracker progressTracker,
                 string testProjectPath,
@@ -58,7 +58,7 @@ namespace Faultify.CoverageCollector
 
             Stopwatch? coverageTimer = new Stopwatch();
             coverageTimer.Start();
-            MutationCoverage? coverage =
+            Dictionary<string, List<Tuple<string, int>>>? coverage =
                 await RunCoverage(coverageProject.TestProjectFile.FullFilePath(), cancellationToken);
             coverageTimer.Stop();
             if (coverage == null)
@@ -227,7 +227,7 @@ namespace Faultify.CoverageCollector
         /// <param name="testAssemblyPath"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<MutationCoverage?> RunCoverage(string testAssemblyPath, CancellationToken cancellationToken)
+        private async Task<Dictionary<string, List<Tuple<string, int>>>?> RunCoverage(string testAssemblyPath, CancellationToken cancellationToken)
         {
             Logger.Info("Running coverage analysis");
             using MemoryMappedFile? file = ResultsUtils
@@ -252,13 +252,13 @@ namespace Faultify.CoverageCollector
         /// </summary>
         /// <param name="coverage"></param>
         /// <returns></returns>
-        private Dictionary<RegisteredCoverage, HashSet<string>> GroupMutationsWithTests(MutationCoverage coverage)
+        private Dictionary<Tuple<string, int>, HashSet<string>> GroupMutationsWithTests(Dictionary<string, List<Tuple<string, int>>> coverage)
         {
             Logger.Info("Grouping mutations with registered tests");
             // Group mutations with tests.
-            Dictionary<RegisteredCoverage, HashSet<string>>? testsPerMutation =
-                new Dictionary<RegisteredCoverage, HashSet<string>>();
-            foreach (var (testName, mutationIds) in coverage.Coverage)
+            Dictionary<Tuple<string, int>, HashSet<string>>? testsPerMutation =
+                new Dictionary<Tuple<string, int>, HashSet<string>>();
+            foreach (var (testName, mutationIds) in coverage)
             {
                 foreach (var registeredCoverage in mutationIds)
                 {
