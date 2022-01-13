@@ -15,22 +15,13 @@ namespace Faultify.Report
         /// <returns>IReporter</returns>
         public static IReporter CreateReporter(ReporterType type)
         {
-            try
+            return type switch
             {
-                return type switch
-                {
-                    ReporterType.Pdf => new PdfReporter(),
-                    ReporterType.Html => new HtmlReporter(),
-                    ReporterType.Json => new JsonReporter(),
-                    _ => throw new ArgumentOutOfRangeException(nameof(type), $"The argument \"{type}\" is not a valid file output type." +
-                                                                     "Defaulting to JSON."),
-                };
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                Logger.Error(ex, ex.Message);
-                return new JsonReporter();
-            }
+                ReporterType.Pdf => new PdfReporter(),
+                ReporterType.Html => new HtmlReporter(),
+                ReporterType.Json => new JsonReporter(),
+                _ => new JsonReporter(),
+            };
         }
     }
 }

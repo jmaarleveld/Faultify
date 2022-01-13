@@ -131,10 +131,21 @@ namespace Faultify.Cli
         /// </summary>
         public ReporterType ReporterType
         {
-            get => Enum.Parse<ReporterType>(ReportType, true);
+            get
+            {
+                try
+                {
+                    return Enum.Parse<ReporterType>(ReportType, true);
+                }
+                catch (ArgumentException ex)
+                {
+                    Logger.Error(ex, $"The argument \"{ReportType}\" is not a valid file output type. Defaulting to Json.");
+                    return ReporterType.Json;
+                }
+            }
             set => ReportType = value.ToString();
         }
-        
+
         /// <summary>
         /// The directory where the current report will be saved to
         /// </summary>
