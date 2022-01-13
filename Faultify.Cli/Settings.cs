@@ -6,6 +6,7 @@ using Faultify.MutationCollector;
 using Faultify.TestRunner;
 using System.Text.Json;
 using System.Collections.Generic;
+using Faultify.Report;
 using NLog;
 
 // Disable Non-nullable is uninitialized, this is handled by the CommandLine package
@@ -33,10 +34,10 @@ namespace Faultify.Cli
         public string ReportPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "FaultifyOutput");
 
         /// <summary>
-        /// Type of report to be generated, options: 'pdf', 'html', 'json'
+        /// Type of report to be generated, options: 'Pdf', 'Html', 'Json'
         /// </summary>
-        [Option('f', "reportFormat", Required = false, Default = "json",
-            HelpText = "Type of report to be generated, options: 'pdf', 'html', 'json'")]
+        [Option('f', "reportFormat", Required = false, Default = "Json",
+            HelpText = "Type of report to be generated, options: 'Pdf', 'Html', 'Json'")]
         public string ReportType { get; set; }
 
         /// <summary>
@@ -123,6 +124,15 @@ namespace Faultify.Cli
         {
             get => Enum.Parse<TestHost>(_testHostName, true);
             set => _testHostName = value.ToString();
+        }
+        
+        /// <summary>
+        /// The file type of the report. options:  "pdf", "html", "json".
+        /// </summary>
+        public ReporterType ReporterType
+        {
+            get => Enum.Parse<ReporterType>(ReportType, true);
+            set => ReportType = value.ToString();
         }
         
         /// <summary>
