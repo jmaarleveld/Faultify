@@ -8,6 +8,6 @@ namespace Faultify.ProjectBuilder
     /// </summary>
     public interface IProjectReader
     {
-        Task<IProjectInfo> ReadAndBuildProjectAsync(string path, IProgress<string> progress);
+        Task<IProjectInfo> ReadProjectAsync(string path, IProgress<string> progress);
     }
 }

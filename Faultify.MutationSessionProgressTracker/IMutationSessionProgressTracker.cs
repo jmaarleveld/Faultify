@@ -2,7 +2,7 @@
 
 namespace Faultify.MutationSessionProgressTracker
 {
-    public interface IMutationSessionProgressTracker
+    public interface IMutationSessionProgressTracker : IProgress<string>
     {
         void LogBeginPreBuilding();
         void LogEndPreBuilding();
