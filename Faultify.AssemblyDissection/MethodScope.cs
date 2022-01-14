@@ -136,13 +136,11 @@ namespace Faultify.AssemblyDissection
             if (original.FieldName != null) {
                 var field = Fields[original.FieldName];
                 return original.GetEquivalentMutation(
-                    original,
                     field,
                     field.MetadataToken.ToInt32());
             }
 
             return original.GetEquivalentMutation(
-                original,
                 MethodDefinition,
                 IntHandle);
         }

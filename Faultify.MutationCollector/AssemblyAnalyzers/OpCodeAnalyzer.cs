@@ -37,6 +37,10 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
+            if (methodName == null) {
+                throw new NullReferenceException(
+                    "OpcodeAnalyzer expects a non-null method name");
+            }
             var mutationGroup = new List<IEnumerable<OpCodeMutation>>();
             int index = 0;
             foreach (Instruction instruction in scope.Body.Instructions)
@@ -67,7 +71,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     mutationGroup.Add(mutations);
                 }
 
-                index += 1;
+                index++;
 
             }
 

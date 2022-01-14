@@ -35,6 +35,10 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
+            if (methodName == null) {
+                throw new NullReferenceException(
+                    "ArrayAnalyzer expects a non-null method name");
+            }
             // Filter and map arrays
             var entityHandle = method.MetadataToken.ToInt32();
             IEnumerable<ArrayMutation> arrayMutations =

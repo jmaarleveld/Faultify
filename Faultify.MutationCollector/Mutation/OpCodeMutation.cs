@@ -131,7 +131,6 @@ namespace Faultify.MutationCollector.Mutation
         /// <param name="memberEntityHandle">entity handle of parent member</param>
         /// <returns>new, equivalent mutation</returns>
         public IMutation GetEquivalentMutation(
-            IMutation original, 
             IMemberDefinition definition,
             int memberEntityHandle)
         {

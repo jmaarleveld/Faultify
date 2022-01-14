@@ -61,7 +61,6 @@ namespace Faultify.AssemblyDissection
         public IMutation GetEquivalentMutation(IMutation original)
         {
             return original.GetEquivalentMutation(
-                original,
                 _fieldDefinition, 
                 _fieldDefinition.MetadataToken.ToInt32());
         }
