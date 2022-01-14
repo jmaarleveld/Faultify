@@ -27,10 +27,12 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
         public IEnumerable<ArrayMutation> GenerateMutations(
             string assemblyName,
+            string typeName,
+            string? methodName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
-            IDictionary<Instruction, SequencePoint> debug = null
+            IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
             // Filter and map arrays
@@ -45,7 +47,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     Name, 
                     Description,
                     assemblyName,
-                    entityHandle);
+                    entityHandle,
+                    typeName,
+                    methodName);
 
             return arrayMutations;
         }

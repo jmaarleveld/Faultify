@@ -21,11 +21,22 @@ namespace Faultify.AssemblyDissection
         private readonly FieldDefinition _fieldDefinition;
         
         private string AssemblyName { get;  }
+        private string TypeName { get;  }
 
-        public FieldScope(FieldDefinition fieldDefinition, string assemblyName)
+        /// <summary>
+        ///     Construct a new field scope 
+        /// </summary>
+        /// <param name="fieldDefinition">Underlying field definition</param>
+        /// <param name="assemblyName">Name of the containing assembly</param>
+        /// <param name="typeName">Name of the containing type</param>
+        public FieldScope(
+            FieldDefinition fieldDefinition,
+            string assemblyName,
+            string typeName)
         {
             _fieldDefinition = fieldDefinition;
             AssemblyName = assemblyName;
+            TypeName = typeName;
         }
 
         public string AssemblyQualifiedName => _fieldDefinition.FullName;
@@ -39,10 +50,20 @@ namespace Faultify.AssemblyDissection
         {
             return MutationFactory.GetFieldMutations(
                 AssemblyName,
+                TypeName,
+                null,
                 _fieldDefinition,
                 mutationLevel, 
                 excludeGroup, 
                 excludeSingular);
+        }
+
+        public IMutation GetEquivalentMutation(IMutation original)
+        {
+            return original.GetEquivalentMutation(
+                original,
+                _fieldDefinition, 
+                _fieldDefinition.MetadataToken.ToInt32());
         }
     }
 }

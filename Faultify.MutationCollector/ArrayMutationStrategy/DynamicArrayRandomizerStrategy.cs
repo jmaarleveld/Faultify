@@ -13,7 +13,7 @@ namespace Faultify.MutationCollector.ArrayMutationStrategy
     {
         private readonly ArrayBuilder _arrayBuilder;
         private readonly MethodDefinition _methodDefinition;
-        private TypeReference _type;
+        private TypeReference? _type;
 
         public DynamicArrayRandomizerStrategy(MethodDefinition methodDefinition)
         {
