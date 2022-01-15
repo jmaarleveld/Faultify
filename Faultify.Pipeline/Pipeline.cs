@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using NLog;
+using Faultify.AssemblyDissection;
 using Faultify.CoverageCollector;
 using Faultify.ProjectBuilder;
 using Faultify.ProjectDuplicator;
 using Faultify.MutationSessionProgressTracker;
-using Faultify.TestHostRunner;
 
 namespace Faultify.Pipeline
 {
     public class Pipeline
     {
         private readonly IMutationSessionProgressTracker _progressTracker;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Pipeline(IMutationSessionProgressTracker progressTracker)
         {
@@ -28,31 +28,27 @@ namespace Faultify.Pipeline
         /// <param name="testProjectPath"></param>
         public async void Start(string testProjectPath)
         {
-            // Create and duplicate the test project
-            Tuple<ITestProjectDuplication, TestHost> testProject
-                = await CreateTestProject(testProjectPath);
+            // Build the project
+            IProjectInfo projectInfo = await BuildProject(testProjectPath);
 
-            // Obtain the coverage result (tests per mutation)
-            CoverageResult coverageResult = new CoverageResult();
+            // Duplicate the test project
+            var (testProjectDuplication, dependencyAssemblies) = DuplicateTestProject(projectInfo);
+
+            // Obtain mapping of a method to the tests that cover that method
             Dictionary<Tuple<string, int>, HashSet<string>> testsPerMutation
-                = await coverageResult.GetTestsPerMutation(_progressTracker, testProject.Item1
-                    , testProject.Item2, CancellationToken.None);
+                = await CoverageResult.GetTestsPerMutation(_progressTracker, testProjectDuplication
+                    , dependencyAssemblies, projectInfo, CancellationToken.None);
         }
 
         /// <summary>
         ///     This can be used to create a test project, which can be used to perform the
         ///     coverage analysis on.
         /// </summary>
-        /// <param name="testProjectPath"></param>
+        /// <param name="projectInfo"></param>
         /// <returns></returns>
-        private async Task<Tuple<ITestProjectDuplication, TestHost>> CreateTestProject(
-            string testProjectPath)
+        private static Tuple<ITestProjectDuplication, List<AssemblyAnalyzer>> DuplicateTestProject(
+            IProjectInfo projectInfo)
         {
-            // Build project
-            _progressTracker.LogBeginPreBuilding();
-            IProjectInfo projectInfo = await BuildProject(testProjectPath);
-            _progressTracker.LogEndPreBuilding();
-
             // Copy project N times
             ITestProjectDuplicator testProjectCopier
                 = new TestProjectDuplicator(Directory.GetParent(projectInfo.AssemblyPath).FullName);
@@ -62,9 +58,13 @@ namespace Faultify.Pipeline
             testProjectCopier.MakeInitialCopy(projectInfo);
 
             // Begin code coverage on first project.
-            ITestProjectDuplication coverageProject = testProjectCopier.MakeCopy(1);
-            TestHost testHost = GetTestHost(projectInfo);
-            return new Tuple<ITestProjectDuplication, TestHost>(coverageProject, testHost);
+            ITestProjectDuplication testProjectDuplication = testProjectCopier.MakeCopy(1);
+
+            // Load each project in memory as an AssemblyAnalyzer
+            List<AssemblyAnalyzer> dependencyAssemblies = LoadInMemory(testProjectDuplication);
+
+            return new Tuple<ITestProjectDuplication, List<AssemblyAnalyzer>>(testProjectDuplication
+                , dependencyAssemblies);
         }
 
         /// <summary>
@@ -74,35 +74,42 @@ namespace Faultify.Pipeline
         /// <returns></returns>
         private async Task<IProjectInfo> BuildProject(string projectPath)
         {
+            _progressTracker.LogBeginPreBuilding();
             IProjectReader projectReader = new ProjectReader();
-            return await projectReader.ReadProjectAsync(projectPath, _progressTracker);
+            IProjectInfo projectInfo
+                = await projectReader.ReadAndBuildProjectAsync(projectPath, _progressTracker);
+            _progressTracker.LogEndPreBuilding();
+            return projectInfo;
         }
 
         /// <summary>
-        ///     This method can be used to obtain the TestHost of the program that will be analyzed.
+        ///     Foreach project reference load it in memory as an <see cref="AssemblyAnalyzer"/>.
         /// </summary>
-        /// <param name="projectInfo"></param>
-        /// <returns></returns>
-        private static TestHost GetTestHost(IProjectInfo projectInfo)
+        /// <param name="duplication"></param>
+        private static List<AssemblyAnalyzer> LoadInMemory(ITestProjectDuplication duplication)
         {
-            string projectFile = File.ReadAllText(projectInfo.ProjectFilePath);
-
-            if (Regex.Match(projectFile, "xunit").Captures.Any())
+            List<AssemblyAnalyzer> dependencyAssemblies = new List<AssemblyAnalyzer>();
+            
+            foreach (FileDuplication projectReferencePath in duplication.TestProjectReferences)
             {
-                return TestHost.XUnit;
+                try
+                {
+                    AssemblyAnalyzer loadProjectReferenceModel
+                        = new AssemblyAnalyzer(projectReferencePath.FullFilePath());
+
+                    if (loadProjectReferenceModel.Types.Count > 0)
+                    {
+                        dependencyAssemblies.Add(loadProjectReferenceModel);
+                    }
+                }
+                catch (FileNotFoundException e)
+                {
+                    Logger.Error(e
+                        , $"Faultify was unable to read the file {projectReferencePath.FullFilePath()}.");
+                }
             }
 
-            if (Regex.Match(projectFile, "nunit").Captures.Any())
-            {
-                return TestHost.NUnit;
-            }
-
-            if (Regex.Match(projectFile, "mstest").Captures.Any())
-            {
-                return TestHost.MsTest;
-            }
-
-            return TestHost.DotnetTest;
+            return dependencyAssemblies;
         }
     }
 }
