@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -20,14 +21,17 @@ namespace Faultify.AssemblyDissection
             AssemblyName = assemblyName;
 
             Fields = TypeDefinition.Fields.Select(x =>
-                    new FieldScope(x, assemblyName)
+                    new FieldScope(
+                        x,
+                        assemblyName,
+                        TypeDefinition.Name)
                 )
-                .ToList();
+                .ToDictionary(x => x.Name, x => x);
 
             Methods = TypeDefinition.Methods.Select(x =>
-                    new MethodScope(x, assemblyName)
+                    new MethodScope(x, assemblyName, TypeDefinition.Name)
                 )
-                .ToList();
+                .ToDictionary(x => x.Name, x => x);
         }
         
         private string AssemblyName { get;  }
@@ -36,12 +40,12 @@ namespace Faultify.AssemblyDissection
         ///     The fields in this type.
         ///     For example: const, static, non-static fields.
         /// </summary>
-        public List<FieldScope> Fields { get; }
+        public Dictionary<string, FieldScope> Fields { get; }
 
         /// <summary>
         ///     The methods in this type.
         /// </summary>
-        public List<MethodScope> Methods { get; }
+        public Dictionary<string, MethodScope> Methods { get; }
 
         public TypeDefinition TypeDefinition { get; }
         public string Name => TypeDefinition.Name;
@@ -53,15 +57,27 @@ namespace Faultify.AssemblyDissection
             HashSet<string> excludeGroup,
             HashSet<string> excludeSingular)
         {
-            var mutations =
-                from field in TypeDefinition.Fields
-                select MutationFactory.GetFieldMutations(
-                    AssemblyName,
-                    field, 
-                    mutationLevel, 
-                    excludeGroup, 
-                    excludeSingular);
+            var mutations = 
+                from field in Fields.Values
+                select field.AllMutations(mutationLevel, excludeGroup, excludeSingular);
             return mutations.SelectMany(x => x);
+        }
+
+        public IMutation GetEquivalentMutation(IMutation original)
+        {
+            if (original.ClassFieldName != null) {
+                var field = Fields[original.ClassFieldName];
+                return field.GetEquivalentMutation(original);
+            }
+
+            if (original.MethodName == null) {
+                throw new ArgumentException(
+                    "Mutation has no class field name and no method name");
+            }
+            // Assume that:
+            //  MethodName != null
+            var method = Methods[original.MethodName];
+            return method.GetEquivalentMutation(original);
         }
     }
 }

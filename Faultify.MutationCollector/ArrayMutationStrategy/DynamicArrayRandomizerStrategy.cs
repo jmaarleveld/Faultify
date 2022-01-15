@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Faultify.MutationCollector.Extensions;
+using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
@@ -13,7 +15,7 @@ namespace Faultify.MutationCollector.ArrayMutationStrategy
     {
         private readonly ArrayBuilder _arrayBuilder;
         private readonly MethodDefinition _methodDefinition;
-        private TypeReference _type;
+        private TypeReference? _type;
 
         public DynamicArrayRandomizerStrategy(MethodDefinition methodDefinition)
         {
@@ -65,11 +67,15 @@ namespace Faultify.MutationCollector.ArrayMutationStrategy
                 }
             }
 
+            if (_type == null) {
+                throw new ArgumentException("Did not find an array opcode in method");
+            }
+
             processor.Clear();
 
             // Append everything before array.
             foreach (Instruction before in beforeArray) processor.Append(before);
-
+            
             List<Instruction> newArray = _arrayBuilder.CreateArray(processor, length, _type);
 
             // Append new array

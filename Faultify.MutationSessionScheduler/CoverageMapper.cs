@@ -36,7 +36,7 @@ namespace Faultify.MutationSessionScheduler
                 HashSet<string>? methods = null;
                 
                 foreach (var mutation in mutationGroup) {
-                    if (mutation.ParentMethodEntityHandle == null) {
+                    if (mutation.MemberEntityHandle == null) {
                         // TODO: log a warning?
                         // TODO: probably should be handled somehow. 
                         // TODO: However, this case was never handled (mutations ignored)
@@ -45,7 +45,7 @@ namespace Faultify.MutationSessionScheduler
                     if (methods == null) {
                         KeyValuePair<Tuple<string, int>, HashSet<string>> pair = testsPerMethod.FirstOrDefault(pair => 
                             pair.Key.Item1 == mutation.AssemblyName && pair.Key
-                            .Item2 == mutation.ParentMethodEntityHandle);
+                            .Item2 == mutation.MemberEntityHandle);
                         methods = pair.Value;
                     }
 

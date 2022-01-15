@@ -29,20 +29,27 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
         public IEnumerable<OpCodeMutation> GenerateMutations(
             string assemblyName,
+            string typeName,
+            string? methodName,
             MethodDefinition scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
-            IDictionary<Instruction, SequencePoint> debug = null
+            IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
+            if (methodName == null) {
+                throw new NullReferenceException(
+                    "OpcodeAnalyzer expects a non-null method name");
+            }
             var mutationGroup = new List<IEnumerable<OpCodeMutation>>();
+            int index = 0;
             foreach (Instruction instruction in scope.Body.Instructions)
             {
                 OpCode original = instruction.OpCode;
                 IEnumerable<OpCodeMutation> mutations = Enumerable.Empty<OpCodeMutation>();
 
-                if (_mappedOpCodes.ContainsKey(original))
-                {
+                if (_mappedOpCodes.ContainsKey(original)) {
+                    int instructionIndex = index;
                     var entityHandle = scope.MetadataToken.ToInt32();
                     IEnumerable<(MutationLevel, OpCode, string)> targets = _mappedOpCodes[original];
                     mutations =
@@ -52,15 +59,20 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             instruction.OpCode,
                             target.Item2,
                             instruction,
+                            instructionIndex,
                             scope,
                             Name,
                             Description,
                             assemblyName,
-                            entityHandle);
+                            entityHandle,
+                            typeName,
+                            methodName);
                     
                     mutationGroup.Add(mutations);
                 }
-                
+
+                index++;
+
             }
 
             return mutationGroup.SelectMany(x => x);

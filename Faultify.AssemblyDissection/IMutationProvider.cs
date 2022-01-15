@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Faultify.MutationCollector;
 using Faultify.MutationCollector.Mutation;
 
@@ -20,5 +21,17 @@ namespace Faultify.AssemblyDissection
             MutationLevel mutationLevel, 
             HashSet<string> excludeGroup, 
             HashSet<string> excludeSingular);
+
+        /// <summary>
+        ///     Get a mutation equivalent to the given one.
+        ///
+        ///     This can be used when mutating a copy of an
+        ///     existing project. The underlying Cecil
+        ///     definitions of a mutation still map to the
+        ///     original project; this method can be used
+        ///     to obtain a new mutation with updated
+        ///     fields which can be used on the copy.
+        /// </summary>
+        IMutation GetEquivalentMutation(IMutation original);
     }
 }
