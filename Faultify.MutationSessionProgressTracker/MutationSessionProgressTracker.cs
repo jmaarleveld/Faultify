@@ -7,7 +7,7 @@ namespace Faultify.MutationSessionProgressTracker
     /// <summary>
     ///     Helper class for tracking the mutation test logs and percentual progress.
     /// </summary>
-    public class MutationSessionProgressTracker : IProgress<string>, IMutationSessionProgressTracker
+    public class MutationSessionProgressTracker : IMutationSessionProgressTracker
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IProgress<MutationRunProgress> _progress;
