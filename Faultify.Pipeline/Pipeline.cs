@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Faultify.AssemblyDissection;
-using Faultify.CoverageCollector;
+using coverageCollector = Faultify.CoverageCollector.CoverageCollector;
 using Faultify.ProjectBuilder;
 using Faultify.ProjectDuplicator;
 using Faultify.MutationSessionProgressTracker;
@@ -35,9 +35,11 @@ namespace Faultify.Pipeline
             var (testProjectDuplication, dependencyAssemblies) = DuplicateTestProject(projectInfo);
 
             // Obtain mapping of a method to the tests that cover that method
-            Dictionary<Tuple<string, int>, HashSet<string>> testsPerMutation
-                = await CoverageResult.GetTestsPerMutation(_progressTracker, testProjectDuplication
-                    , dependencyAssemblies, projectInfo, CancellationToken.None);
+            _progressTracker.LogBeginCoverage();
+            Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan> testsPerMutation
+                = await coverageCollector.GetTestsPerMutation(testProjectDuplication
+                    , dependencyAssemblies, projectInfo, TIMESPAN_PROGRAMSETTING_HERE!
+                    , CancellationToken.None);
         }
 
         /// <summary>
