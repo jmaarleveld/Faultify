@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Faultify.ProjectDuplicator;
@@ -53,13 +54,8 @@ namespace Faultify.MutationSessionRunner
             }
 
             // Convert the testOutcomes to a Dictionary<string, TestOutcome>
-            Dictionary<string, TestOutcome>
-                testOutcomesDict = new Dictionary<string, TestOutcome>();
-            foreach ((string mutation, TestOutcome testOutcome) in testOutcomes)
-            {
-                testOutcomesDict[mutation] = testOutcome;
-            }
-
+            var testOutcomesDict = testOutcomes.ToDictionary(x => x.Item1, x => x.Item2);
+            
             return new Tuple<HashSet<int>, Dictionary<string, TestOutcome>>(newTimedOutGroups
                 , testOutcomesDict);
         }
