@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.CoverageCollector"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.ProjectBuilder", "Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj", "{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.MutationSessionRunner", "Faultify.MutationSessionRunner\Faultify.MutationSessionRunner.csproj", "{C2FB8DD1-CE91-4257-962E-7755E78B6944}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faultify.Pipeline", "Faultify.Pipeline\Faultify.Pipeline.csproj", "{D574A023-0BE4-4FF0-8F8E-4FF0D3146291}"
 EndProject
 Global
@@ -140,6 +142,10 @@ Global
 		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BDDDA38-FDAD-4F30-8084-69C9BF12E503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2FB8DD1-CE91-4257-962E-7755E78B6944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2FB8DD1-CE91-4257-962E-7755E78B6944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2FB8DD1-CE91-4257-962E-7755E78B6944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2FB8DD1-CE91-4257-962E-7755E78B6944}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D574A023-0BE4-4FF0-8F8E-4FF0D3146291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D574A023-0BE4-4FF0-8F8E-4FF0D3146291}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D574A023-0BE4-4FF0-8F8E-4FF0D3146291}.Release|Any CPU.ActiveCfg = Release|Any CPU
