@@ -27,12 +27,18 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
         public IEnumerable<ArrayMutation> GenerateMutations(
             string assemblyName,
+            string typeName,
+            string? methodName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
-            IDictionary<Instruction, SequencePoint> debug = null
+            IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
+            if (methodName == null) {
+                throw new NullReferenceException(
+                    "ArrayAnalyzer expects a non-null method name");
+            }
             // Filter and map arrays
             var entityHandle = method.MetadataToken.ToInt32();
             IEnumerable<ArrayMutation> arrayMutations =
@@ -45,7 +51,9 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     Name, 
                     Description,
                     assemblyName,
-                    entityHandle);
+                    entityHandle,
+                    typeName,
+                    methodName);
 
             return arrayMutations;
         }

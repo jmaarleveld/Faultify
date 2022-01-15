@@ -80,7 +80,7 @@ namespace Faultify.CodeDecompiler
             // Get the source code for the mutations 
             foreach (var mutation in mutationGroup)
             {
-                var entityHandle = mutation.ParentMethodEntityHandle;
+                var entityHandle = mutation.MemberEntityHandle;
                 // Return a "no code" result in case the entity handle is null
                 if (entityHandle == null)
                 {

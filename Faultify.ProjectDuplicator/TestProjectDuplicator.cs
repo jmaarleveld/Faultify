@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
-using Faultify.ProjectDuplicator.ProjectAnalyzing;
+using Faultify.ProjectBuilder;
 
 namespace Faultify.ProjectDuplicator
 {

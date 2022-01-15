@@ -35,9 +35,9 @@ namespace Faultify.MutationCollector
         /// <param name="type">the type of the field for which a random value is to be generated</param>
         /// <param name="reference">a il-reference to the field that contains the originalField value</param>
         /// <returns>The random value.</returns>
-        public static object GenerateValueForField(Type type, object reference)
+        public static object? GenerateValueForField(Type type, object reference)
         {
-            object newRef = null;
+            object? newRef = null;
 
             try
             {

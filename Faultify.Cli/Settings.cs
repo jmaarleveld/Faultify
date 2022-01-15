@@ -6,6 +6,7 @@ using Faultify.MutationCollector;
 using Faultify.TestRunner;
 using System.Text.Json;
 using System.Collections.Generic;
+using Faultify.Report;
 using NLog;
 
 // Disable Non-nullable is uninitialized, this is handled by the CommandLine package
@@ -33,10 +34,10 @@ namespace Faultify.Cli
         public string ReportPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "FaultifyOutput");
 
         /// <summary>
-        /// Type of report to be generated, options: 'pdf', 'html', 'json'
+        /// Type of report to be generated, options: 'Pdf', 'Html', 'Json'
         /// </summary>
-        [Option('f', "reportFormat", Required = false, Default = "json",
-            HelpText = "Type of report to be generated, options: 'pdf', 'html', 'json'")]
+        [Option('f', "reportFormat", Required = false, Default = "Json",
+            HelpText = "Type of report to be generated, options: 'Pdf', 'Html', 'Json'")]
         public string ReportType { get; set; }
 
         /// <summary>
@@ -121,10 +122,41 @@ namespace Faultify.Cli
         /// </summary>
         public TestHost TestHost
         {
-            get => Enum.Parse<TestHost>(_testHostName, true);
+            get
+            {
+                try
+                {
+                    return Enum.Parse<TestHost>(_testHostName, true);
+                }
+                catch (ArgumentException ex)
+                {
+                    Logger.Error(ex, $"The argument \"{_testHostName}\" is not a valid file test host. Defaulting to DotNetTest.");
+                    return TestHost.DotnetTest;
+                }
+            }
             set => _testHostName = value.ToString();
         }
         
+        /// <summary>
+        /// The file type of the report. options:  "pdf", "html", "json".
+        /// </summary>
+        public ReporterType ReporterType
+        {
+            get
+            {
+                try
+                {
+                    return Enum.Parse<ReporterType>(ReportType, true);
+                }
+                catch (ArgumentException ex)
+                {
+                    Logger.Error(ex, $"The argument \"{ReportType}\" is not a valid file output type. Defaulting to Json.");
+                    return ReporterType.Json;
+                }
+            }
+            set => ReportType = value.ToString();
+        }
+
         /// <summary>
         /// The directory where the current report will be saved to
         /// </summary>

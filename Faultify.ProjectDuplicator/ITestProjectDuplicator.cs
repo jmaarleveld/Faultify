@@ -1,4 +1,4 @@
-﻿using Faultify.ProjectDuplicator.ProjectAnalyzing;
+﻿using Faultify.ProjectBuilder;
 
 namespace Faultify.ProjectDuplicator
 {

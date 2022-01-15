@@ -12,22 +12,34 @@ namespace Faultify.MutationCollector.Mutation
             OpCode original, 
             OpCode replacement, 
             Instruction scope, 
+            int instructionIndex,
             MethodDefinition method,
             string analyzerName,
             string analyzerDescription,
             string assemblyName,
-            int? parentMethodEntityHandle)
+            int memberEntityHandle,
+            string typeName,
+            string methodName)
         {
             Original = original;
             Replacement = replacement;
             Scope = scope;
+            InstructionIndex = instructionIndex;
             MethodScope = method;
             LineNumber = FindLineNumber();
             AnalyzerName = analyzerName;
             AnalyzerDescription = analyzerDescription;
             AssemblyName = assemblyName;
-            ParentMethodEntityHandle = parentMethodEntityHandle;
+            MemberEntityHandle = memberEntityHandle;
+            ClassFieldName = null;
+            FieldName = null;
+            TypeName = typeName;
+            MethodName = methodName;
         }
+        
+        /********************************************************************************
+         * Analyzer information
+         */
         
         /// <summary>
         ///     Name of the analyze this mutation was found by.
@@ -39,21 +51,49 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         public string AnalyzerDescription { get; }
         
+        /********************************************************************************
+         * Assembly Information
+         */
+        
         /// <summary>
         ///     Name of the assembly containing this mutation.
         /// </summary>
         public string AssemblyName { get; }
+        
+        /// <summary>
+        ///     Name of the class containing this mutation 
+        /// </summary>
+        public string TypeName { get; }
+        
+        /// <summary>
+        ///     If this mutation occurs in a class variable,
+        ///     the name of the variable is stored here.
+        /// </summary>
+        public string? ClassFieldName { get; }
 
         /// <summary>
-        ///     EntityHandle referencing the method containing
-        ///     this mutation.
-        ///
-        ///     This field may be null, in case the mutation does
-        ///     not occur in a method.
-        ///     An example of this would be a mutation of a
-        ///     class variable.
+        ///     If the mutation occurs in a method,
+        ///     the name of the method is stored here.
         /// </summary>
-        public int? ParentMethodEntityHandle { get; }
+        public string MethodName { get; }
+        
+        /// <summary>
+        ///     If the mutation occurs in a field inside a
+        ///     method, the name of the field is stored here.
+        ///
+        ///     Note that the method name will also be stored.
+        /// </summary>
+        public string? FieldName { get; }
+
+        /// <summary>
+        ///     EntityHandle referencing the member containing
+        ///     this mutation.
+        /// </summary>
+        public int MemberEntityHandle { get; }
+        
+        /********************************************************************************
+         * Mutation and Reporting Functionality 
+         */
 
         /// <summary>
         ///     The original opcode.
@@ -73,6 +113,43 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         private Instruction Scope { get; set; }
 
+        /// <summary>
+        ///     Index of the instruction in the method body
+        /// </summary>
+        private int InstructionIndex { get; }
+
+        /// <summary>
+        ///     Generate a mutation equivalent to the current one for a
+        ///     class in a different project.
+        ///
+        ///     Mutations are originally analyzed on one copy of the project;
+        ///     to avoid needing to generate them all again for other copies,
+        ///     this method allows making a copy for a specific copy.
+        /// </summary>
+        /// <param name="original">original mutation</param>
+        /// <param name="definition">field definition in the copy</param>
+        /// <param name="memberEntityHandle">entity handle of parent member</param>
+        /// <returns>new, equivalent mutation</returns>
+        public IMutation GetEquivalentMutation(
+            IMemberDefinition definition,
+            int memberEntityHandle)
+        {
+            var methodDefinition = (MethodDefinition) definition;
+            var instruction = methodDefinition.Body.Instructions[InstructionIndex];
+            return new OpCodeMutation(
+                Original,
+                Replacement,
+                instruction,
+                InstructionIndex,
+                methodDefinition,
+                AnalyzerName,
+                AnalyzerDescription,
+                AssemblyName,
+                memberEntityHandle,
+                TypeName,
+                MethodName);
+        }
+
         public void Mutate()
         {
             Scope.OpCode = Replacement;
@@ -90,8 +167,8 @@ namespace Faultify.MutationCollector.Mutation
 
             if (debug != null)
             {
-                Instruction prev = Scope;
-                SequencePoint seqPoint = null;
+                Instruction? prev = Scope;
+                SequencePoint? seqPoint = null;
                 // If prev is not null
                 // and line number is not found
                 // Try previous instruction.

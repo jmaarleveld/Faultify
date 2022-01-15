@@ -25,14 +25,20 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
         public IEnumerable<VariableMutation> GenerateMutations(
             string assemblyName,
+            string typeName,
+            string? methodName,
             MethodDefinition method,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
-            IDictionary<Instruction, SequencePoint> debug = null
+            IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
+            if (methodName == null) {
+                throw new ArgumentException("method name must not be null");
+            }
             List<VariableMutation> mutations = new List<VariableMutation>();
 
+            int index = 0;
             foreach (Instruction instruction in method.Body.Instructions)
             {
                 // Booleans (0,1) or number literals are loaded on the evaluation stack
@@ -56,15 +62,19 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
                     // If the value is mapped then mutate it.
                     if (TypeChecker.IsVariableType(type)) {
+                        var instructionIndex = index;
                         var entityHandle = method.MetadataToken.ToInt32();
                         var mutation = new VariableMutation(
                             variableInstruction,
+                            instructionIndex,
                             type,
                             method,
                             Name,
                             Description,
                             assemblyName,
-                            entityHandle);
+                            entityHandle,
+                            typeName,
+                            methodName);
                         mutations.Add(mutation);
                     }
                 }
@@ -72,6 +82,8 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     // Might not be necessary anymore as casting is more robust.
                     Logger.Debug(e, $"Failed to get the type of {instruction.Operand}");
                 }
+
+                index++;
             }
 
             return mutations;

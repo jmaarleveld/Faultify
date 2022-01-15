@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Faultify.CoverageCollector\Faultify.CoverageCollector.csproj" />
+      <ProjectReference Include="..\Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj" />
+      <ProjectReference Include="..\Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj" />
+      <ProjectReference Include="..\Faultify.ProjectDuplicator\Faultify.ProjectDuplicator.csproj" />
+    </ItemGroup>
+
+</Project>
