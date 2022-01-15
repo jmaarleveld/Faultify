@@ -122,8 +122,18 @@ namespace Faultify.Cli
         /// </summary>
         public TestHost TestHost
         {
-            get => Enum.Parse<TestHost>(_testHostName, true);
-            set => _testHostName = value.ToString();
+            get
+            {
+                try
+                {
+                    return Enum.Parse<TestHost>(_testHostName, true);
+                }
+                catch (ArgumentException ex)
+                {
+                    Logger.Error(ex, $"The argument \"{_testHostName}\" is not a valid file test host. Defaulting to DotNetTest.");
+                    return TestHost.DotnetTest;
+                }
+            }
         }
         
         /// <summary>

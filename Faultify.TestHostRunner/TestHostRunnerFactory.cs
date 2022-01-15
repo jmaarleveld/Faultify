@@ -23,23 +23,14 @@ namespace Faultify.TestHostRunner
         {
             ITestHostRunner testRunner;
             Logger.Info("Creating test runner");
-            try
+            return testHost switch
             {
-                testRunner = testHost switch
-                {
-                    TestHost.NUnit => new NUnitTestHostRunner(testAssemblyPath, timeOut),
-                    TestHost.XUnit => new XUnitTestHostRunner(testAssemblyPath),
-                    TestHost.MsTest => new DotnetTestHostRunner(testAssemblyPath, timeOut),
-                    TestHost.DotnetTest => new DotnetTestHostRunner(testAssemblyPath, timeOut),
-                    _ => throw new ArgumentOutOfRangeException(nameof(testHost), $"{testHost} not found."),
-                };
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, ex.Message + "Defaulting to DotNetTest.");
-                testRunner = new DotnetTestHostRunner(testAssemblyPath, timeOut);
-            }
-            return testRunner;
+                TestHost.NUnit => new NUnitTestHostRunner(testAssemblyPath, timeOut),
+                TestHost.XUnit => new XUnitTestHostRunner(testAssemblyPath),
+                TestHost.MsTest => new DotnetTestHostRunner(testAssemblyPath, timeOut),
+                TestHost.DotnetTest => new DotnetTestHostRunner(testAssemblyPath, timeOut),
+                _ => new DotnetTestHostRunner(testAssemblyPath, timeOut),
+            };
         }
     }
 }
