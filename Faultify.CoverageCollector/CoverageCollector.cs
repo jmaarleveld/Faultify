@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Faultify.AssemblyDissection;
-using Faultify.MutationSessionProgressTracker;
 using Faultify.ProjectBuilder;
 using Faultify.TestHostRunner;
 using Faultify.TestHostRunner.Results;
@@ -20,30 +19,27 @@ using Faultify.ProjectDuplicator;
 
 namespace Faultify.CoverageCollector
 {
-    public class CoverageResult
+    public class CoverageCollector
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///     This maps a method to all the tests that cover that method.
         /// </summary>
-        /// <param name="progressTracker"></param>
         /// <param name="coverageProject"></param>
         /// <param name="dependencyAssemblies"></param>
         /// <param name="projectInfo"></param>
+        /// <param name="timeoutSetting"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<Dictionary<Tuple<string, int>, HashSet<string>>>
+        public static async Task<Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>>
             GetTestsPerMutation(
-                IMutationSessionProgressTracker progressTracker,
                 ITestProjectDuplication coverageProject,
                 List<AssemblyAnalyzer> dependencyAssemblies,
                 IProjectInfo projectInfo,
+                TimeSpan timeoutSetting,
                 CancellationToken cancellationToken = default)
         {
-            // Measure the test coverage 
-            progressTracker.LogBeginCoverage();
-            
             // Rewrites assemblies
             TestHost testHost = GetTestHost(projectInfo);
             PrepareAssembliesForCodeCoverage(coverageProject, testHost, dependencyAssemblies);
@@ -60,6 +56,8 @@ namespace Faultify.CoverageCollector
                 Environment.Exit(16);
             }
 
+            TimeSpan timeout = CreateTimeOut(coverageTimer, timeoutSetting);
+
             Logger.Info("Collecting garbage");
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -68,7 +66,9 @@ namespace Faultify.CoverageCollector
             coverageProject.MarkAsFree();
 
             // Start test session.
-            return GroupMutationsWithTests(coverage);
+            var testsPerMutation = GroupMutationsWithTests(coverage);
+            return new Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>(
+                testsPerMutation, timeout);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Faultify.CoverageCollector
 
             return testsPerMutation;
         }
-        
+
         /// <summary>
         ///     This method can be used to obtain the TestHost of the program that will be analyzed.
         /// </summary>
@@ -210,6 +210,21 @@ namespace Faultify.CoverageCollector
             }
 
             return TestHost.DotnetTest;
+        }
+
+        /// Sets the time out for the mutations to be either the specified number of seconds or the time it takes to run
+        /// the test project.
+        /// When timeout is less then 0.51 seconds it will be set to .51 seconds to make sure the MaxTestDuration is at
+        /// least one second.
+        private static TimeSpan CreateTimeOut(Stopwatch stopwatch, TimeSpan timeoutSetting)
+        {
+            TimeSpan timeout = timeoutSetting;
+            if (timeoutSetting.Equals(TimeSpan.FromSeconds(0)))
+            {
+                timeout = stopwatch.Elapsed;
+            }
+
+            return timeout < TimeSpan.FromSeconds(.51) ? TimeSpan.FromSeconds(.51) : timeout;
         }
     }
 }
