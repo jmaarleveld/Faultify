@@ -134,6 +134,7 @@ namespace Faultify.Cli
                     return TestHost.DotnetTest;
                 }
             }
+            set => _testHostName = value.ToString();
         }
         
         /// <summary>
