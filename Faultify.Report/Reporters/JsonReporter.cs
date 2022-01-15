@@ -2,9 +2,8 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using Faultify.Report.Models;
-using Faultify.Report.Reporters;
 
-namespace Faultify.Report
+namespace Faultify.Report.Reporters
 {
     public class JsonReporter : IReporter
     {
