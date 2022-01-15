@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using Faultify.Report;
+using Faultify.MutationSessionProgressTracker;
 using Faultify.Report.Models;
 using Faultify.Report.Reporters;
 using Faultify.TestRunner;
-using Faultify.TestRunner.Logging;
-using Karambolo.Extensions.Logging.File;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Config;
 using NLog.Extensions.Logging;
-using NLog.Targets;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Faultify.Cli
 {
