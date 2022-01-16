@@ -57,6 +57,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj" />
+		<ProjectReference Include="..\Faultify.Pipeline\Faultify.Pipeline.csproj" />
 		<ProjectReference Include="..\Faultify.Report\Faultify.Report.csproj" />
 		<ProjectReference Include="..\Faultify.TestRunner.Collector\Faultify.TestRunner.Collector.csproj" />
 		<ProjectReference Include="..\Faultify.TestRunner\Faultify.TestRunner.csproj" />
