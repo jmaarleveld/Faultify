@@ -138,32 +138,11 @@ namespace Faultify.Cli
             
             // TestProjectReportModel testResult = await RunMutationTest(progressTracker);
             //
-            progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
+            // progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
             // await GenerateReport(testResult);
             progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
             await Task.CompletedTask;
         }
-
-        // /// <summary>
-        // /// Runs coverage, analysis, mutations and tests
-        // /// </summary>
-        // /// <param name="progressTracker">Progress tracker</param>
-        // /// <returns>A report model with the results of the tests</returns>
-        // private async Task<TestProjectReportModel> RunMutationTest(
-        //     MutationSessionProgressTracker.MutationSessionProgressTracker progressTracker
-        // )
-        // {
-        //     MutationTestProject mutationTestProject = new MutationTestProject(
-        //         ProgramSettings.TestProjectPath,
-        //         ProgramSettings.MutationLevel,
-        //         ProgramSettings.TestHost,
-        //         ProgramSettings.TimeOut,
-        //         ProgramSettings.ExcludeMutationGroups.ToHashSet(),
-        //         ProgramSettings.ExcludeSingleMutations
-        //     );
-        //
-        //     return await mutationTestProject.Test(progressTracker, CancellationToken.None);
-        ///
 
         /// <summary>
         /// Helper method to generate a ConfigurationRoot
