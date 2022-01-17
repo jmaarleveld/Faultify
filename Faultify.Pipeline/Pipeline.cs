@@ -68,12 +68,11 @@ namespace Faultify.Pipeline
             HashSet<string> excludeSingular)
         {
             var allMutations = new List<IEnumerable<IEnumerable<IMutation>>>();
-            
+
             foreach (var assembly in dependencyAssemblies)
-            foreach (var type in assembly.Types)
             {
-                var mutations
-                    = type.Value.AllMutations(mutationLevel, excludeGroup, excludeSingular);
+                var mutations =
+                    assembly.AllMutations(mutationLevel, excludeGroup, excludeSingular);
                 allMutations.Add(mutations);
             }
             // Flatten result
