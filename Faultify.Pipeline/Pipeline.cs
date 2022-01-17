@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Faultify.AssemblyDissection;
+using Faultify.MutationCollector;
+using Faultify.MutationCollector.Mutation;
 using coverageCollector = Faultify.CoverageCollector.CoverageCollector;
 using Faultify.ProjectBuilder;
 using Faultify.ProjectDuplicator;
 using Faultify.MutationSessionProgressTracker;
+using Faultify.MutationSessionScheduler;
 
 namespace Faultify.Pipeline
 {
@@ -36,10 +40,44 @@ namespace Faultify.Pipeline
 
             // Obtain mapping of a method to the tests that cover that method
             _progressTracker.LogBeginCoverage();
-            Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan> testsPerMutation
+            (Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod, TimeSpan timeout)
                 = await coverageCollector.GetTestsPerMutation(testProjectDuplication
                     , dependencyAssemblies, projectInfo, TIMESPAN_PROGRAMSETTING_HERE!
                     , CancellationToken.None);
+
+            // Collect mutations for each assembly
+            var mutations = CollectMutations(dependencyAssemblies, MUTATIONLEVEL, EXCLUDEGROUP
+                , EXCLUDESINGUAR);
+
+            // Map the testsPerMethod with the mutations
+            var coveragePerMutation
+                = MutationSessionScheduler.CoverageMapper.MapCoverageToMutations(testsPerMethod
+                    , mutations);
+
+            // Generate the mutation test runs based on the mapped coverage and mutations
+            IMutationTestRunGenerator mutationTestRunGenerator
+                = new DefaultMutationTestRunGenerator();
+            var mutationTestRuns
+                = mutationTestRunGenerator.GenerateMutationTestRuns(coveragePerMutation);
+        }
+
+        private static IEnumerable<IEnumerable<IMutation>> CollectMutations(
+            List<AssemblyAnalyzer> dependencyAssemblies,
+            MutationLevel mutationLevel,
+            HashSet<string> excludeGroup,
+            HashSet<string> excludeSingular)
+        {
+            var allMutations = new List<IEnumerable<IEnumerable<IMutation>>>();
+            
+            foreach (var assembly in dependencyAssemblies)
+            foreach (var type in assembly.Types)
+            {
+                var mutations
+                    = type.Value.AllMutations(mutationLevel, excludeGroup, excludeSingular);
+                allMutations.Add(mutations);
+            }
+            // Flatten result
+            return allMutations.SelectMany(x => x);
         }
 
         /// <summary>
@@ -91,7 +129,7 @@ namespace Faultify.Pipeline
         private static List<AssemblyAnalyzer> LoadInMemory(ITestProjectDuplication duplication)
         {
             List<AssemblyAnalyzer> dependencyAssemblies = new List<AssemblyAnalyzer>();
-            
+
             foreach (FileDuplication projectReferencePath in duplication.TestProjectReferences)
             {
                 try
