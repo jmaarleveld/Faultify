@@ -3,9 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using CommandLine;
 using Faultify.MutationSessionProgressTracker;
-using Faultify.Report.Models;
-using Faultify.Report;
-using Faultify.Report.Reporters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -134,9 +131,9 @@ namespace Faultify.Cli
             Progress<MutationRunProgress> progress = new Progress<MutationRunProgress>();
             progress.ProgressChanged += (_, progress) => PrintProgress(progress);
 
-            MutationSessionProgressTracker.MutationSessionProgressTracker progressTracker = new MutationSessionProgressTracker.MutationSessionProgressTracker(progress);
+            var progressTracker = new MutationSessionProgressTracker.MutationSessionProgressTracker(progress);
 
-            Pipeline.Pipeline pipeline = new Pipeline.Pipeline(progressTracker);
+            var pipeline = new Pipeline.Pipeline(progressTracker);
             pipeline.Start(ProgramSettings.TestProjectPath);
             
             // TestProjectReportModel testResult = await RunMutationTest(progressTracker);
@@ -166,25 +163,8 @@ namespace Faultify.Cli
         //     );
         //
         //     return await mutationTestProject.Test(progressTracker, CancellationToken.None);
-        // }
+        ///
 
-        /// <summary>
-        /// Builds a report based on the test results and program settings
-        /// </summary>
-        /// <param name="testResult">Report model with the test results</param>
-        private async Task GenerateReport(TestProjectReportModel testResult)
-        {
-            MutationProjectReportModel model = new MutationProjectReportModel();
-            model.TestProjects.Add(testResult);
-
-            IReporter reporter = ReporterFactory.CreateReporter(ProgramSettings.ReporterType);
-            byte[] reportBytes = await reporter.CreateReportAsync(model);
-
-            string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
-            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
-            await File.WriteAllBytesAsync(reportFullPath, reportBytes);
-        }
-        
         /// <summary>
         /// Helper method to generate a ConfigurationRoot
         /// </summary>
