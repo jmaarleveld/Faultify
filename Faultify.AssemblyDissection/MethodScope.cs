@@ -23,11 +23,25 @@ namespace Faultify.AssemblyDissection
         public readonly MethodDefinition MethodDefinition;
 
         private string AssemblyName { get;  }    
-        
-        public MethodScope(MethodDefinition methodDefinition, string assemblyName)
+        private string TypeName { get; }
+
+        /// <summary>
+        ///     Fields inside this method 
+        /// </summary>
+        private Dictionary<string, FieldDefinition> Fields { get; }
+
+        public MethodScope(MethodDefinition methodDefinition, string assemblyName, string typeName)
         {
             MethodDefinition = methodDefinition;
             AssemblyName = assemblyName;
+            TypeName = typeName;
+            Fields = 
+                MethodDefinition.
+                Body.
+                Instructions.
+                OfType<FieldReference>().
+                Select(x => x.Resolve())
+                .ToDictionary(x => x.Name, x => x);
         }
 
         public int IntHandle => MethodDefinition.MetadataToken.ToInt32();
@@ -84,6 +98,7 @@ namespace Faultify.AssemblyDissection
         {
             return MutationFactory.GetMethodMutations(
                     AssemblyName,
+                    TypeName,
                     MethodDefinition, 
                     mutationLevel, 
                     excludeGroup, 
@@ -99,14 +114,14 @@ namespace Faultify.AssemblyDissection
             HashSet<string> excludeGroup, 
             HashSet<string> excludeSingular)
         {
-            IEnumerable<FieldReference> fieldReferences = MethodDefinition.Body.Instructions
-                .OfType<FieldReference>();
             List<IEnumerable<IEnumerable<IMutation>>> fieldMutationLists =
                 new List<IEnumerable<IEnumerable<IMutation>>>();
-            foreach (FieldReference field in fieldReferences) {
+            foreach (var field in Fields.Values) {
                 var mutations = MutationFactory.GetFieldMutations(
                     AssemblyName,
-                    field.Resolve(),
+                    TypeName,
+                    MethodDefinition.Name,
+                    field,
                     mutationLevel,
                     excludeGroup,
                     excludeSingular);
@@ -114,6 +129,20 @@ namespace Faultify.AssemblyDissection
             }
             // Flatten result 
             return fieldMutationLists.SelectMany(x => x);
+        }
+
+        public IMutation GetEquivalentMutation(IMutation original)
+        {
+            if (original.FieldName != null) {
+                var field = Fields[original.FieldName];
+                return original.GetEquivalentMutation(
+                    field,
+                    field.MetadataToken.ToInt32());
+            }
+
+            return original.GetEquivalentMutation(
+                MethodDefinition,
+                IntHandle);
         }
     }
 }

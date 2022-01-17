@@ -20,7 +20,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
         /// <summary>
         ///     Runs the given tests and returns the results.
         /// </summary>
-        /// <param name="cancellationToken"></param>
+        /// <param name="timeout"></param>
         /// <param name="progress"></param>
         /// <param name="tests"></param>
         /// <returns>

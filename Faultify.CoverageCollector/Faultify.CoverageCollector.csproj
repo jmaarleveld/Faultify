@@ -8,7 +8,6 @@
     
     <ItemGroup>
       <ProjectReference Include="..\Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj" />
-      <ProjectReference Include="..\Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj" />
       <ProjectReference Include="..\Faultify.ProjectDuplicator\Faultify.ProjectDuplicator.csproj" />
       <ProjectReference Include="..\Faultify.TestHostRunner\Faultify.TestHostRunner.csproj" />
     </ItemGroup>

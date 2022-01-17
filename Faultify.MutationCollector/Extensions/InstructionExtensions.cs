@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -45,12 +46,26 @@ namespace Faultify.MutationCollector.Extensions
 
         public static Type ToSystemType(this TypeReference typeRef)
         {
-            return Type.GetType(typeRef.FullName);
+            var name = typeRef.FullName;
+            var systemType = Type.GetType(name);
+            if (systemType == null) {
+                throw new InvalidEnumArgumentException(
+                    $@"Type lookup for type {name} failed.");
+            }
+
+            return systemType;
         }
 
         public static Type ToSystemType(this VariableReference varRef)
         {
-            return Type.GetType(varRef.VariableType.FullName);
+            var name = varRef.VariableType.FullName;
+            var systemType = Type.GetType(name);
+            if (systemType == null) {
+                throw new InvalidEnumArgumentException(
+                    $@"Type lookup for type {name} failed.");
+            }
+
+            return systemType;
         }
 
         public static OpCode GetLdcOpCodeByTypeReference(this TypeReference reference)

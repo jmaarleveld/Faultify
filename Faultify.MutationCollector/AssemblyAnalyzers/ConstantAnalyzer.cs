@@ -23,10 +23,12 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
 
         public IEnumerable<ConstantMutation> GenerateMutations(
             string assemblyName,
+            string typeName,
+            string? methodName,
             FieldDefinition field,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
-            IDictionary<Instruction, SequencePoint> debug = null
+            IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
             // Make a new mutation list
@@ -43,7 +45,12 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     Name, 
                     Description, 
                     assemblyName, 
-                    null));
+                    field.MetadataToken.ToInt32(),
+                    typeName,
+                    methodName == null ? field.Name : null,
+                        methodName,
+                    methodName == null ? null : field.Name)
+                );
             }
 
             return mutations;

@@ -2,22 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;
 
 namespace Faultify.AssemblyDissection
 {
     /// <summary>
     ///     The `AssemblyMutator` can be used to analyze all kinds of mutations in a target assembly.
-    ///     It can be extended with custom analyzers.
-    ///     Though an extension must correspond to one of the following collections in `AssemblyMutator`:
-    ///     <br /><br />
-    ///     - ArrayMutationAnalyzers(<see cref="ArrayAnalyzer" />)<br />
-    ///     - ConstantAnalyzers(<see cref="VariableAnalyzer" />)<br />
-    ///     - VariableMutationAnalyzer(<see cref="Analyzers.ConstantAnalyzer" />)<br />
-    ///     - OpCodeMutationAnalyzer(<see cref="OpCodeAnalyzer" />)<br />
-    ///     <br /><br />
-    ///     If you add your analyzer to one of those collections then it will be used in the process of analyzing.
-    ///     Unfortunately, if your analyzer does not fit the interfaces, it can not be used with the `AssemblyMutator`.
     /// </summary>
     public class AssemblyAnalyzer : IDisposable
     {
@@ -51,7 +42,7 @@ namespace Faultify.AssemblyDissection
         /// <summary>
         ///     The types in the assembly.
         /// </summary>
-        public List<TypeScope> Types { get; }
+        public Dictionary<string, TypeScope> Types { get; }
 
         public void Dispose()
         {
@@ -62,14 +53,14 @@ namespace Faultify.AssemblyDissection
         ///     Loads all of the types within the raw module definition into the class
         /// </summary>
         /// <returns>A List<TypeScope> of types in the module</returns>
-        private List<TypeScope> LoadTypes()
+        private Dictionary<string, TypeScope> LoadTypes()
         {
             return (
                 from type
                     in Module.Types
                 where !type.FullName.StartsWith("<")
                 select new TypeScope(type, Module.Assembly.Name.Name)
-            ).ToList();
+            ).ToDictionary(x => x.Name, x => x);
         }
 
         /// <summary>
@@ -89,6 +80,22 @@ namespace Faultify.AssemblyDissection
         public void Flush()
         {
             Module.Write(Module.FileName);
+        }
+
+        /// <summary>
+        ///     Get a mutation equivalent to the given one.
+        ///
+        ///     This can be used when mutating a copy of an
+        ///     existing project. The underlying Cecil
+        ///     definitions of a mutation still map to the
+        ///     original project; this method can be used
+        ///     to obtain a new mutation with updated
+        ///     fields which can be used on the copy.
+        /// </summary>
+        IMutation GetEquivalentMutation(IMutation original)
+        {
+            TypeScope scope = Types[original.TypeName];
+            return scope.GetEquivalentMutation(original);
         }
     }
 }

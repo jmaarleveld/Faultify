@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Faultify.AssemblyDissection;
-using Faultify.MutationSessionProgressTracker;
+using Faultify.ProjectBuilder;
 using Faultify.TestHostRunner;
 using Faultify.TestHostRunner.Results;
 using Faultify.TestHostRunner.TestHostRunners;
@@ -17,30 +19,30 @@ using Faultify.ProjectDuplicator;
 
 namespace Faultify.CoverageCollector
 {
-    public class CoverageResult
+    public class CoverageCollector
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///     This maps a method to all the tests that cover that method.
         /// </summary>
-        /// <param name="progressTracker"></param>
         /// <param name="coverageProject"></param>
-        /// <param name="testHost"></param>
+        /// <param name="dependencyAssemblies"></param>
+        /// <param name="projectInfo"></param>
+        /// <param name="timeoutSetting"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Dictionary<Tuple<string, int>, HashSet<string>>>
+        public static async Task<Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>>
             GetTestsPerMutation(
-                IMutationSessionProgressTracker progressTracker,
                 ITestProjectDuplication coverageProject,
-                TestHost testHost,
+                List<AssemblyAnalyzer> dependencyAssemblies,
+                IProjectInfo projectInfo,
+                TimeSpan timeoutSetting,
                 CancellationToken cancellationToken = default)
         {
-            // Measure the test coverage 
-            progressTracker.LogBeginCoverage();
-
             // Rewrites assemblies
-            PrepareAssembliesForCodeCoverage(coverageProject, testHost);
+            TestHost testHost = GetTestHost(projectInfo);
+            PrepareAssembliesForCodeCoverage(coverageProject, testHost, dependencyAssemblies);
 
             Stopwatch coverageTimer = new Stopwatch();
             coverageTimer.Start();
@@ -54,6 +56,8 @@ namespace Faultify.CoverageCollector
                 Environment.Exit(16);
             }
 
+            TimeSpan timeout = CreateTimeOut(coverageTimer, timeoutSetting);
+
             Logger.Info("Collecting garbage");
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -62,7 +66,9 @@ namespace Faultify.CoverageCollector
             coverageProject.MarkAsFree();
 
             // Start test session.
-            return GroupMutationsWithTests(coverage);
+            var testsPerMutation = GroupMutationsWithTests(coverage);
+            return new Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>(
+                testsPerMutation, timeout);
         }
 
         /// <summary>
@@ -70,17 +76,16 @@ namespace Faultify.CoverageCollector
         ///     This code that is injected will register calls to methods/tests.
         ///     Those calls determine what tests cover which methods.
         /// </summary>
-        /// <param name="duplication"></param>
+        /// <param name="coverageProject"></param>
         /// <param name="testHost"></param>
+        /// <param name="dependencyAssemblies"></param>
         private static void PrepareAssembliesForCodeCoverage(
-            ITestProjectDuplication duplication, TestHost testHost)
+            ITestProjectDuplication coverageProject, TestHost testHost
+            , List<AssemblyAnalyzer> dependencyAssemblies)
         {
             Logger.Info("Preparing assemblies for code coverage");
             ModuleDefinition testModule
-                = ModuleDefinition.ReadModule(duplication.TestProjectFile.FullFilePath());
-
-            List<AssemblyAnalyzer> dependencyAssemblies = new List<AssemblyAnalyzer>();
-            LoadInMemory(duplication, dependencyAssemblies);
+                = ModuleDefinition.ReadModule(coverageProject.TestProjectFile.FullFilePath());
 
             TestCoverageInjector.Instance.InjectTestCoverage(testModule);
             TestCoverageInjector.Instance.InjectModuleInit(testModule);
@@ -156,7 +161,7 @@ namespace Faultify.CoverageCollector
         /// </summary>
         /// <param name="coverage"></param>
         /// <returns></returns>
-        private Dictionary<Tuple<string, int>, HashSet<string>> GroupMutationsWithTests(
+        private static Dictionary<Tuple<string, int>, HashSet<string>> GroupMutationsWithTests(
             Dictionary<string, List<Tuple<string, int>>> coverage)
         {
             Logger.Info("Grouping mutations with registered tests");
@@ -181,31 +186,45 @@ namespace Faultify.CoverageCollector
         }
 
         /// <summary>
-        ///     Foreach project reference load it in memory as an <see cref="AssemblyAnalyzer"/>.
+        ///     This method can be used to obtain the TestHost of the program that will be analyzed.
         /// </summary>
-        /// <param name="duplication"></param>
-        /// <param name="dependencyAssemblies"></param>
-        private static void LoadInMemory(
-            ITestProjectDuplication duplication, List<AssemblyAnalyzer> dependencyAssemblies)
+        /// <param name="projectInfo"></param>
+        /// <returns></returns>
+        private static TestHost GetTestHost(IProjectInfo projectInfo)
         {
-            foreach (FileDuplication projectReferencePath in duplication.TestProjectReferences)
-            {
-                try
-                {
-                    AssemblyAnalyzer loadProjectReferenceModel
-                        = new AssemblyAnalyzer(projectReferencePath.FullFilePath());
+            string projectFile = File.ReadAllText(projectInfo.ProjectFilePath);
 
-                    if (loadProjectReferenceModel.Types.Count > 0)
-                    {
-                        dependencyAssemblies.Add(loadProjectReferenceModel);
-                    }
-                }
-                catch (FileNotFoundException e)
-                {
-                    Logger.Error(e
-                        , $"Faultify was unable to read the file {projectReferencePath.FullFilePath()}.");
-                }
+            if (Regex.Match(projectFile, "xunit").Captures.Any())
+            {
+                return TestHost.XUnit;
             }
+
+            if (Regex.Match(projectFile, "nunit").Captures.Any())
+            {
+                return TestHost.NUnit;
+            }
+
+            if (Regex.Match(projectFile, "mstest").Captures.Any())
+            {
+                return TestHost.MsTest;
+            }
+
+            return TestHost.DotnetTest;
+        }
+
+        /// Sets the time out for the mutations to be either the specified number of seconds or the time it takes to run
+        /// the test project.
+        /// When timeout is less then 0.51 seconds it will be set to .51 seconds to make sure the MaxTestDuration is at
+        /// least one second.
+        private static TimeSpan CreateTimeOut(Stopwatch stopwatch, TimeSpan timeoutSetting)
+        {
+            TimeSpan timeout = timeoutSetting;
+            if (timeoutSetting.Equals(TimeSpan.FromSeconds(0)))
+            {
+                timeout = stopwatch.Elapsed;
+            }
+
+            return timeout < TimeSpan.FromSeconds(.51) ? TimeSpan.FromSeconds(.51) : timeout;
         }
     }
 }

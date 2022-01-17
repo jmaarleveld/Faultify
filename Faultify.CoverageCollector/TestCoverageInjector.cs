@@ -16,7 +16,7 @@ namespace Faultify.CoverageCollector
     /// </summary>
     public class TestCoverageInjector
     {
-        private static readonly Lazy<TestCoverageInjector> _instance = new(() => new TestCoverageInjector());
+        private static readonly Lazy<TestCoverageInjector> _instance = new Lazy<TestCoverageInjector>(() => new TestCoverageInjector());
 
         private readonly string _currentAssemblyPath = typeof(TestCoverageInjector).Assembly.Location;
         private readonly MethodDefinition _initializeMethodDefinition;
