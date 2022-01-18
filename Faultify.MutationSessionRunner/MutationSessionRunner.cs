@@ -19,7 +19,6 @@ namespace Faultify.MutationSessionRunner
             IProgress<string> sessionProgressTracker,
             Dictionary<int, HashSet<string>> testsPerGroup,
             HashSet<int> timedOutGroups,
-            object timedOutGroupsLock,
             TestHost testHost,
             ITestProjectDuplication testProject
         )
@@ -27,14 +26,7 @@ namespace Faultify.MutationSessionRunner
             HashSet<string> runningTests = new HashSet<string>();
             foreach (var (groupId, tests) in testsPerGroup)
             {
-                // lock and retrieve info
-                bool containsGroupId;
-                lock (timedOutGroupsLock)
-                {
-                    containsGroupId = timedOutGroups.Contains(groupId);
-                }
-                
-                if (containsGroupId) continue;
+                if (timedOutGroups.Contains(groupId)) continue;
                 foreach (var test in tests)
                 {
                     runningTests.Add(test);

@@ -36,8 +36,8 @@ namespace Faultify.Pipeline
         private readonly object _failedRunsLock = new object();
         private int _totalRunsCount;
 
-        private List<CoupledTestOutcome> _coupledTestOutcomes
-            = new List<CoupledTestOutcome>();
+        private List<ReportData> _coupledTestOutcomes
+            = new List<ReportData>();
 
         private readonly object _coupledTestOutcomesLock = new object();
 
@@ -63,9 +63,12 @@ namespace Faultify.Pipeline
             // Obtain mapping of a method to the tests that cover that method
             _progressTracker.LogBeginCoverage();
             (Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod, TimeSpan timeout)
-                = await coverageCollector.GetTestsPerMutation(coverageProject
-                    , dependencyAssemblies, projectInfo, TIMESPAN_PROGRAMSETTING_HERE!
-                    , CancellationToken.None);
+                = await coverageCollector.GetTestsPerMutation(
+                    coverageProject,
+                    dependencyAssemblies,
+                    projectInfo,
+                    TIMESPAN_PROGRAMSETTING_HERE!,
+                    CancellationToken.None);
 
             // Collect mutations for each assembly
             var mutations = CollectMutations(dependencyAssemblies, MUTATIONLEVEL, EXCLUDEGROUP
@@ -151,50 +154,35 @@ namespace Faultify.Pipeline
 
             try
             {
-                // Obtain original source code for each mutation
+                // Obtain a Dictionary of IMutations
                 var mutations = mutationTestRun
                     .ToDictionary(pair => pair.Key, pair => pair.Value.Item1).Values.ToList();
+
                 var originalSourceCode = SourceCollector.CollectSourceCode(
                     mutations, testProjectDuplication, dependencyAssemblies);
 
-                // Apply the mutations to the source code
-                var mutationsPerGroup
-                    = mutationTestRun.ToDictionary(pair => pair.Key, pair => pair.Value.Item1);
-                MutationApplier.MutationApplier.ApplyMutations(mutationsPerGroup, _timedOutGroups,
-                    _timedOutGroupsLock, dependencyAssemblies, testProjectDuplication);
+                var timedOutGroupsCopy = CopyTimedOutGroups();
 
-                // Obtain mutated source code for each mutation
+                MutationApplier.MutationApplier.ApplyMutations(
+                    mutationTestRun.ToDictionary(pair => pair.Key, pair => pair.Value.Item1),
+                    timedOutGroupsCopy,
+                    dependencyAssemblies,
+                    testProjectDuplication);
+
                 var mutatedSourceCode = SourceCollector.CollectSourceCode(
                     mutations, testProjectDuplication, dependencyAssemblies);
 
                 Stopwatch singRunsStopwatch = new Stopwatch();
                 singRunsStopwatch.Start();
 
-                // Run the mutation test run
-                var testsPerGroup
-                    = mutationTestRun.ToDictionary(pair => pair.Key, pair => pair.Value.Item2);
-                IMutationSessionRunner mutationSessionRunner
-                    = new MutationSessionRunner.MutationSessionRunner();
-                var (newTimedOutGroups, mutationTestRunResult)
-                    = await mutationSessionRunner.StartMutationSession(timeout
-                        , _progressTracker, testsPerGroup, _timedOutGroups, _timedOutGroupsLock,
-                        _testHost, testProjectDuplication);
+                var (newTimedOutGroups, mutationTestRunResult) = await StartMutationSession(
+                    mutationTestRun, timeout, timedOutGroupsCopy, testProjectDuplication);
 
-                // Update the timed out groups
-                lock (_timedOutGroupsLock)
-                {
-                    _timedOutGroups.UnionWith(newTimedOutGroups);
-                }
+                UpdateTimedOutGroups(newTimedOutGroups);
 
-                // Convert the mutation test run outcome to test outcomes
-                var coupledTestOutcomes = CoupleTestOutcomes(mutationTestRunResult,
+                var newReportData = CollectReportData(mutationTestRunResult,
                     mutationTestRun, mutations, originalSourceCode, mutatedSourceCode);
-
-                // Update the test outcomes with the newly obtained results
-                lock (_coupledTestOutcomesLock)
-                {
-                    _coupledTestOutcomes = _coupledTestOutcomes.Concat(coupledTestOutcomes).ToList();
-                }
+                UpdateReportData(newReportData);
 
                 singRunsStopwatch.Stop();
                 singRunsStopwatch.Reset();
@@ -202,29 +190,87 @@ namespace Faultify.Pipeline
             catch (Exception e)
             {
                 // Test run failed
-                _progressTracker.Log(
-                    $"The test process encountered an unexpected error. Continuing without this test run. Please consider to submit an github issue. {e}"
-                    ,
-                    LogMessageType.Error);
-                lock (_failedRunsLock)
-                {
-                    _failedRuns += 1;
-                }
-
-                Logger.Error(e, "The test process encountered an unexpected error.");
+                HandleMutationTestRunException(e);
             }
             finally
             {
                 // Successfully completed the test run
-                lock (_completedRunsLock)
-                {
-                    _completedRuns += 1;
+                FinishMutationTestRun();
+            }
+        }
 
-                    lock (_failedRunsLock)
-                    {
-                        _progressTracker.LogTestRunUpdate(_completedRuns, _totalRunsCount
-                            , _failedRuns);
-                    }
+        private async Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>>
+            StartMutationSession(
+                Dictionary<int, (IMutation, HashSet<string>)> mutationTestRun,
+                TimeSpan timeout,
+                HashSet<int> timedOutGroupsCopy,
+                ITestProjectDuplication testProjectDuplication)
+        {
+            var testsPerGroup
+                = mutationTestRun.ToDictionary(pair => pair.Key, pair => pair.Value.Item2);
+            IMutationSessionRunner mutationSessionRunner
+                = new MutationSessionRunner.MutationSessionRunner();
+            return await mutationSessionRunner.StartMutationSession(
+                timeout,
+                _progressTracker,
+                testsPerGroup,
+                timedOutGroupsCopy,
+                _testHost,
+                testProjectDuplication);
+        }
+
+        private HashSet<int> CopyTimedOutGroups()
+        {
+            HashSet<int> timedOutGroupsCopy;
+            lock (_timedOutGroupsLock)
+            {
+                timedOutGroupsCopy = _timedOutGroups.ToHashSet();
+            }
+
+            return timedOutGroupsCopy;
+        }
+
+        private void UpdateTimedOutGroups(IEnumerable<int> newTimedOutGroups)
+        {
+            lock (_timedOutGroupsLock)
+            {
+                _timedOutGroups.UnionWith(newTimedOutGroups);
+            }
+        }
+
+        private void UpdateReportData(IEnumerable<ReportData> newReportData)
+        {
+            lock (_coupledTestOutcomesLock)
+            {
+                _coupledTestOutcomes
+                    = _coupledTestOutcomes.Concat(newReportData).ToList();
+            }
+        }
+
+        private void HandleMutationTestRunException(Exception e)
+        {
+            _progressTracker.Log(
+                $"The test process encountered an unexpected error. Continuing without this test run. Please consider to submit an github issue. {e}"
+                ,
+                LogMessageType.Error);
+            lock (_failedRunsLock)
+            {
+                _failedRuns += 1;
+            }
+
+            Logger.Error(e, "The test process encountered an unexpected error.");
+        }
+
+        private void FinishMutationTestRun()
+        {
+            lock (_completedRunsLock)
+            {
+                _completedRuns += 1;
+
+                lock (_failedRunsLock)
+                {
+                    _progressTracker.LogTestRunUpdate(_completedRuns, _totalRunsCount
+                        , _failedRuns);
                 }
             }
         }
@@ -238,7 +284,7 @@ namespace Faultify.Pipeline
         /// <param name="originalSourceCode"></param>
         /// <param name="mutatedSourceCode"></param>
         /// <returns></returns>
-        private static IEnumerable<CoupledTestOutcome> CoupleTestOutcomes(
+        private static IEnumerable<ReportData> CollectReportData(
             Dictionary<string, TestOutcome> testOutcomes,
             Dictionary<int, (IMutation, HashSet<string>)> mutationTestRun,
             List<IMutation> mutations,
@@ -246,7 +292,7 @@ namespace Faultify.Pipeline
             IEnumerable<string> mutatedSourceCode)
         {
             var coupledTestOutcomes
-                = new List<CoupledTestOutcome>();
+                = new List<ReportData>();
 
             var coupledSourceCode = mutations.Zip(originalSourceCode)
                 .Zip(mutatedSourceCode, (first, second) => (first.First, first.Second, second));
@@ -257,7 +303,7 @@ namespace Faultify.Pipeline
                 foreach (var testName in pair.Value.Item2)
                 {
                     coupledTestOutcomes.Add(
-                        new CoupledTestOutcome(testName, testOutcomes[testName], tuple.First,
+                        new ReportData(testName, testOutcomes[testName], tuple.First,
                             tuple.Second, tuple.second));
                 }
             }

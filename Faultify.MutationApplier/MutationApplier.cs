@@ -17,7 +17,6 @@ namespace Faultify.MutationApplier
         public static void ApplyMutations(
             Dictionary<int, IMutation> mutations, 
             HashSet<int> timedOutGroups,
-            object timedOutGroupsLock,
             Dictionary<string, AssemblyAnalyzer> assemblyAnalyzers,
             ITestProjectDuplication testProject)
         {
@@ -27,14 +26,7 @@ namespace Faultify.MutationApplier
                 var mutationGroupId = pair.Key;
                 var mutation = pair.Value;
 
-                // lock and retrieve info
-                bool containsMutationGroupId;
-                lock (timedOutGroupsLock)
-                {
-                    containsMutationGroupId = timedOutGroups.Contains(mutationGroupId);
-                }
-                
-                if (!containsMutationGroupId) {
+                if (!timedOutGroups.Contains(mutationGroupId)) {
                     mutation.Mutate();
                 }
             }

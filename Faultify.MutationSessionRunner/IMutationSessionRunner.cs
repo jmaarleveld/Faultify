@@ -21,14 +21,12 @@ namespace Faultify.MutationSessionRunner
         /// <param name="timedOutGroups"></param>
         /// <param name="testHost"></param>
         /// <param name="testProject"></param>
-        /// <param name="timedOutGroupsLock"></param>
         /// <returns></returns>
         Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>> StartMutationSession(
             TimeSpan timeout,
             IProgress<string> sessionProgressTracker,
             Dictionary<int, HashSet<string>> mutationsPerGroup,
             HashSet<int> timedOutGroups,
-            object timedOutGroupsLock,
             TestHost testHost,
             ITestProjectDuplication testProject
         );

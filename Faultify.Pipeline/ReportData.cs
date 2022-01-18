@@ -1,4 +1,5 @@
-﻿using Faultify.MutationCollector.Mutation;
+﻿using Faultify.AssemblyDissection;
+using Faultify.MutationCollector.Mutation;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Faultify.Pipeline
@@ -7,7 +8,7 @@ namespace Faultify.Pipeline
     ///     Structure to store test outcomes with its corresponding information regarding source
     ///     code and mutation.
     /// </summary>
-    public struct CoupledTestOutcome
+    public struct ReportData
     {
         public string TestName { get; }
         public TestOutcome TestOutcome { get; }
@@ -15,7 +16,7 @@ namespace Faultify.Pipeline
         public string OriginalSourceCode { get; }
         public string MutatedSourceCode { get; }
 
-        public CoupledTestOutcome(string testName, TestOutcome testOutcome, IMutation mutation,
+        public ReportData(string testName, TestOutcome testOutcome, IMutation mutation,
             string originalSourceCode, string mutatedSourceCode)
         {
             TestName = testName;
