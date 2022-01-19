@@ -28,6 +28,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             FieldDefinition field,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
+            string memberName,
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
@@ -49,7 +50,8 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     typeName,
                     methodName == null ? field.Name : null,
                         methodName,
-                    methodName == null ? null : field.Name)
+                    methodName == null ? null : field.Name,
+                    memberName)
                 );
             }
 

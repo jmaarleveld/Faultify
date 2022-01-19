@@ -26,7 +26,7 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="testsPerMethod"></param>
         /// <param name="mutations"></param>
         /// <returns></returns>
-        static IEnumerable<(IMutation, HashSet<string>, int)> MapCoverageToMutations(
+        public static IEnumerable<(IMutation, HashSet<string>, int)> MapCoverageToMutations(
             Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod,
             IEnumerable<IEnumerable<IMutation>> mutations)
         {

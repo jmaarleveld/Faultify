@@ -35,7 +35,7 @@ namespace Faultify.CoverageCollector
         public static async Task<Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>>
             GetTestsPerMutation(
                 ITestProjectDuplication coverageProject,
-                List<AssemblyAnalyzer> dependencyAssemblies,
+                Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
                 IProjectInfo projectInfo,
                 TimeSpan timeoutSetting,
                 CancellationToken cancellationToken = default)
@@ -81,7 +81,7 @@ namespace Faultify.CoverageCollector
         /// <param name="dependencyAssemblies"></param>
         private static void PrepareAssembliesForCodeCoverage(
             ITestProjectDuplication coverageProject, TestHost testHost
-            , List<AssemblyAnalyzer> dependencyAssemblies)
+            , Dictionary<string, AssemblyAnalyzer> dependencyAssemblies)
         {
             Logger.Info("Preparing assemblies for code coverage");
             ModuleDefinition testModule
@@ -97,7 +97,7 @@ namespace Faultify.CoverageCollector
 
             File.WriteAllBytes(testModule.FileName, ms.ToArray());
 
-            foreach (var assembly in dependencyAssemblies)
+            foreach (var assembly in dependencyAssemblies.Values)
             {
                 Logger.Trace($"Writing assembly {assembly.Module.FileName}");
                 TestCoverageInjector.Instance.InjectAssemblyReferences(assembly.Module);

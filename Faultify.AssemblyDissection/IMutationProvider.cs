@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Faultify.MutationCollector;
 using Faultify.MutationCollector.Mutation;
 

@@ -13,7 +13,6 @@ namespace Faultify.Report.Models
             TimeSpan testDuration,
             string originalSource,
             string mutatedSource,
-            int mutationId,
             string memberName
         )
         {
@@ -24,7 +23,6 @@ namespace Faultify.Report.Models
             TestDuration = testDuration;
             OriginalSource = originalSource;
             MutatedSource = mutatedSource;
-            MutationId = mutationId;
             MemberName = memberName;
         }
 
@@ -43,7 +41,6 @@ namespace Faultify.Report.Models
         public TimeSpan TestDuration { get; set; }
         public string OriginalSource { get; set; }
         public string MutatedSource { get; set; }
-        public int MutationId { get; set; }
         public string MemberName { get; set; }
     }
 }

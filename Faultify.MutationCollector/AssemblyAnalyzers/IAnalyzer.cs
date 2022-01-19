@@ -43,6 +43,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             TScope scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
+            string memberName,
             IDictionary<Instruction, SequencePoint>? debug = null
         );
     }

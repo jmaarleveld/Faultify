@@ -8,10 +8,35 @@ namespace Faultify.Report.Models
     public class TestProjectReportModel
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        public TestProjectReportModel(string testProjectName, TimeSpan testSessionDuration)
+        public TestProjectReportModel(
+            string testProjectName,
+            List<ReportData> reportDataList,
+            int totalTestRuns,
+            TimeSpan testDuration)
         {
             TestProjectName = testProjectName;
-            TestSessionDuration = testSessionDuration;
+            TestSessionDuration = TimeSpan.MaxValue;
+
+            ProcessReportData(reportDataList);
+            InitializeMetrics(totalTestRuns, testDuration);
+        }
+        
+        private void ProcessReportData(List<ReportData> reportDataList)
+        {
+            foreach (var reportData in reportDataList)
+            {
+                Mutations.Add(new MutationVariantReportModel(
+                    reportData.Mutation.Report,
+                    "",
+                    new MutationAnalyzerReportModel(
+                        reportData.Mutation.AnalyzerName,
+                        reportData.Mutation.AnalyzerDescription),
+                    reportData.MutationStatus,
+                    reportData.TestRunDuration,
+                    reportData.OriginalSourceCode,
+                    reportData.MutatedSourceCode,
+                    reportData.Mutation.MemberName));
+            }
         }
 
         public IList<MutationVariantReportModel> Mutations { get; } = new List<MutationVariantReportModel>();

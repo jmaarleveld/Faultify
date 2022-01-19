@@ -11,21 +11,27 @@ namespace Faultify.MutationSessionScheduler
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // Magic number, optimal run size not yet clear
-        private const int CONSTANT_OPTIMAL_DIVISION_ALGORITHM_THRESHOLD = 500; 
+        private const int CONSTANT_OPTIMAL_DIVISION_ALGORITHM_THRESHOLD = 500;
 
-        public IEnumerable<Dictionary<int, IMutation>> GenerateMutationTestRuns(
+        public IEnumerable<Dictionary<int, (IMutation, HashSet<string>)>> GenerateMutationTestRuns(
             IEnumerable<(IMutation, HashSet<string>, int)> testsPerMutation)
         {
             Logger.Info("Generating mutation test runs");
-            
-            IEnumerable<IList<(IMutation, int)>> testRunGroups = GetTestGroups(testsPerMutation.ToList());
 
-            foreach (var testRunGroup in testRunGroups) {
+            var testsPerMutationList = testsPerMutation.ToList();
+
+            IEnumerable<IList<(IMutation, int)>> testRunGroups
+                = GetTestGroups(testsPerMutationList.ToList());
+            var testsPerGroup
+                = testsPerMutationList.ToDictionary(triple => triple.Item3, triple => triple.Item2);
+
+            foreach (var testRunGroup in testRunGroups)
+            {
                 yield return testRunGroup.ToDictionary(
-                    pair => pair.Item2, pair => pair.Item1);
+                    pair => pair.Item2, pair => (pair.Item1, testsPerGroup[pair.Item2]));
             }
         }
-        
+
         /// <summary>
         ///     Groups mutations into groups that can be run in parallel
         /// </summary>
@@ -46,7 +52,7 @@ namespace Faultify.MutationSessionScheduler
             // Very poor time scaling
             return OptimalCoverageAlgorithm(testsPerMutation);
         }
-        
+
         /*****************************************************************************************
          * Greedy Coverage Algorithm
          */
@@ -79,22 +85,23 @@ namespace Faultify.MutationSessionScheduler
         ///     Adding a mutation to the buckets, if there is no bucket for it yet, make a new bucket
         /// </summary>
         private static void InsertOrMakeNew(
-            List<MutationBucket> buckets, 
+            List<MutationBucket> buckets,
             (IMutation, HashSet<string>, int) triple)
         {
             var mutation = triple.Item1;
             var testsForMutation = triple.Item2;
             var groupId = triple.Item3;
-            
+
             // Attempt to add the mutation to a bucket
             var wasInserted = false;
-            
-            foreach (MutationBucket bucket in buckets) {
-                if (bucket.IntersectsWith(testsForMutation)) 
+
+            foreach (MutationBucket bucket in buckets)
+            {
+                if (bucket.IntersectsWith(testsForMutation))
                 {
                     continue;
                 }
-                
+
                 bucket.AddMutation(mutation, testsForMutation, groupId);
                 wasInserted = true;
                 break;
@@ -122,7 +129,7 @@ namespace Faultify.MutationSessionScheduler
         )
         {
             // Get all MutationsInfo
-            List<(IMutation, HashSet<string>, int)> allMutations = 
+            List<(IMutation, HashSet<string>, int)> allMutations =
                 new List<(IMutation, HashSet<string>, int)>(testsPerMutation);
 
             while (allMutations.Count > 0)
@@ -145,15 +152,16 @@ namespace Faultify.MutationSessionScheduler
         /// <param name="freeTests"></param>
         /// <param name="mutationsForThisRun"></param>
         private static void RemoveFreeSlots(
-            List<(IMutation, HashSet<string>, int)> allMutations, 
+            List<(IMutation, HashSet<string>, int)> allMutations,
             HashSet<string> freeTests,
             List<(IMutation, int)> mutationsForThisRun)
         {
-            foreach (var triple in allMutations.ToArray()) {
+            foreach (var triple in allMutations.ToArray())
+            {
                 var mutation = triple.Item1;
                 var testsForMutation = triple.Item2;
                 var groupId = triple.Item3;
-                
+
                 if (freeTests.IsSupersetOf(testsForMutation))
                 {
                     foreach (var test in testsForMutation)
@@ -165,7 +173,8 @@ namespace Faultify.MutationSessionScheduler
                     allMutations.Remove(triple);
                 }
 
-                if (freeTests.Count == 0) {
+                if (freeTests.Count == 0)
+                {
                     break;
                 }
             }

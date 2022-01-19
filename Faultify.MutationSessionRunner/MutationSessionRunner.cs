@@ -12,24 +12,24 @@ namespace Faultify.MutationSessionRunner
     /// <summary>
     ///     Executes the mutation test run on a test project.
     /// </summary>
-    internal class MutationSessionRunner : IMutationSessionRunner
+    public class MutationSessionRunner : IMutationSessionRunner
     {
         public async Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>> StartMutationSession(
             TimeSpan timeout,
             IProgress<string> sessionProgressTracker,
-            Dictionary<int, HashSet<string>> mutationsPerGroup,
+            Dictionary<int, HashSet<string>> testsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
-            TestProjectDuplication testProject
+            ITestProjectDuplication testProject
         )
         {
             HashSet<string> runningTests = new HashSet<string>();
-            foreach (var (groupId, mutations) in mutationsPerGroup)
+            foreach (var (groupId, tests) in testsPerGroup)
             {
                 if (timedOutGroups.Contains(groupId)) continue;
-                foreach (var mutation in mutations)
+                foreach (var test in tests)
                 {
-                    runningTests.Add(mutation);
+                    runningTests.Add(test);
                 }
             }
 
@@ -44,9 +44,9 @@ namespace Faultify.MutationSessionRunner
             foreach ((string test, TestOutcome testOutcome) in testOutcomes)
             {
                 if (testOutcome != TestOutcome.None) continue;
-                foreach (var (groupId, mutations) in mutationsPerGroup)
+                foreach (var (groupId, tests) in testsPerGroup)
                 {
-                    if (mutations.Contains(test))
+                    if (tests.Contains(test))
                     {
                         newTimedOutGroups.Add(groupId);
                     }

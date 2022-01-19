@@ -7,8 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Mono.Cecil" Version="0.11.3">
+        <Aliases>MC</Aliases>
+      </PackageReference>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Faultify.CodeDecompiler\Faultify.CodeDecompiler.csproj" />
       <ProjectReference Include="..\Faultify.CoverageCollector\Faultify.CoverageCollector.csproj" />
+      <ProjectReference Include="..\Faultify.MutationApplier\Faultify.MutationApplier.csproj" />
       <ProjectReference Include="..\Faultify.MutationSessionProgressTracker\Faultify.MutationSessionProgressTracker.csproj" />
+      <ProjectReference Include="..\Faultify.MutationSessionRunner\Faultify.MutationSessionRunner.csproj" />
+      <ProjectReference Include="..\Faultify.MutationSessionScheduler\Faultify.MutationSessionScheduler.csproj" />
       <ProjectReference Include="..\Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj" />
       <ProjectReference Include="..\Faultify.ProjectDuplicator\Faultify.ProjectDuplicator.csproj" />
       <ProjectReference Include="..\Faultify.Report\Faultify.Report.csproj" />

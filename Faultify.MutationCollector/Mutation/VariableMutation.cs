@@ -16,7 +16,8 @@ namespace Faultify.MutationCollector.Mutation
             string assemblyName,
             int memberEntityHandle,
             string typeName,
-            string methodName)
+            string methodName,
+            string memberName)
         {
             Instruction = instruction;
             InstructionIndex = instructionIndex;
@@ -34,6 +35,7 @@ namespace Faultify.MutationCollector.Mutation
             MethodName = methodName;
             FieldName = null;
             ClassFieldName = null;
+            MemberName = memberName;
         }
         
         /********************************************************************************
@@ -124,7 +126,6 @@ namespace Faultify.MutationCollector.Mutation
         ///     to avoid needing to generate them all again for other copies,
         ///     this method allows making a copy for a specific copy.
         /// </summary>
-        /// <param name="original">original mutation</param>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent member</param>
         /// <returns>new, equivalent mutation</returns>
@@ -144,8 +145,11 @@ namespace Faultify.MutationCollector.Mutation
                 AssemblyName,
                 memberEntityHandle,
                 TypeName,
-                MethodName);
+                MethodName,
+                MemberName);
         }
+        
+        public string MemberName { get; }
 
         public void Mutate()
         {
