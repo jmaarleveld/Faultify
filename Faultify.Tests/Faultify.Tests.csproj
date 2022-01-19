@@ -73,6 +73,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Faultify.CodeDecompiler\Faultify.CodeDecompiler.csproj" />
     <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
     <ProjectReference Include="..\Faultify.MutationApplier\Faultify.MutationApplier.csproj" />
     <ProjectReference Include="..\Faultify.TestRunner\Faultify.TestRunner.csproj" />

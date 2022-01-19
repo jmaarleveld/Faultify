@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Reflection.Metadata;
-using Faultify.Core.ProjectAnalyzing;
 using Faultify.Tests.UnitTests.Utils;
 using NUnit.Framework;
 using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
@@ -44,7 +43,7 @@ namespace Faultify.Tests.UnitTests
         public void Decompile_Test_Type(string expectedNotClean)
         {
             // Arrange
-            CodeDecompiler cd = new CodeDecompiler("test.dll", _stream);
+            var cd = new CodeDecompiler.CodeDecompiler("test.dll", _stream);
             EntityHandle handle = DecompileHandleHelper.DecompileType(_module, TypeName);
             string expected = expectedNotClean.CleanUpCode();
 
@@ -66,7 +65,7 @@ namespace Faultify.Tests.UnitTests
         )
         {
             // Arrange
-            CodeDecompiler cd = new CodeDecompiler("test.dll", _stream);
+            var cd = new CodeDecompiler.CodeDecompiler("test.dll", _stream);
             EntityHandle handle = DecompileHandleHelper.DecompileMethod(_module, TypeName, methodName, typeList);
             string expected = expectedNotClean.CleanUpCode();
 
@@ -81,7 +80,7 @@ namespace Faultify.Tests.UnitTests
         public void Decompile_Test_Field(string fieldName, string expectedNotClean)
         {
             // Arrange
-            CodeDecompiler cd = new CodeDecompiler("test.dll", _stream);
+            var cd = new CodeDecompiler.CodeDecompiler("test.dll", _stream);
             EntityHandle handle = DecompileHandleHelper.DecompileField(_module, TypeName, fieldName);
             string expected = expectedNotClean.CleanUpCode();
 

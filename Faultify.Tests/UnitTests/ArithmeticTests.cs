@@ -1,6 +1,6 @@
 extern alias MC;
 using System.IO;
-using Faultify.MutationCollector.Analyzers;
+using Faultify.MutationCollector.AssemblyAnalyzers;
 using Faultify.Tests.UnitTests.Utils;
 using MC::Mono.Cecil.Cil;
 using NUnit.Framework;
