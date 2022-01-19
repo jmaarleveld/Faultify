@@ -1,4 +1,4 @@
-﻿using Mono.Cecil;
+﻿extern alias MC;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ using Faultify.TestHostRunner;
 using Faultify.TestHostRunner.Results;
 using Faultify.TestHostRunner.TestHostRunners;
 using Faultify.ProjectDuplicator;
+using MC::Mono.Cecil;
 
 namespace Faultify.CoverageCollector
 {
