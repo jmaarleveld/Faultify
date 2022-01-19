@@ -12,16 +12,18 @@ namespace Faultify.Pipeline
     {
         public string TestName { get; }
         public TestOutcome TestOutcome { get; }
-        public IMutation Mutation { get; }
+        public string AnalyzerName { get; }
+        public string AnalyzerDescription { get; }
         public string OriginalSourceCode { get; }
         public string MutatedSourceCode { get; }
 
-        public ReportData(string testName, TestOutcome testOutcome, IMutation mutation,
-            string originalSourceCode, string mutatedSourceCode)
+        public ReportData(string testName, TestOutcome testOutcome, string analyzerName,
+            string analyzerDescription, string originalSourceCode, string mutatedSourceCode)
         {
             TestName = testName;
             TestOutcome = testOutcome;
-            Mutation = mutation;
+            AnalyzerName = analyzerName;
+            AnalyzerDescription = analyzerDescription;
             OriginalSourceCode = originalSourceCode;
             MutatedSourceCode = mutatedSourceCode;
         }

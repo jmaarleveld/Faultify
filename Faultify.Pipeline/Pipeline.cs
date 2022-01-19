@@ -303,8 +303,8 @@ namespace Faultify.Pipeline
                 foreach (var testName in pair.Value.Item2)
                 {
                     coupledTestOutcomes.Add(
-                        new ReportData(testName, testOutcomes[testName], tuple.First,
-                            tuple.Second, tuple.second));
+                        new ReportData(testName, testOutcomes[testName], tuple.First.AnalyzerName,
+                            tuple.First.AnalyzerDescription, tuple.Second, tuple.second));
                 }
             }
 
