@@ -22,17 +22,12 @@
       <Aliases>MC</Aliases>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="NLog" Version="5.0.0-rc1" />
     <PackageReference Include="MemoryTest.XUnit" Version="0.0.1" />
 	<PackageReference Include="MemoryTest.NUnit" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Faultify.MutationCollector\Faultify.MutationCollector.csproj" />
-    <ProjectReference Include="..\Faultify.MutationApplier\Faultify.MutationApplier.csproj" />
-    <ProjectReference Include="..\Faultify.Injection\Faultify.Injection.csproj" />
-    <ProjectReference Include="..\Faultify.Report\Faultify.Report.csproj" />
-    <ProjectReference Include="..\Faultify.TestRunner.Shared\Faultify.TestRunner.Shared.csproj" />
   </ItemGroup>
 	
 	

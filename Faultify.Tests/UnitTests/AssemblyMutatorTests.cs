@@ -45,11 +45,10 @@ namespace Faultify.Tests.UnitTests
 
             Assert.AreEqual(mutator.Types.Count, 2);
 
-            using var typeScopeEnumerator = mutator.Types.Values.GetEnumerator();
+            var typeScopeEnumerator = mutator.Types.Values.ToList();
             
-            Assert.AreEqual(typeScopeEnumerator.Current.AssemblyQualifiedName, _nameSpaceTestAssemblyTarget1);
-            typeScopeEnumerator.MoveNext();
-            Assert.AreEqual(typeScopeEnumerator.Current.AssemblyQualifiedName, _nameSpaceTestAssemblyTarget2);
+            Assert.AreEqual(typeScopeEnumerator[0].AssemblyQualifiedName, _nameSpaceTestAssemblyTarget1);
+            Assert.AreEqual(typeScopeEnumerator[1].AssemblyQualifiedName, _nameSpaceTestAssemblyTarget2);
         }
 
         [Test]
