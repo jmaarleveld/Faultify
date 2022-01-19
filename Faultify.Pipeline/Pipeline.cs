@@ -123,7 +123,6 @@ namespace Faultify.Pipeline
             IEnumerable<Task> tasks = from mutationTestRun in mutationTestRuns
                 select RunMutationTestRun(
                     mutationTestRun,
-                    dependencyAssemblies,
                     testProjectDuplicator,
                     timeout,
                     runId++);
@@ -136,14 +135,12 @@ namespace Faultify.Pipeline
         /// <summary>
         ///     Method that handles a single mutation test run
         /// </summary>
-        /// <param name="mutationTestRun"></param>
-        /// <param name="dependencyAssemblies"></param>
+        /// <param name="testRunData"></param>
         /// <param name="testProjectDuplicator"></param>
         /// <param name="timeout"></param>
         /// <param name="runId"></param>
         private async Task RunMutationTestRun(
-            Dictionary<int, (IMutation, HashSet<string>)> mutationTestRun,
-            Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
+            Dictionary<int, (IMutation, HashSet<string>)> testRunData,
             ITestProjectDuplicator testProjectDuplicator,
             TimeSpan timeout,
             int runId)
@@ -151,6 +148,16 @@ namespace Faultify.Pipeline
             // Create the project to work in
             ITestProjectDuplication testProjectDuplication
                 = testProjectDuplicator.MakeCopy(runId + 2);
+            
+            // The old assemblies were bound to the first project;
+            // Create assemblies from the new project bound to this copy
+            Dictionary<string, AssemblyAnalyzer> dependencyAssemblies = LoadInMemory(
+                testProjectDuplication);
+            
+            // Get mutations which are also bound to the new copy
+            var mutationTestRun = GetMutationsForDuplication(
+                testRunData, 
+                dependencyAssemblies);
 
             try
             {
@@ -197,6 +204,27 @@ namespace Faultify.Pipeline
                 // Successfully completed the test run
                 FinishMutationTestRun();
             }
+        }
+
+        /// <summary>
+        ///     Generate the mutations bound to a specific copy
+        ///     of the test project.
+        /// </summary>
+        /// <param name="testRunData"></param>
+        /// <param name="dependencyAssemblies"></param>
+        private Dictionary<int, (IMutation, HashSet<string>)> GetMutationsForDuplication(
+            Dictionary<int, (IMutation, HashSet<string>)> testRunData,
+            Dictionary<string, AssemblyAnalyzer> dependencyAssemblies)
+        {
+            var mutationTestRun = testRunData.ToDictionary(
+                pair => pair.Key,
+                pair => (
+                    // Lookup the assembly analyzer and get a new mutation 
+                    dependencyAssemblies[pair.Value.Item1.AssemblyName].GetEquivalentMutation(pair.Value.Item1), 
+                    pair.Value.Item2
+                )
+            );
+            return mutationTestRun;
         }
 
         private async Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>>
