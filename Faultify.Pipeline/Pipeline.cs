@@ -1,11 +1,14 @@
-﻿using System;
+﻿extern alias MC;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using MC::Mono.Cecil;
 using NLog;
 using Faultify.AssemblyDissection;
 using Faultify.CodeDecompiler;
@@ -17,7 +20,10 @@ using Faultify.ProjectDuplicator;
 using Faultify.MutationSessionProgressTracker;
 using Faultify.MutationSessionRunner;
 using Faultify.MutationSessionScheduler;
+using Faultify.Report;
+using Faultify.Report.Models;
 using Faultify.TestHostRunner;
+using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
 
 namespace Faultify.Pipeline
 {
@@ -36,10 +42,10 @@ namespace Faultify.Pipeline
         private readonly object _failedRunsLock = new object();
         private int _totalRunsCount;
 
-        private List<ReportData> _coupledTestOutcomes
+        private List<ReportData> _reportData
             = new List<ReportData>();
 
-        private readonly object _coupledTestOutcomesLock = new object();
+        private readonly object _reportDataLock = new object();
 
         public Pipeline(IMutationSessionProgressTracker progressTracker, TestHost testHost)
         {
@@ -86,9 +92,20 @@ namespace Faultify.Pipeline
                 = mutationTestRunGenerator.GenerateMutationTestRuns(coveragePerMutation).ToList();
 
             // Run the created test runs
-            RunTestRuns(mutationTestRuns, timeout, dependencyAssemblies, testProjectDuplicator);
+            (var mutationCount, TimeSpan allRunsDuration)
+                = RunTestRuns(mutationTestRuns, timeout, dependencyAssemblies, testProjectDuplicator);
 
             // Do the reporting stuff
+            var testProjectName = ModuleDefinition
+                .ReadModule(coverageProject.TestProjectFile.FullFilePath()).Name;
+            var testProjectReportModel = new TestProjectReportModel(
+                testProjectName,
+                _reportData,
+                _totalRunsCount,
+                allRunsDuration);
+            
+            _progressTracker.LogEndTestSession(allRunsDuration, _completedRuns,
+                mutationCount, testProjectReportModel.ScorePercentage);
 
             // Cleanup
             testProjectDuplicator.DeleteFolder();
@@ -101,7 +118,7 @@ namespace Faultify.Pipeline
         /// <param name="timeout"></param>
         /// <param name="dependencyAssemblies"></param>
         /// <param name="testProjectDuplicator"></param>
-        private void RunTestRuns(
+        private (int, TimeSpan) RunTestRuns(
             ICollection<Dictionary<int, (IMutation, HashSet<string>)>> mutationTestRuns,
             TimeSpan timeout,
             Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
@@ -130,6 +147,8 @@ namespace Faultify.Pipeline
             // Wait until all mutation test runs are finished
             Task.WaitAll(tasks.ToArray());
             allRunsStopwatch.Stop();
+
+            return (mutationCount, allRunsStopwatch.Elapsed);
         }
 
         /// <summary>
@@ -188,7 +207,8 @@ namespace Faultify.Pipeline
                 UpdateTimedOutGroups(newTimedOutGroups);
 
                 var newReportData = CollectReportData(mutationTestRunResult,
-                    mutationTestRun, mutations, originalSourceCode, mutatedSourceCode);
+                    mutationTestRun, mutations, originalSourceCode, mutatedSourceCode
+                    , singRunsStopwatch.Elapsed);
                 UpdateReportData(newReportData);
 
                 singRunsStopwatch.Stop();
@@ -268,10 +288,10 @@ namespace Faultify.Pipeline
 
         private void UpdateReportData(IEnumerable<ReportData> newReportData)
         {
-            lock (_coupledTestOutcomesLock)
+            lock (_reportDataLock)
             {
-                _coupledTestOutcomes
-                    = _coupledTestOutcomes.Concat(newReportData).ToList();
+                _reportData
+                    = _reportData.Concat(newReportData).ToList();
             }
         }
 
@@ -311,13 +331,15 @@ namespace Faultify.Pipeline
         /// <param name="mutations"></param>
         /// <param name="originalSourceCode"></param>
         /// <param name="mutatedSourceCode"></param>
+        /// <param name="testRunDuration"></param>
         /// <returns></returns>
         private static IEnumerable<ReportData> CollectReportData(
             Dictionary<string, TestOutcome> testOutcomes,
             Dictionary<int, (IMutation, HashSet<string>)> mutationTestRun,
             List<IMutation> mutations,
             IEnumerable<string> originalSourceCode,
-            IEnumerable<string> mutatedSourceCode)
+            IEnumerable<string> mutatedSourceCode,
+            TimeSpan testRunDuration)
         {
             var coupledTestOutcomes
                 = new List<ReportData>();
@@ -331,8 +353,13 @@ namespace Faultify.Pipeline
                 foreach (var testName in pair.Value.Item2)
                 {
                     coupledTestOutcomes.Add(
-                        new ReportData(testName, testOutcomes[testName], tuple.First.AnalyzerName,
-                            tuple.First.AnalyzerDescription, tuple.Second, tuple.second));
+                        new ReportData(
+                            testName,
+                            testOutcomes[testName],
+                            tuple.First,
+                            tuple.Second, 
+                            tuple.second,
+                            testRunDuration));
                 }
             }
 

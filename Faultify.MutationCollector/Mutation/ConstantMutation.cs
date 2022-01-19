@@ -18,7 +18,8 @@ namespace Faultify.MutationCollector.Mutation
             string typeName,
             string? classFieldName,
             string? methodName,
-            string? fieldName)
+            string? fieldName,
+            string memberName)
         {
             Name = field.Name;
             Original = field.Constant;
@@ -33,6 +34,7 @@ namespace Faultify.MutationCollector.Mutation
             ClassFieldName = classFieldName;
             MethodName = methodName;
             FieldName = fieldName;
+            MemberName = memberName;
         }
         
         /********************************************************************************
@@ -123,7 +125,6 @@ namespace Faultify.MutationCollector.Mutation
         ///     to avoid needing to generate them all again for other copies,
         ///     this method allows making a copy for a specific copy.
         /// </summary>
-        /// <param name="original">original mutation</param>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent member</param>
         /// <returns>new, equivalent mutation</returns>
@@ -142,9 +143,11 @@ namespace Faultify.MutationCollector.Mutation
                 TypeName,
                 ClassFieldName,
                 MethodName,
-                FieldName);
+                FieldName,
+                MemberName);
         }
-
+        
+        public string MemberName { get; }
 
         public void Mutate()
         {

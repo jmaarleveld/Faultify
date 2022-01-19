@@ -102,7 +102,8 @@ namespace Faultify.AssemblyDissection
                     MethodDefinition, 
                     mutationLevel, 
                     excludeGroup, 
-                    excludeSingular);
+                    excludeSingular,
+                    AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -124,7 +125,8 @@ namespace Faultify.AssemblyDissection
                     field,
                     mutationLevel,
                     excludeGroup,
-                    excludeSingular);
+                    excludeSingular,
+                    AssemblyQualifiedName);
                 fieldMutationLists.Add(mutations);
             }
             // Flatten result 

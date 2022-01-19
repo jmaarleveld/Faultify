@@ -34,6 +34,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             MethodDefinition scope,
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
+            string memberName,
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
@@ -66,7 +67,8 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             assemblyName,
                             entityHandle,
                             typeName,
-                            methodName);
+                            methodName,
+                            memberName);
                     
                     mutationGroup.Add(mutations);
                 }
