@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CommandLine;
 using Faultify.MutationSessionProgressTracker;
+using Faultify.Pipeline;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -133,7 +134,7 @@ namespace Faultify.Cli
 
             var progressTracker = new MutationSessionProgressTracker.MutationSessionProgressTracker(progress);
 
-            var pipeline = new Pipeline.Pipeline(progressTracker);
+            var pipeline = new Pipeline.Pipeline(progressTracker, ProgramSettings);
             pipeline.Start(ProgramSettings.TestProjectPath);
             
             // TestProjectReportModel testResult = await RunMutationTest(progressTracker);

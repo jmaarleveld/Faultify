@@ -12,10 +12,10 @@ using NLog;
 // Disable Non-nullable is uninitialized, this is handled by the CommandLine package
 #pragma warning disable 8618
 
-namespace Faultify.Cli
+namespace Faultify.Pipeline
 {
     
-    internal class Settings
+    public class Settings
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
