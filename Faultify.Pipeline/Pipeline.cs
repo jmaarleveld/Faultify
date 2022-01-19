@@ -485,5 +485,22 @@ namespace Faultify.Pipeline
 
             return dependencyAssemblies;
         }
+        
+        /// <summary>
+        /// Builds a report based on the test results and program settings
+        /// </summary>
+        /// <param name="testResult">Report model with the test results</param>
+        private async Task GenerateReport(TestProjectReportModel testResult)
+        {
+            var model = new MutationProjectReportModel();
+            model.TestProjects.Add(testResult);
+
+            var reporter = ReporterFactory.CreateReporter(ProgramSettings.ReporterType);
+            byte[] reportBytes = await reporter.CreateReportAsync(model);
+
+            string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
+            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
+            await File.WriteAllBytesAsync(reportFullPath, reportBytes);
+        }
     }
 }
