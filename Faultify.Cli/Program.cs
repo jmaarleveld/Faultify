@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
-using Faultify.Report;
-using Faultify.Report.Models;
-using Faultify.Report.Reporters;
-using Faultify.TestRunner;
-using Faultify.TestRunner.Logging;
-using Karambolo.Extensions.Logging.File;
+using Faultify.MutationSessionProgressTracker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Config;
 using NLog.Extensions.Logging;
-using NLog.Targets;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Faultify.Cli
 {
@@ -144,81 +131,19 @@ namespace Faultify.Cli
             Progress<MutationRunProgress> progress = new Progress<MutationRunProgress>();
             progress.ProgressChanged += (_, progress) => PrintProgress(progress);
 
-            MutationSessionProgressTracker progressTracker = new MutationSessionProgressTracker(progress);
-            
-            TestProjectReportModel testResult = await RunMutationTest(progressTracker);
+            var progressTracker = new MutationSessionProgressTracker.MutationSessionProgressTracker(progress);
 
-            progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
-            await GenerateReport(testResult);
+            var pipeline = new Pipeline.Pipeline(progressTracker);
+            pipeline.Start(ProgramSettings.TestProjectPath);
+            
+            // TestProjectReportModel testResult = await RunMutationTest(progressTracker);
+            //
+            // progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
+            // await GenerateReport(testResult);
             progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
             await Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Runs coverage, analysis, mutations and tests
-        /// </summary>
-        /// <param name="progressTracker">Progress tracker</param>
-        /// <returns>A report model with the results of the tests</returns>
-        private async Task<TestProjectReportModel> RunMutationTest(
-            MutationSessionProgressTracker progressTracker
-        )
-        {
-            MutationTestProject mutationTestProject = new MutationTestProject(
-                ProgramSettings.TestProjectPath,
-                ProgramSettings.MutationLevel,
-                ProgramSettings.TestHost,
-                ProgramSettings.TimeOut,
-                ProgramSettings.ExcludeMutationGroups.ToHashSet(),
-                ProgramSettings.ExcludeSingleMutations
-            );
-
-            return await mutationTestProject.Test(progressTracker, CancellationToken.None);
-        }
-
-        /// <summary>
-        /// Builds a report based on the test results and program settings
-        /// </summary>
-        /// <param name="testResult">Report model with the test results</param>
-        private async Task GenerateReport(TestProjectReportModel testResult)
-        {
-            MutationProjectReportModel model = new MutationProjectReportModel();
-            model.TestProjects.Add(testResult);
-
-            IReporter reporter = ReportFactory(ProgramSettings.ReportType);
-            byte[] reportBytes = await reporter.CreateReportAsync(model);
-
-            string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
-            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
-            await File.WriteAllBytesAsync(reportFullPath, reportBytes);
-        }
-        
-        /// <summary>
-        /// Selects the appropriate Report Builder
-        /// </summary>
-        /// <param name="type">Report type, must be one of "PDF", "HTML", or "JSON"</param>
-        /// <returns>The reporter instance</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Wrong report type</exception>
-        private IReporter ReportFactory(string type)
-        {
-            try
-            {
-                return type.ToUpper() switch
-                {
-                    "PDF" => new PdfReporter(),
-                    "HTML" => new HtmlReporter(),
-                    "JSON" => new JsonReporter(),
-                    _ => throw new ArgumentOutOfRangeException(type, $"The argument \"{type}\" is not a valid file output type." +
-                        "Defaulting to JSON."),
-                };
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                Logger.Error(ex, ex.Message);
-                return new JsonReporter();
-            }
-            
-        }
-        
         /// <summary>
         /// Helper method to generate a ConfigurationRoot
         /// </summary>

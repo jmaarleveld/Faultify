@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using Faultify.MutationCollector;
-using Faultify.TestRunner;
 using System.Text.Json;
 using System.Collections.Generic;
 using Faultify.Report;
+using Faultify.TestHostRunner;
 using NLog;
 
 // Disable Non-nullable is uninitialized, this is handled by the CommandLine package

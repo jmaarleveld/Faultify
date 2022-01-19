@@ -26,7 +26,7 @@ namespace Faultify.Cli
                 "\n"
                 + $"| Test Project Path: {settings.TestProjectPath}\n"
                 + $"| Mutation Level: {settings.MutationLevel}\n"
-                + $"| Test host: {settings.TestHost}\n"
+                + $"| Test host: {nameof(settings.TestHost)}\n"
                 + $"| Report Path: {settings.ReportPath}\n"
                 + $"| Report Type: {settings.ReportType}\n"
                 + "\n";
