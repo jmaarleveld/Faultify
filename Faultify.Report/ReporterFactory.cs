@@ -1,13 +1,9 @@
-﻿using System;
-using Faultify.Report.Reporters;
-using NLog;
+﻿using Faultify.Report.Reporters;
 
 namespace Faultify.Report
 {
     public class ReporterFactory
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         ///     Create and return an IReporter
         /// </summary>

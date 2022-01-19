@@ -20,8 +20,6 @@ using Faultify.MutationSessionRunner;
 using Faultify.MutationSessionScheduler;
 using Faultify.Report;
 using Faultify.Report.Models;
-using Faultify.Report.Reporters;
-using Faultify.TestHostRunner;
 using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
 
 namespace Faultify.Pipeline
@@ -31,7 +29,7 @@ namespace Faultify.Pipeline
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IMutationSessionProgressTracker _progressTracker;
-        private readonly TestHost _testHost;
+        private readonly Settings _settings;
 
         private HashSet<int> _timedOutGroups = new HashSet<int>();
         private readonly object _timedOutGroupsLock = new object();
@@ -46,10 +44,10 @@ namespace Faultify.Pipeline
 
         private readonly object _reportDataLock = new object();
 
-        public Pipeline(IMutationSessionProgressTracker progressTracker, TestHost testHost)
+        public Pipeline(IMutationSessionProgressTracker progressTracker, Settings settings)
         {
             _progressTracker = progressTracker;
-            _testHost = testHost;
+            _settings = settings;
         }
 
         /// <summary>
@@ -72,12 +70,15 @@ namespace Faultify.Pipeline
                     coverageProject,
                     dependencyAssemblies,
                     projectInfo,
-                    TIMESPAN_PROGRAMSETTING_HERE!,
+                    _settings.TimeOut,
                     CancellationToken.None);
 
             // Collect mutations for each assembly
-            var mutations = CollectMutations(dependencyAssemblies, MUTATIONLEVEL, EXCLUDEGROUP
-                , EXCLUDESINGULAR);
+            var mutations = CollectMutations(
+                dependencyAssemblies,
+                _settings.MutationLevel, 
+                _settings.ExcludeMutationGroups.ToHashSet(), 
+                _settings.ExcludeSingleMutations);
 
             // Map the testsPerMethod with the mutations
             var coveragePerMutation
@@ -92,7 +93,7 @@ namespace Faultify.Pipeline
 
             // Run the created test runs
             (var mutationCount, TimeSpan allRunsDuration)
-                = RunTestRuns(mutationTestRuns, timeout, dependencyAssemblies, testProjectDuplicator);
+                = RunTestRuns(mutationTestRuns, timeout, testProjectDuplicator);
 
             // Create the report model
             var testProjectName = ModuleDefinition
@@ -110,26 +111,9 @@ namespace Faultify.Pipeline
             testProjectDuplicator.DeleteFolder();
             
             // Generate the report
-            _progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
+            _progressTracker.LogBeginReportBuilding(_settings.ReportType, _settings.ReportPath);
             await GenerateReport(testProjectReportModel);
-            _progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
-        }
-        
-        /// <summary>
-        /// Builds a report based on the test results and program settings
-        /// </summary>
-        /// <param name="testResult">Report model with the test results</param>
-        private async Task GenerateReport(TestProjectReportModel testResult)
-        {
-            MutationProjectReportModel model = new MutationProjectReportModel();
-            model.TestProjects.Add(testResult);
-
-            IReporter reporter = ReporterFactory.CreateReporter(ProgramSettings.ReportType);
-            byte[] reportBytes = await reporter.CreateReportAsync(model);
-
-            string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
-            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
-            await File.WriteAllBytesAsync(reportFullPath, reportBytes);
+            _progressTracker.LogEndFaultify(_settings.ReportPath);
         }
 
         /// <summary>
@@ -137,12 +121,10 @@ namespace Faultify.Pipeline
         /// </summary>
         /// <param name="mutationTestRuns"></param>
         /// <param name="timeout"></param>
-        /// <param name="dependencyAssemblies"></param>
         /// <param name="testProjectDuplicator"></param>
         private (int, TimeSpan) RunTestRuns(
             ICollection<Dictionary<int, (IMutation, HashSet<string>)>> mutationTestRuns,
             TimeSpan timeout,
-            Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
             ITestProjectDuplicator testProjectDuplicator)
         {
             // Pre mutation test run initializations
@@ -284,7 +266,7 @@ namespace Faultify.Pipeline
                 _progressTracker,
                 testsPerGroup,
                 timedOutGroupsCopy,
-                _testHost,
+                _settings.TestHost,
                 testProjectDuplication);
         }
 
@@ -495,11 +477,11 @@ namespace Faultify.Pipeline
             var model = new MutationProjectReportModel();
             model.TestProjects.Add(testResult);
 
-            var reporter = ReporterFactory.CreateReporter(ProgramSettings.ReporterType);
+            var reporter = ReporterFactory.CreateReporter(_settings.ReporterType);
             byte[] reportBytes = await reporter.CreateReportAsync(model);
 
             string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
-            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
+            string reportFullPath = Path.Combine(_settings.OutputDirectory, reportFileName);
             await File.WriteAllBytesAsync(reportFullPath, reportBytes);
         }
     }
