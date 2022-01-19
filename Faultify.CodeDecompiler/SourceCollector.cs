@@ -21,21 +21,33 @@ namespace Faultify.CodeDecompiler
             ITestProjectDuplication projectDuplication,
             Dictionary<string, AssemblyAnalyzer> assemblyAnalyzers)
         {
-            // First, group mutations by assembly name
-            var orderedMutations =
-                mutations.GroupBy(mutation => mutation.AssemblyName);
-            List<string> sourceSnippets = new List<string>(mutations.Count);
+            // Group mutations together based on their assembly name,
+            // so that we do all mutations for a single assembly 
+            // at the same time.
+            var orderedMutations = 
+                Enumerable.Range(0, mutations.Count()).
+                GroupBy(index => mutations[index].AssemblyName);
+
+            // List to store results in
+            List<string> totalSourceSnippets = new List<string>(mutations.Count);
 
             foreach (var mutationGrouping in orderedMutations)
             {
-                sourceSnippets.AddRange(
-                    CollectSourceForGrouping(
-                        mutationGrouping.ToList(),
-                        projectDuplication,
-                        assemblyAnalyzers));
+                // Get snippets for this group of mutations 
+                var sourceSnippets = CollectSourceForGrouping(
+                    mutationGrouping.Select(index => mutations[index]).ToList(), 
+                    projectDuplication, 
+                    assemblyAnalyzers).ToList();
+                
+                // Add snippets into the result list 
+                int innerIndex = 0;
+                foreach (var index in mutationGrouping) {
+                    totalSourceSnippets[index] = sourceSnippets[innerIndex];
+                    innerIndex++;
+                }
             }
 
-            return sourceSnippets;
+            return totalSourceSnippets;
         }
 
         private static IEnumerable<string> CollectSourceForGrouping(
@@ -81,17 +93,8 @@ namespace Faultify.CodeDecompiler
             foreach (var mutation in mutationGroup)
             {
                 var entityHandle = mutation.MemberEntityHandle;
-                // Return a "no code" result in case the entity handle is null
-                if (entityHandle == null)
-                {
-                    yield return NullDecompiler.CONSTANT_NULL_CODE;
-                }
-                else
-                {
-                    // Cast is now guaranteed not to fail
-                    yield return decompiler.Decompile(
-                        MetadataTokens.EntityHandle((int)entityHandle));
-                }
+                yield return decompiler.Decompile(
+                    MetadataTokens.EntityHandle((int)entityHandle));
             }
         }
     }
