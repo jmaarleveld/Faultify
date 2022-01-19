@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using MC::Mono.Cecil;
 using NLog;
 using Faultify.AssemblyDissection;
 using Faultify.CodeDecompiler;
@@ -22,6 +20,7 @@ using Faultify.MutationSessionRunner;
 using Faultify.MutationSessionScheduler;
 using Faultify.Report;
 using Faultify.Report.Models;
+using Faultify.Report.Reporters;
 using Faultify.TestHostRunner;
 using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
 
@@ -95,7 +94,7 @@ namespace Faultify.Pipeline
             (var mutationCount, TimeSpan allRunsDuration)
                 = RunTestRuns(mutationTestRuns, timeout, dependencyAssemblies, testProjectDuplicator);
 
-            // Do the reporting stuff
+            // Create the report model
             var testProjectName = ModuleDefinition
                 .ReadModule(coverageProject.TestProjectFile.FullFilePath()).Name;
             var testProjectReportModel = new TestProjectReportModel(
@@ -106,9 +105,31 @@ namespace Faultify.Pipeline
             
             _progressTracker.LogEndTestSession(allRunsDuration, _completedRuns,
                 mutationCount, testProjectReportModel.ScorePercentage);
-
+            
             // Cleanup
             testProjectDuplicator.DeleteFolder();
+            
+            // Generate the report
+            _progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
+            await GenerateReport(testProjectReportModel);
+            _progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
+        }
+        
+        /// <summary>
+        /// Builds a report based on the test results and program settings
+        /// </summary>
+        /// <param name="testResult">Report model with the test results</param>
+        private async Task GenerateReport(TestProjectReportModel testResult)
+        {
+            MutationProjectReportModel model = new MutationProjectReportModel();
+            model.TestProjects.Add(testResult);
+
+            IReporter reporter = ReporterFactory.CreateReporter(ProgramSettings.ReportType);
+            byte[] reportBytes = await reporter.CreateReportAsync(model);
+
+            string reportFileName = DateTime.Now.ToString("yy-MM-dd-H-mm") + reporter.FileExtension;
+            string reportFullPath = Path.Combine(ProgramSettings.OutputDirectory, reportFileName);
+            await File.WriteAllBytesAsync(reportFullPath, reportBytes);
         }
 
         /// <summary>
