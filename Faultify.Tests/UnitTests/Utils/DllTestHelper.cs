@@ -130,7 +130,7 @@ namespace Faultify.Tests.UnitTests.Utils
             }
 
             IEnumerable<OpCodeMutation> possibleOperatorMutations =
-                mutator.GenerateMutations(module.Assembly.Name.Name, "type", mutateMethod.Name, mutateMethod, MutationLevel.Detailed, new HashSet<string>());
+                mutator.GenerateMutations(module.Assembly.Name.Name, "type", mutateMethod.Name, mutateMethod, MutationLevel.Detailed, new HashSet<string>(), "memberName");
 
             foreach (OpCodeMutation mutation in possibleOperatorMutations)
             {
@@ -171,7 +171,7 @@ namespace Faultify.Tests.UnitTests.Utils
             }
 
             IEnumerable<VariableMutation> possibleOperatorMutations =
-                mutator.GenerateMutations(module.Assembly.Name.Name, "type", method, mutateMethod, MutationLevel.Detailed, new HashSet<string>());
+                mutator.GenerateMutations(module.Assembly.Name.Name, "type", method, mutateMethod, MutationLevel.Detailed, new HashSet<string>(), "memberName");
 
             foreach (VariableMutation mutation in possibleOperatorMutations)
             {
@@ -199,7 +199,7 @@ namespace Faultify.Tests.UnitTests.Utils
             TMutator mutator = Activator.CreateInstance<TMutator>();
 
             IEnumerable<ConstantMutation> possibleOperatorMutations =
-                mutator.GenerateMutations(module.Assembly.Name.Name,"type", null, field, MutationLevel.Detailed, new HashSet<string>());
+                mutator.GenerateMutations(module.Assembly.Name.Name,"type", null, field, MutationLevel.Detailed, new HashSet<string>(), "memberName");
 
             foreach (ConstantMutation mutation in possibleOperatorMutations)
             {
@@ -227,7 +227,7 @@ namespace Faultify.Tests.UnitTests.Utils
                 .FirstOrDefault(x => x.Name == fieldName);
 
             TMutator mutator = Activator.CreateInstance<TMutator>();
-            ConstantMutation mutation = mutator.GenerateMutations(module.Assembly.Name.Name,"type", null, field, MutationLevel.Detailed, new HashSet<string>()).First();
+            ConstantMutation mutation = mutator.GenerateMutations(module.Assembly.Name.Name,"type", null, field, MutationLevel.Detailed, new HashSet<string>(), "memberName").First();
             mutation.Mutate();
             MemoryStream mutatedBinaryStream = new MemoryStream();
             module.Write(mutatedBinaryStream);
@@ -244,7 +244,7 @@ namespace Faultify.Tests.UnitTests.Utils
                 .FirstOrDefault(x => x.Name == methodName);
 
             TMutator mutator = Activator.CreateInstance<TMutator>();
-            ArrayMutation mutation = mutator.GenerateMutations(module.Assembly.Name.Name,"type",methodName,method, MutationLevel.Detailed, new HashSet<string>()).First();
+            ArrayMutation mutation = mutator.GenerateMutations(module.Assembly.Name.Name,"type",methodName,method, MutationLevel.Detailed, new HashSet<string>(), "memberName").First();
 
             mutation.Mutate();
             MemoryStream mutatedBinaryStream = new MemoryStream();
