@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Faultify.MutationCollector.Analyzers;
+using Faultify.MutationCollector.AssemblyAnalyzers;
 using Faultify.Tests.UnitTests.Utils;
 using NUnit.Framework;
 
@@ -12,7 +12,6 @@ namespace Faultify.Tests.UnitTests
     {
         private readonly string _folder = Path.Combine("UnitTests", "TestSource", "ArrayTarget.cs");
         private readonly string _nameSpace = "Faultify.Tests.UnitTests.TestSource.ArrayTarget";
-
 
         [TestCase("IntArray_Long")]
         [TestCase("UIntArray_Long")]
