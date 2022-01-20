@@ -12,7 +12,7 @@ using Faultify.MutationCollector.Mutation;
 using Faultify.MutationCollector.AssemblyAnalyzers;
 using MC::Mono.Cecil;
 using MC::Mono.Cecil.Cil;
-using MC::Mono.Cecil.Rocks;
+using Mono.Cecil.Rocks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
