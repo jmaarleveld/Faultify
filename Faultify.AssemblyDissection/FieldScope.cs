@@ -55,7 +55,8 @@ namespace Faultify.AssemblyDissection
                 _fieldDefinition,
                 mutationLevel, 
                 excludeGroup, 
-                excludeSingular);
+                excludeSingular,
+                AssemblyQualifiedName);
         }
 
         public IMutation GetEquivalentMutation(IMutation original)

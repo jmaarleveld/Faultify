@@ -87,6 +87,7 @@ namespace Faultify.MutationCollector.Mutation
             int memberEntityHandle);
 
         string Report { get; }
+        public string MemberName { get; }
 
         /// <summary>
         ///     Mutates the the bytecode to its mutated version.

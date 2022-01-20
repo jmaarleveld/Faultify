@@ -14,7 +14,7 @@ namespace Faultify.MutationSessionScheduler
         /// <summary>
         ///     Generates mutation test runs for the mutation test session.
         /// </summary>
-        public IEnumerable<Dictionary<int, IMutation>> GenerateMutationTestRuns(
+        public IEnumerable<Dictionary<int, (IMutation, HashSet<string>)>> GenerateMutationTestRuns(
             IEnumerable<(IMutation, HashSet<string>, int)> testsPerMutation);
     }
 }

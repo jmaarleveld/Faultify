@@ -28,7 +28,7 @@ namespace Faultify.MutationSessionRunner
             Dictionary<int, HashSet<string>> mutationsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
-            TestProjectDuplication testProject
+            ITestProjectDuplication testProject
         );
     }
 }
