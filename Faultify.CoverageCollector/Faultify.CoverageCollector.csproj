@@ -14,9 +14,9 @@
     
     <ItemGroup>
       <PackageReference Include="Buildalyzer" Version="3.2.0" />
-      <PackageReference Include="Mono.Cecil" Version="0.11.3">
+      <Reference Include="Mono.Cecil" Version="0.11.3">
           <Aliases>MC</Aliases>
-      </PackageReference>
+      </Reference>
     </ItemGroup>
 
 </Project>
