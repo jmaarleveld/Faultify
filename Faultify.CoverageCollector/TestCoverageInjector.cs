@@ -1,13 +1,13 @@
-﻿using System;
+﻿extern alias MC;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MethodAttributes = Mono.Cecil.MethodAttributes;
 using NLog;
-using Faultify.TestHostRunner.Results;
+using MC::Mono.Cecil.Cil;
+using MC::Mono.Cecil;
+using MethodAttributes = MC::Mono.Cecil.MethodAttributes;
 
 namespace Faultify.CoverageCollector
 {

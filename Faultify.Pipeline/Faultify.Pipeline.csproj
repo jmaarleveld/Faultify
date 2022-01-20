@@ -2,15 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CommandLineParser" Version="2.8.0" />
-      <PackageReference Include="Mono.Cecil" Version="0.11.3">
+      <Reference Include="Mono.Cecil" Version="0.11.3">
         <Aliases>MC</Aliases>
-      </PackageReference>
+      </Reference>
     </ItemGroup>
     
     <ItemGroup>
