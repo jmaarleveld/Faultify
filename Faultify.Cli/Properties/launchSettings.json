@@ -2,15 +2,7 @@
   "profiles": {
     "Faultify.Cli": {
       "commandName": "Project",
-      "commandLineArgs": "-t  \"D:\\Temporal\\ILSpy\\ICSharpCode.Decompiler.Tests\\ICSharpCode.Decompiler.Tests.csproj\" -f html"
-    },
-    "Benchmark": {
-      "commandName": "Project",
-      "commandLineArgs": "-i  \"D:\\Projects\\rug\\softwareEngineering\\Faultify\\Benchmark\\Faultify.Benchmark.NUnit\\Faultify.Benchmark.NUnit.csproj\" -f html -t nunit"
-    },
-    "ILSpy test": {
-      "commandLineArgs": "-i  \"C:\\Users\\joran\\Documents\\softEng\\ILSpy\\ICSharpCode.Decompiler.Tests\\ICSharpCode.Decompiler.Tests.csproj\" -f html",
-      "commandName": "Project"
+      "commandLineArgs": "-i ..\\..\\..\\..\\Benchmark\\Faultify.Benchmark.NUnit\\Faultify.Benchmark.NUnit.csproj -t NUnit -f html"
     }
   }
 }
