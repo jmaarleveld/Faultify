@@ -380,7 +380,10 @@ namespace Faultify.Pipeline
         }
 
         /// <summary>
-        ///     Filter TestOutcomes, so only one TestOutcome per mutation ends up in the results.
+        ///     A single mutation can have multiple tests, and therefore multiple TestOutcomes.
+        ///     However, the results should only show one TestOutcome. This method will make sure
+        ///     only one TestOutcome per mutation ends up in the result. If at least one of the
+        ///     tests for a mutation was killed, the TestOutcome will also be: killed.
         /// </summary>
         /// <param name="testOutcomes"></param>
         /// <param name="mutationTestRun"></param>
