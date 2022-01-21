@@ -364,3 +364,5 @@ FodyWeavers.xsd
 Faultify.sln.DotSettings.user
 
 .idea/
+
+.sonarqube/

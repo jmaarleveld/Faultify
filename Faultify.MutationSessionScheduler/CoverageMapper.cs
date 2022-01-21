@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Faultify.MutationCollector.Mutation;
+using NLog.Fluent;
+using NLog;
 
 namespace Faultify.MutationSessionScheduler
 {
@@ -11,6 +13,7 @@ namespace Faultify.MutationSessionScheduler
     /// </summary>
     public class CoverageMapper
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         /// <summary>
         ///     Map test coverage to mutations.
         ///
@@ -31,25 +34,37 @@ namespace Faultify.MutationSessionScheduler
             IEnumerable<IEnumerable<IMutation>> mutations)
         {
             int currentMutationGroupId = 1;
-            
+            Logger.Debug("MapCoverageToMutations");
             foreach (var mutationGroup in mutations) {
                 HashSet<string>? methods = null;
                 
-                foreach (var mutation in mutationGroup) {
-                    if (mutation.MemberEntityHandle == null) {
-                        // TODO: log a warning?
-                        // TODO: probably should be handled somehow. 
-                        // TODO: However, this case was never handled (mutations ignored)
-                        continue;
-                    }
+                foreach (var mutation in mutationGroup)
+                {
+                    Logger.Debug(mutation);
                     if (methods == null) {
-                        KeyValuePair<Tuple<string, int>, HashSet<string>> pair = testsPerMethod.FirstOrDefault(pair => 
-                            pair.Key.Item1 == mutation.AssemblyName && pair.Key
-                            .Item2 == mutation.MemberEntityHandle);
-                        methods = pair.Value;
+                        try
+                        {
+                            if (mutation.ParentMethodEntityHandle == null)
+                            {
+                                throw new NullReferenceException(
+                                    "ParentMethodEntityHandle of the mutation was null");
+                            }
+                            KeyValuePair<Tuple<string, int>, HashSet<string>> pair
+                                = testsPerMethod.FirstOrDefault(pair =>
+                                    pair.Key.Item1 == mutation.AssemblyName && pair.Key
+                                        .Item2 == mutation.ParentMethodEntityHandle);
+                            methods = pair.Value;
+                        }
+                        catch (NullReferenceException e)
+                        {
+                            Logger.Error(e.Message);
+                        }
                     }
 
-                    yield return (mutation, methods, currentMutationGroupId);
+                    if (methods != null)
+                    {
+                        yield return (mutation, methods, currentMutationGroupId);
+                    }
                 }
                 
                 currentMutationGroupId++;

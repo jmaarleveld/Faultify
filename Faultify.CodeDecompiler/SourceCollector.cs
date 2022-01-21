@@ -29,7 +29,7 @@ namespace Faultify.CodeDecompiler
                 GroupBy(index => mutations[index].AssemblyName);
 
             // List to store results in
-            List<string> totalSourceSnippets = new List<string>(mutations.Count);
+            string[] totalSourceSnippets = new string[mutations.Count];
 
             foreach (var mutationGrouping in orderedMutations)
             {

@@ -17,11 +17,9 @@ namespace Faultify.TestHostRunner
         /// <param name="testAssemblyPath">The path of the tested project</param>
         /// <param name="timeOut">The timeout for the test hosts</param>
         /// <param name="testHost">Type of testHost to instantiate</param>
-        /// <param name="testHostLogger">Logger class</param>
         /// <returns></returns>
         public static ITestHostRunner CreateTestRunner(string testAssemblyPath, TimeSpan timeOut, TestHost testHost)
         {
-            ITestHostRunner testRunner;
             Logger.Info("Creating test runner");
             return testHost switch
             {

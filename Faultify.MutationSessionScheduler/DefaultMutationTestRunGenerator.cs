@@ -22,8 +22,13 @@ namespace Faultify.MutationSessionScheduler
 
             IEnumerable<IList<(IMutation, int)>> testRunGroups
                 = GetTestGroups(testsPerMutationList.ToList());
-            var testsPerGroup
-                = testsPerMutationList.ToDictionary(triple => triple.Item3, triple => triple.Item2);
+
+            var testsPerGroup = new Dictionary<int, HashSet<string>>();
+            foreach (var (_, tests, groupId) in testsPerMutationList)
+            {
+                if (testsPerGroup.ContainsKey(groupId)) continue;
+                testsPerGroup[groupId] = tests;
+            }
 
             foreach (var testRunGroup in testRunGroups)
             {

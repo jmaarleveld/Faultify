@@ -29,7 +29,7 @@ namespace Faultify.CoverageCollector
         /// </summary>
         /// <param name="coverageProject"></param>
         /// <param name="dependencyAssemblies"></param>
-        /// <param name="projectInfo"></param>
+        /// <param name="testHost"></param>
         /// <param name="timeoutSetting"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
@@ -37,12 +37,11 @@ namespace Faultify.CoverageCollector
             GetTestsPerMutation(
                 ITestProjectDuplication coverageProject,
                 Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
-                IProjectInfo projectInfo,
+                TestHost testHost,
                 TimeSpan timeoutSetting,
                 CancellationToken cancellationToken = default)
         {
             // Rewrites assemblies
-            TestHost testHost = GetTestHost(projectInfo);
             PrepareAssembliesForCodeCoverage(coverageProject, testHost, dependencyAssemblies);
 
             Stopwatch coverageTimer = new Stopwatch();

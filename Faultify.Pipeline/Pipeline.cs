@@ -20,6 +20,7 @@ using Faultify.MutationSessionRunner;
 using Faultify.MutationSessionScheduler;
 using Faultify.Report;
 using Faultify.Report.Models;
+using NLog.Fluent;
 using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
 
 namespace Faultify.Pipeline
@@ -54,7 +55,7 @@ namespace Faultify.Pipeline
         ///     This should be called to start the pipeline.
         /// </summary>
         /// <param name="testProjectPath"></param>
-        public async void Start(string testProjectPath)
+        public async Task Start(string testProjectPath)
         {
             // Build the project
             IProjectInfo projectInfo = await BuildProject(testProjectPath);
@@ -69,7 +70,7 @@ namespace Faultify.Pipeline
                 = await coverageCollector.GetTestsPerMutation(
                     coverageProject,
                     dependencyAssemblies,
-                    projectInfo,
+                    _settings.TestHost,
                     _settings.TimeOut,
                     CancellationToken.None);
 
@@ -239,6 +240,12 @@ namespace Faultify.Pipeline
             Dictionary<int, (IMutation, HashSet<string>)> testRunData,
             Dictionary<string, AssemblyAnalyzer> dependencyAssemblies)
         {
+            Logger.Debug("DEPENDENCYASSEMBLIES");
+            foreach (var d in dependencyAssemblies.Keys)
+            {
+                Logger.Debug(d);
+            }
+            
             var mutationTestRun = testRunData.ToDictionary(
                 pair => pair.Key,
                 pair => (
@@ -454,7 +461,7 @@ namespace Faultify.Pipeline
 
                     if (loadProjectReferenceModel.Types.Count > 0)
                     {
-                        dependencyAssemblies[projectReferencePath.FullFilePath()]
+                        dependencyAssemblies[loadProjectReferenceModel.Module.Assembly.Name.Name]
                             = loadProjectReferenceModel;
                     }
                 }

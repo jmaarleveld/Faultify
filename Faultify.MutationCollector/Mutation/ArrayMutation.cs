@@ -68,6 +68,8 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         public int MemberEntityHandle { get; }
         
+        public int? ParentMethodEntityHandle { get; }
+        
         /********************************************************************************
          * Methods
          */
@@ -81,7 +83,8 @@ namespace Faultify.MutationCollector.Mutation
             int memberEntityHandle,
             string typeName,
             string methodName,
-            string memberName)
+            string memberName,
+            int? parentMethodEntityHandle)
         {
             _arrayMutationStrategy = mutationStrategy;
             Original = methodDef;
@@ -95,6 +98,7 @@ namespace Faultify.MutationCollector.Mutation
             MethodName = methodName;
             TypeName = typeName;
             MemberName = memberName;
+            ParentMethodEntityHandle = parentMethodEntityHandle;
         }
 
         /// <summary>
@@ -107,10 +111,12 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent member</param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>new, equivalent mutation</returns>
         public IMutation GetEquivalentMutation(
             IMemberDefinition definition,
-            int memberEntityHandle)
+            int memberEntityHandle,
+            int? parentMethodEntityHandle)
         {
             var methodDefinition = (MethodDefinition) definition;
             return new ArrayMutation(
@@ -122,7 +128,8 @@ namespace Faultify.MutationCollector.Mutation
                 memberEntityHandle,
                 TypeName,
                 MethodName,
-                MemberName);
+                MemberName,
+                parentMethodEntityHandle);
         }
 
         public string MemberName { get; }
