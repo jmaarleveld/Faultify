@@ -64,6 +64,15 @@ namespace Faultify.Pipeline
             var (coverageProject, dependencyAssemblies, testProjectDuplicator)
                 = DuplicateTestProject(projectInfo);
 
+            // Collect mutations for each assembly
+            // Collect mutation before bytecode is inserted
+            // Call ToList() to prevent lazy evaluation
+            var mutations = CollectMutations(
+                dependencyAssemblies,
+                _settings.MutationLevel,
+                _settings.ExcludeMutationGroups.ToHashSet(),
+                _settings.ExcludeSingleMutations).ToList().Select(x => x.ToList());
+
             // Obtain mapping of a method to the tests that cover that method
             _progressTracker.LogBeginCoverage();
             (Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod, TimeSpan timeout)
@@ -73,13 +82,6 @@ namespace Faultify.Pipeline
                     _settings.TestHost,
                     _settings.TimeOut,
                     CancellationToken.None);
-
-            // Collect mutations for each assembly
-            var mutations = CollectMutations(
-                dependencyAssemblies,
-                _settings.MutationLevel, 
-                _settings.ExcludeMutationGroups.ToHashSet(), 
-                _settings.ExcludeSingleMutations);
 
             // Map the testsPerMethod with the mutations
             var coveragePerMutation
@@ -104,13 +106,13 @@ namespace Faultify.Pipeline
                 _reportData,
                 _totalRunsCount,
                 allRunsDuration);
-            
+
             _progressTracker.LogEndTestSession(allRunsDuration, _completedRuns,
                 mutationCount, testProjectReportModel.ScorePercentage);
-            
+
             // Cleanup
             testProjectDuplicator.DeleteFolder();
-            
+
             // Generate the report
             _progressTracker.LogBeginReportBuilding(_settings.ReportType, _settings.ReportPath);
             await GenerateReport(testProjectReportModel);
@@ -171,15 +173,15 @@ namespace Faultify.Pipeline
             // Create the project to work in
             ITestProjectDuplication testProjectDuplication
                 = testProjectDuplicator.MakeCopy(runId + 2);
-            
+
             // The old assemblies were bound to the first project;
             // Create assemblies from the new project bound to this copy
             Dictionary<string, AssemblyAnalyzer> dependencyAssemblies = LoadInMemory(
                 testProjectDuplication);
-            
+
             // Get mutations which are also bound to the new copy
             var mutationTestRun = GetMutationsForDuplication(
-                testRunData, 
+                testRunData,
                 dependencyAssemblies);
 
             try
@@ -245,12 +247,13 @@ namespace Faultify.Pipeline
             {
                 Logger.Debug(d);
             }
-            
+
             var mutationTestRun = testRunData.ToDictionary(
                 pair => pair.Key,
                 pair => (
                     // Lookup the assembly analyzer and get a new mutation 
-                    dependencyAssemblies[pair.Value.Item1.AssemblyName].GetEquivalentMutation(pair.Value.Item1), 
+                    dependencyAssemblies[pair.Value.Item1.AssemblyName]
+                        .GetEquivalentMutation(pair.Value.Item1),
                     pair.Value.Item2
                 )
             );
@@ -367,7 +370,7 @@ namespace Faultify.Pipeline
                             testName,
                             testOutcomes[testName],
                             tuple.First,
-                            tuple.Second, 
+                            tuple.Second,
                             tuple.second,
                             testRunDuration));
                 }
@@ -474,7 +477,7 @@ namespace Faultify.Pipeline
 
             return dependencyAssemblies;
         }
-        
+
         /// <summary>
         /// Builds a report based on the test results and program settings
         /// </summary>
