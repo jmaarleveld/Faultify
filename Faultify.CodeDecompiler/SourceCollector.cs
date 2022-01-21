@@ -29,7 +29,7 @@ namespace Faultify.CodeDecompiler
                 GroupBy(index => mutations[index].AssemblyName);
 
             // List to store results in
-            List<string> totalSourceSnippets = new List<string>(mutations.Count);
+            string[] totalSourceSnippets = new string[mutations.Count];
 
             foreach (var mutationGrouping in orderedMutations)
             {
@@ -92,9 +92,16 @@ namespace Faultify.CodeDecompiler
             // Get the source code for the mutations 
             foreach (var mutation in mutationGroup)
             {
-                var entityHandle = mutation.MemberEntityHandle;
-                yield return decompiler.Decompile(
-                    MetadataTokens.EntityHandle((int)entityHandle));
+                var entityHandle = mutation.ParentMethodEntityHandle;
+                if (entityHandle == null)
+                {
+                    yield return NullDecompiler.CONSTANT_NULL_CODE;
+                }
+                else
+                {
+                    yield return decompiler.Decompile(
+                        MetadataTokens.EntityHandle((int)entityHandle));
+                }
             }
         }
     }

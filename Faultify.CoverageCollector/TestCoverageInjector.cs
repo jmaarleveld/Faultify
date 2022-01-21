@@ -1,9 +1,9 @@
 ﻿extern alias MC;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Faultify.TestHostRunner.Results;
 using NLog;
 using MC::Mono.Cecil.Cil;
 using MC::Mono.Cecil;
@@ -152,7 +152,7 @@ namespace Faultify.CoverageCollector
         public void InjectAssemblyReferences(ModuleDefinition module)
         {
             // Find the references for `Faultify.TestRunner.Shared` and copy it over to the module directory and add it as reference.
-            Assembly assembly = typeof(Dictionary<string, List<Tuple<string, int>>>).Assembly;
+            Assembly assembly = typeof(ResultsUtils).Assembly;
 
             string dest = Path.Combine(Path.GetDirectoryName(module.FileName), Path.GetFileName(assembly.Location));
             File.Copy(assembly.Location, dest, true);
@@ -207,7 +207,7 @@ namespace Faultify.CoverageCollector
         {
             module.AssemblyReferences.Add(_registerTestCoverage.Module.Assembly.Name);
             module.AssemblyReferences.Add(
-                _registerTargetCoverage.Module.AssemblyReferences.First(x => x.Name == "Faultify.TestRunner.Shared"));
+                _registerTargetCoverage.Module.AssemblyReferences.First(x => x.Name == "Faultify.TestHostRunner"));
 
             foreach (TypeDefinition typeDefinition in module.Types.Where(x => !x.Name.StartsWith("<")))
             foreach (MethodDefinition method in typeDefinition.Methods

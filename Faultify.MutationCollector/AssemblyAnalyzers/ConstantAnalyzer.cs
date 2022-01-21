@@ -29,6 +29,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
             string memberName,
+            int? parentMethodEntityHandle,
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
@@ -51,7 +52,8 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     methodName == null ? field.Name : null,
                         methodName,
                     methodName == null ? null : field.Name,
-                    memberName)
+                    memberName,
+                    parentMethodEntityHandle)
                 );
             }
 

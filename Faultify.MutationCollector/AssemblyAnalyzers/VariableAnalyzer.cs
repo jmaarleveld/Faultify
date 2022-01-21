@@ -31,6 +31,7 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             MutationLevel mutationLevel,
             HashSet<string> exclusions,
             string memberName,
+            int? parentMethodEntityHandle,
             IDictionary<Instruction, SequencePoint>? debug = null
         )
         {
@@ -39,9 +40,10 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
             }
             List<VariableMutation> mutations = new List<VariableMutation>();
 
-            int index = 0;
+            int index = -1;
             foreach (Instruction instruction in method.Body.Instructions)
             {
+                index++;
                 // Booleans (0,1) or number literals are loaded on the evaluation stack
                 // with 'ldc_...' and popped of with 'stloc'.
                 // Therefore if there is an 'ldc' instruction followed by
@@ -76,7 +78,8 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                             entityHandle,
                             typeName,
                             methodName,
-                            memberName);
+                            memberName,
+                            parentMethodEntityHandle);
                         mutations.Add(mutation);
                     }
                 }
@@ -84,8 +87,6 @@ namespace Faultify.MutationCollector.AssemblyAnalyzers
                     // Might not be necessary anymore as casting is more robust.
                     Logger.Debug(e, $"Failed to get the type of {instruction.Operand}");
                 }
-
-                index++;
             }
 
             return mutations;

@@ -16,7 +16,6 @@ namespace Faultify.AssemblyDissection
     /// </summary>
     public class MethodScope : IMutationProvider, IMemberScope
     {
-       
         /// <summary>
         ///     Underlying Mono.Cecil TypeDefinition.
         /// </summary>
@@ -42,6 +41,8 @@ namespace Faultify.AssemblyDissection
                 OfType<FieldReference>().
                 Select(x => x.Resolve())
                 .ToDictionary(x => x.Name, x => x);
+
+            MethodDefinition.Body?.SimplifyMacros();
         }
 
         public int IntHandle => MethodDefinition.MetadataToken.ToInt32();
@@ -71,8 +72,6 @@ namespace Faultify.AssemblyDissection
                 return new List<IList<IMutation>>();
             }
 
-            MethodDefinition.Body.SimplifyMacros();
-            
             // Get all mutations in the method body 
             var methodMutations = GetMethodMutations(
                 mutationLevel,
@@ -103,7 +102,8 @@ namespace Faultify.AssemblyDissection
                     mutationLevel, 
                     excludeGroup, 
                     excludeSingular,
-                    AssemblyQualifiedName);
+                    AssemblyQualifiedName,
+                    IntHandle);
         }
 
         /// <summary>
@@ -126,7 +126,8 @@ namespace Faultify.AssemblyDissection
                     mutationLevel,
                     excludeGroup,
                     excludeSingular,
-                    AssemblyQualifiedName);
+                    AssemblyQualifiedName,
+                    IntHandle);
                 fieldMutationLists.Add(mutations);
             }
             // Flatten result 
@@ -139,11 +140,13 @@ namespace Faultify.AssemblyDissection
                 var field = Fields[original.FieldName];
                 return original.GetEquivalentMutation(
                     field,
-                    field.MetadataToken.ToInt32());
+                    field.MetadataToken.ToInt32(),
+                    IntHandle);
             }
 
             return original.GetEquivalentMutation(
                 MethodDefinition,
+                IntHandle,
                 IntHandle);
         }
     }

@@ -34,10 +34,11 @@ namespace Faultify.MutationCollector {
         /// <param name="typeName">Name of the containing class</param>
         /// <param name="methodName">If relevant, the name of the containing method</param>
         /// <param name="field">Field definition being mutated</param>
-        /// <param name="level">the mutation leven</param>
+        /// <param name="level">the mutation level</param>
         /// <param name="excludedAnalyzers">excluded analyzers</param>
         /// <param name="excludedCategories">excluded categories of mutations</param>
-        /// <param name="memberName">excluded categories of mutations</param>
+        /// <param name="memberName"></param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>
         ///     enumerable of enumerables, where every inner enumerable contains a
         ///     group of mutations found by the same analyzer which will be
@@ -51,7 +52,8 @@ namespace Faultify.MutationCollector {
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
             HashSet<string> excludedCategories,
-            string memberName)
+            string memberName,
+            int? parentMethodEntityHandle)
         {
             IEnumerable<IEnumerable<IMutation> > mutationGroups =
                 from analyzer in FieldAnalyzers 
@@ -63,7 +65,8 @@ namespace Faultify.MutationCollector {
                     field,
                     level, 
                     excludedCategories,
-                    memberName) 
+                    memberName,
+                    parentMethodEntityHandle) 
                 into mutations 
                 where mutations.Any() 
                 select mutations;
@@ -79,7 +82,8 @@ namespace Faultify.MutationCollector {
         /// <param name="level">the mutation leven</param>
         /// <param name="excludedAnalyzers">excluded analyzers</param>
         /// <param name="excludedCategories">excluded categories of mutations</param>
-        /// <param name="memberName">excluded categories of mutations</param>
+        /// <param name="memberName"></param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>
         ///     enumerable of enumerables, where every inner enumerable contains a
         ///     group of mutations found by the same analyzer which will be
@@ -92,7 +96,8 @@ namespace Faultify.MutationCollector {
             MutationLevel level,
             HashSet<string> excludedAnalyzers,
             HashSet<string> excludedCategories,
-            string memberName)
+            string memberName,
+            int? parentMethodEntityHandle)
         {
             IEnumerable<IEnumerable<IMutation> > mutationGroups =
                 from 
@@ -105,7 +110,8 @@ namespace Faultify.MutationCollector {
                     method, 
                     level, 
                     excludedCategories,
-                    memberName) 
+                    memberName,
+                    parentMethodEntityHandle) 
                 into mutations 
                 where mutations.Any() 
                 select mutations;

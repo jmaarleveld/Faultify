@@ -17,7 +17,8 @@ namespace Faultify.MutationCollector.Mutation
             int memberEntityHandle,
             string typeName,
             string methodName,
-            string memberName)
+            string memberName,
+            int? parentMethodEntityHandle)
         {
             Instruction = instruction;
             InstructionIndex = instructionIndex;
@@ -36,6 +37,7 @@ namespace Faultify.MutationCollector.Mutation
             FieldName = null;
             ClassFieldName = null;
             MemberName = memberName;
+            ParentMethodEntityHandle = parentMethodEntityHandle;
         }
         
         /********************************************************************************
@@ -92,6 +94,8 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         public int MemberEntityHandle { get; }
         
+        public int? ParentMethodEntityHandle { get; }
+        
         /********************************************************************************
          * Mutation and Reporting Functionality 
          */
@@ -128,13 +132,15 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent member</param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>new, equivalent mutation</returns>
         public IMutation GetEquivalentMutation(
             IMemberDefinition definition,
-            int memberEntityHandle)
+            int memberEntityHandle,
+            int? parentMethodEntityHandle)
         {
             var methodDefinition = (MethodDefinition) definition;
-            var instruction = methodDefinition.Body.Instructions[InstructionIndex];
+            var instruction = methodDefinition.Body.Instructions[InstructionIndex].Previous;
             return new VariableMutation(
                 instruction,
                 InstructionIndex,
@@ -146,7 +152,8 @@ namespace Faultify.MutationCollector.Mutation
                 memberEntityHandle,
                 TypeName,
                 MethodName,
-                MemberName);
+                MemberName,
+                parentMethodEntityHandle);
         }
         
         public string MemberName { get; }

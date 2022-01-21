@@ -5,6 +5,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Faultify.MutationCollector;
 using Faultify.MutationCollector.Mutation;
+using NLog;
 using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace Faultify.AssemblyDissection
@@ -14,7 +15,7 @@ namespace Faultify.AssemblyDissection
     /// </summary>
     public class TypeScope : IMemberScope, IMutationProvider
     {
-
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public TypeScope(TypeDefinition typeDefinition, string assemblyName)
         {
             TypeDefinition = typeDefinition;
@@ -57,9 +58,14 @@ namespace Faultify.AssemblyDissection
             HashSet<string> excludeGroup,
             HashSet<string> excludeSingular)
         {
-            var mutations = 
-                from field in Fields.Values
-                select field.AllMutations(mutationLevel, excludeGroup, excludeSingular);
+            // var mutations = 
+            //     from field in Fields.Values
+            //     select field.AllMutations(mutationLevel, excludeGroup, excludeSingular);
+            Logger.Warn("TypeScope Field mutations are ignored");
+
+            var mutations =
+                from method in Methods.Values
+                select method.AllMutations(mutationLevel, excludeGroup, excludeSingular);
             return mutations.SelectMany(x => x);
         }
 

@@ -66,6 +66,8 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         int MemberEntityHandle { get; }
         
+        int? ParentMethodEntityHandle { get; }
+        
         /********************************************************************************
          * Mutation and Reporting Functionality 
          */
@@ -78,13 +80,14 @@ namespace Faultify.MutationCollector.Mutation
         ///     to avoid needing to generate them all again for other copies,
         ///     this method allows making a copy for a specific copy.
         /// </summary>
-        /// <param name="original">original mutation</param>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent method</param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>new, equivalent mutation</returns>
         IMutation GetEquivalentMutation(
             IMemberDefinition definition,
-            int memberEntityHandle);
+            int memberEntityHandle,
+            int? parentMethodEntityHandle);
 
         string Report { get; }
         public string MemberName { get; }

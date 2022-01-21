@@ -19,7 +19,8 @@ namespace Faultify.MutationCollector.Mutation
             string? classFieldName,
             string? methodName,
             string? fieldName,
-            string memberName)
+            string memberName,
+            int? parentMethodEntityHandle)
         {
             Name = field.Name;
             Original = field.Constant;
@@ -35,6 +36,7 @@ namespace Faultify.MutationCollector.Mutation
             MethodName = methodName;
             FieldName = fieldName;
             MemberName = memberName;
+            ParentMethodEntityHandle = parentMethodEntityHandle;
         }
         
         /********************************************************************************
@@ -91,6 +93,8 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         public int MemberEntityHandle { get; }
         
+        public int? ParentMethodEntityHandle { get; }
+        
         /********************************************************************************
          * Mutation and Reporting Functionality 
          */
@@ -127,10 +131,12 @@ namespace Faultify.MutationCollector.Mutation
         /// </summary>
         /// <param name="definition">field definition in the copy</param>
         /// <param name="memberEntityHandle">entity handle of parent member</param>
+        /// <param name="parentMethodEntityHandle"></param>
         /// <returns>new, equivalent mutation</returns>
         public IMutation GetEquivalentMutation(
             IMemberDefinition definition,
-            int memberEntityHandle)
+            int memberEntityHandle,
+            int? parentMethodEntityHandle)
         {
             var fieldDefinition = (FieldDefinition) definition;
             return new ConstantMutation(
@@ -144,7 +150,8 @@ namespace Faultify.MutationCollector.Mutation
                 ClassFieldName,
                 MethodName,
                 FieldName,
-                MemberName);
+                MemberName,
+                parentMethodEntityHandle);
         }
         
         public string MemberName { get; }

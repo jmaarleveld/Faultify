@@ -56,14 +56,16 @@ namespace Faultify.AssemblyDissection
                 mutationLevel, 
                 excludeGroup, 
                 excludeSingular,
-                AssemblyQualifiedName);
+                AssemblyQualifiedName,
+                null);
         }
 
         public IMutation GetEquivalentMutation(IMutation original)
         {
             return original.GetEquivalentMutation(
                 _fieldDefinition, 
-                _fieldDefinition.MetadataToken.ToInt32());
+                _fieldDefinition.MetadataToken.ToInt32(),
+                null);
         }
     }
 }
