@@ -81,7 +81,7 @@ namespace Faultify.Pipeline
                     _settings.TestHost,
                     _settings.TimeOut,
                     CancellationToken.None);
-            
+
             Logger.Info("Freeing test project");
             coverageProject.MarkAsFree();
 
@@ -350,8 +350,10 @@ namespace Faultify.Pipeline
             IEnumerable<string> mutatedSourceCode,
             TimeSpan testRunDuration)
         {
-            var coupledTestOutcomes
+            var reportDataList
                 = new List<ReportData>();
+
+            var filteredTestOutcomes = FilterDuplicateTestOutcomes(testOutcomes, mutationTestRun);
 
             var coupledSourceCode = mutations.Zip(originalSourceCode)
                 .Zip(mutatedSourceCode, (first, second) => (first.First, first.Second, second));
@@ -361,10 +363,12 @@ namespace Faultify.Pipeline
                 var pair = mutationTestRun.First(pair => pair.Value.Item1 == tuple.First);
                 foreach (var testName in pair.Value.Item2)
                 {
-                    coupledTestOutcomes.Add(
+                    // some test names are filtered out now, so check needed
+                    if (!filteredTestOutcomes.ContainsKey(testName)) continue;
+                    reportDataList.Add(
                         new ReportData(
                             testName,
-                            testOutcomes[testName],
+                            filteredTestOutcomes[testName],
                             tuple.First,
                             tuple.Second,
                             tuple.second,
@@ -372,7 +376,44 @@ namespace Faultify.Pipeline
                 }
             }
 
-            return coupledTestOutcomes;
+            return reportDataList;
+        }
+
+        /// <summary>
+        ///     A single mutation can have multiple tests, and therefore multiple TestOutcomes.
+        ///     However, the results should only show one TestOutcome. This method will make sure
+        ///     only one TestOutcome per mutation ends up in the result. If at least one of the
+        ///     tests for a mutation was killed, the TestOutcome will also be: killed.
+        /// </summary>
+        /// <param name="testOutcomes"></param>
+        /// <param name="mutationTestRun"></param>
+        /// <returns></returns>
+        private static Dictionary<string, TestOutcome> FilterDuplicateTestOutcomes(
+            Dictionary<string, TestOutcome> testOutcomes,
+            Dictionary<int, (IMutation, HashSet<string>)> mutationTestRun)
+        {
+            Dictionary<string, TestOutcome> filteredTestOutcomes
+                = new Dictionary<string, TestOutcome>();
+
+            foreach (var (_, tests) in mutationTestRun.Values)
+            {
+                string? currentTest = null;
+                TestOutcome currentTestOutcome = TestOutcome.Passed;
+
+                foreach (var test in tests.Where(test =>
+                    testOutcomes.ContainsKey(test) && currentTestOutcome == TestOutcome.Passed))
+                {
+                    currentTest = test;
+                    currentTestOutcome = testOutcomes[test];
+                }
+
+                if (currentTest != null)
+                {
+                    filteredTestOutcomes[currentTest] = currentTestOutcome;
+                }
+            }
+
+            return filteredTestOutcomes;
         }
 
         private static IEnumerable<IEnumerable<IMutation>> CollectMutations(
