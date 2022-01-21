@@ -76,11 +76,14 @@ namespace Faultify.Pipeline
             _progressTracker.LogBeginCoverage();
             (Dictionary<Tuple<string, int>, HashSet<string>> testsPerMethod, TimeSpan timeout)
                 = await coverageCollector.GetTestsPerMutation(
-                    coverageProject,
+                    coverageProject.TestProjectFile.FullFilePath(),
                     dependencyAssemblies,
                     _settings.TestHost,
                     _settings.TimeOut,
                     CancellationToken.None);
+            
+            Logger.Info("Freeing test project");
+            coverageProject.MarkAsFree();
 
             // Map the testsPerMethod with the mutations
             var coveragePerMutation

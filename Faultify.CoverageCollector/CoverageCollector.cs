@@ -5,17 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Faultify.AssemblyDissection;
-using Faultify.ProjectBuilder;
 using Faultify.TestHostRunner;
 using Faultify.TestHostRunner.Results;
 using Faultify.TestHostRunner.TestHostRunners;
-using Faultify.ProjectDuplicator;
 using MC::Mono.Cecil;
 
 namespace Faultify.CoverageCollector
@@ -27,7 +23,7 @@ namespace Faultify.CoverageCollector
         /// <summary>
         ///     This maps a method to all the tests that cover that method.
         /// </summary>
-        /// <param name="coverageProject"></param>
+        /// <param name="coverageProjectFullFilePath"></param>
         /// <param name="dependencyAssemblies"></param>
         /// <param name="testHost"></param>
         /// <param name="timeoutSetting"></param>
@@ -35,19 +31,20 @@ namespace Faultify.CoverageCollector
         /// <returns></returns>
         public static async Task<Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>>
             GetTestsPerMutation(
-                ITestProjectDuplication coverageProject,
+                string coverageProjectFullFilePath,
                 Dictionary<string, AssemblyAnalyzer> dependencyAssemblies,
                 TestHost testHost,
                 TimeSpan timeoutSetting,
                 CancellationToken cancellationToken = default)
         {
             // Rewrites assemblies
-            PrepareAssembliesForCodeCoverage(coverageProject, testHost, dependencyAssemblies);
+            PrepareAssembliesForCodeCoverage(coverageProjectFullFilePath, testHost
+                , dependencyAssemblies);
 
             Stopwatch coverageTimer = new Stopwatch();
             coverageTimer.Start();
             Dictionary<string, List<Tuple<string, int>>>? coverage =
-                await RunCoverage(coverageProject.TestProjectFile.FullFilePath(), testHost
+                await RunCoverage(coverageProjectFullFilePath, testHost
                     , cancellationToken);
             coverageTimer.Stop();
             if (coverage == null)
@@ -62,9 +59,6 @@ namespace Faultify.CoverageCollector
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            Logger.Info("Freeing test project");
-            coverageProject.MarkAsFree();
-
             // Start test session.
             var testsPerMutation = GroupMutationsWithTests(coverage);
             return new Tuple<Dictionary<Tuple<string, int>, HashSet<string>>, TimeSpan>(
@@ -76,16 +70,16 @@ namespace Faultify.CoverageCollector
         ///     This code that is injected will register calls to methods/tests.
         ///     Those calls determine what tests cover which methods.
         /// </summary>
-        /// <param name="coverageProject"></param>
+        /// <param name="coverageProjectFullFilePath"></param>
         /// <param name="testHost"></param>
         /// <param name="dependencyAssemblies"></param>
         private static void PrepareAssembliesForCodeCoverage(
-            ITestProjectDuplication coverageProject, TestHost testHost
+            string coverageProjectFullFilePath, TestHost testHost
             , Dictionary<string, AssemblyAnalyzer> dependencyAssemblies)
         {
             Logger.Info("Preparing assemblies for code coverage");
             ModuleDefinition testModule
-                = ModuleDefinition.ReadModule(coverageProject.TestProjectFile.FullFilePath());
+                = ModuleDefinition.ReadModule(coverageProjectFullFilePath);
 
             TestCoverageInjector.Instance.InjectTestCoverage(testModule);
             TestCoverageInjector.Instance.InjectModuleInit(testModule);
