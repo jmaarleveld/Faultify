@@ -1,3 +1,5 @@
+![Failed to load build status. Maybe the repo name must be updated?](https://github.com/jmaarleveld/Faultify/actions/workflows/dotnet.yml/badge.svg)
+
 <h1 align="center"><img width="500" src="docs/Windesheim_docs/full-logo.png" /></h1>
 
 ## Byte Code Dotnet Mutation Utility
