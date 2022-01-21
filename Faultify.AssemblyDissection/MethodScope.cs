@@ -6,7 +6,6 @@ using Faultify.MutationCollector;
 using Faultify.MutationCollector.Mutation;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
-using NLog;
 using FieldDefinition = Mono.Cecil.FieldDefinition;
 using MethodDefinition = Mono.Cecil.MethodDefinition;
 
@@ -17,7 +16,6 @@ namespace Faultify.AssemblyDissection
     /// </summary>
     public class MethodScope : IMutationProvider, IMemberScope
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         /// <summary>
         ///     Underlying Mono.Cecil TypeDefinition.
         /// </summary>
@@ -45,8 +43,6 @@ namespace Faultify.AssemblyDissection
                 .ToDictionary(x => x.Name, x => x);
 
             MethodDefinition.Body?.SimplifyMacros();
-
-            Logger.Debug(IntHandle);
         }
 
         public int IntHandle => MethodDefinition.MetadataToken.ToInt32();

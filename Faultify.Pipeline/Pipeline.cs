@@ -20,7 +20,6 @@ using Faultify.MutationSessionRunner;
 using Faultify.MutationSessionScheduler;
 using Faultify.Report;
 using Faultify.Report.Models;
-using NLog.Fluent;
 using ModuleDefinition = MC::Mono.Cecil.ModuleDefinition;
 
 namespace Faultify.Pipeline
@@ -242,12 +241,6 @@ namespace Faultify.Pipeline
             Dictionary<int, (IMutation, HashSet<string>)> testRunData,
             Dictionary<string, AssemblyAnalyzer> dependencyAssemblies)
         {
-            Logger.Debug("DEPENDENCYASSEMBLIES");
-            foreach (var d in dependencyAssemblies.Keys)
-            {
-                Logger.Debug(d);
-            }
-
             var mutationTestRun = testRunData.ToDictionary(
                 pair => pair.Key,
                 pair => (

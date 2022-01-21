@@ -185,33 +185,6 @@ namespace Faultify.CoverageCollector
             return testsPerMutation;
         }
 
-        /// <summary>
-        ///     This method can be used to obtain the TestHost of the program that will be analyzed.
-        /// </summary>
-        /// <param name="projectInfo"></param>
-        /// <returns></returns>
-        private static TestHost GetTestHost(IProjectInfo projectInfo)
-        {
-            string projectFile = File.ReadAllText(projectInfo.ProjectFilePath);
-
-            if (Regex.Match(projectFile, "xunit").Captures.Any())
-            {
-                return TestHost.XUnit;
-            }
-
-            if (Regex.Match(projectFile, "nunit").Captures.Any())
-            {
-                return TestHost.NUnit;
-            }
-
-            if (Regex.Match(projectFile, "mstest").Captures.Any())
-            {
-                return TestHost.MsTest;
-            }
-
-            return TestHost.DotnetTest;
-        }
-
         /// Sets the time out for the mutations to be either the specified number of seconds or the time it takes to run
         /// the test project.
         /// When timeout is less then 0.51 seconds it will be set to .51 seconds to make sure the MaxTestDuration is at

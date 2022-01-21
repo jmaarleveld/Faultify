@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Faultify.MutationCollector.Mutation;
-using NLog.Fluent;
 using NLog;
 
 namespace Faultify.MutationSessionScheduler
@@ -14,6 +13,7 @@ namespace Faultify.MutationSessionScheduler
     public class CoverageMapper
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
         /// <summary>
         ///     Map test coverage to mutations.
         ///
@@ -34,13 +34,12 @@ namespace Faultify.MutationSessionScheduler
             IEnumerable<IEnumerable<IMutation>> mutations)
         {
             int currentMutationGroupId = 1;
-            Logger.Debug("MapCoverageToMutations");
+
             foreach (var mutationGroup in mutations) {
                 HashSet<string>? methods = null;
                 
                 foreach (var mutation in mutationGroup)
                 {
-                    Logger.Debug(mutation);
                     if (methods == null) {
                         try
                         {
