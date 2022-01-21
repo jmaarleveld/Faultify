@@ -109,24 +109,38 @@ namespace Faultify.Tests.UnitTests
 
             var list = method1.AllMutations(MutationLevel.Detailed, new HashSet<string>(), new HashSet<string>());
 
-            List<IEnumerable<IMutation>> mutations = list.Where(x => x is IEnumerable<OpCodeMutation>).ToList();
+            List<List<IMutation>> mutations = 
+                list.Where(x => x is IEnumerable<OpCodeMutation>).
+                    Select(x => x.ToList()).ToList();
 
-            // The Mutator should detect Arithmetic and Comparison mutations, but no bitwise mutations.
+            var arithmeticMutations = 
+                mutations.Where(x => x.First().AnalyzerName == new ArithmeticAnalyzer().Name).ToList();
+            var comparisonMutations = 
+                mutations.Where(x => x.First().AnalyzerName == new ComparisonAnalyzer().Name).ToList();
+            
+            // The Mutator should detect exactly 4 Arithmetic and 1 Comparison mutations, but no others
+            // Furthermore, those mutations should be in the same IEnumerable
+            
+            // We must have exactly two groups 
+            Assert.AreEqual(2, mutations.Count);
+            
+            // 1 group of arithmetic mutations, 1 group of comparison mutations 
+            Assert.AreEqual(1, arithmeticMutations.Count);
+            Assert.AreEqual(1, comparisonMutations.Count);
+            
+            // Verify group amounts  
+            Assert.AreEqual(4, arithmeticMutations.First().Count);
+            Assert.AreEqual(1, comparisonMutations.First().Count);
 
-            IEnumerable<IMutation> arithmeticMutations =
-                mutations.FirstOrDefault(x => x.First().AnalyzerName == new ArithmeticAnalyzer().Name) ?? Array.Empty<IMutation>();
-            IEnumerable<IMutation> comparisonMutations =
-                mutations.FirstOrDefault(x => x.First().AnalyzerName == new ComparisonAnalyzer().Name) ?? Array.Empty<IMutation>();
-            IEnumerable<IMutation> bitWiseMutations =
-                mutations.FirstOrDefault(x => x.First().AnalyzerName == new BitwiseAnalyzer().Name) ?? Array.Empty<IMutation>();
+            // Verify that all mutations in the group are correct
+            foreach (var arithmeticMutation in arithmeticMutations.First())
+            {
+                Assert.AreEqual(new ArithmeticAnalyzer().Name, arithmeticMutation.AnalyzerName);
+            }
 
-            Assert.AreEqual(mutations.Count, 3);
-            Assert.IsNotNull(arithmeticMutations, null);
-            Assert.IsNotNull(comparisonMutations, null);
-
-            Assert.IsNotEmpty(arithmeticMutations);
-            Assert.IsNotEmpty(comparisonMutations);
-            Assert.IsEmpty(bitWiseMutations);
+            foreach (var comparisonMutation in comparisonMutations.First()) {
+                Assert.AreEqual(new ComparisonAnalyzer().Name, comparisonMutation.AnalyzerName);
+            }
         }
 
         [Test]
