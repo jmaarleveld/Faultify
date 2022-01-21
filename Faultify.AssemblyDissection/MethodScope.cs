@@ -43,6 +43,9 @@ namespace Faultify.AssemblyDissection
                 OfType<FieldReference>().
                 Select(x => x.Resolve())
                 .ToDictionary(x => x.Name, x => x);
+
+            MethodDefinition.Body?.SimplifyMacros();
+
             Logger.Debug(IntHandle);
         }
 
@@ -73,8 +76,6 @@ namespace Faultify.AssemblyDissection
                 return new List<IList<IMutation>>();
             }
 
-            MethodDefinition.Body.SimplifyMacros();
-            
             // Get all mutations in the method body 
             var methodMutations = GetMethodMutations(
                 mutationLevel,

@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
+using NLog;
 
 namespace Faultify.MutationCollector.Mutation
 {
@@ -23,6 +24,12 @@ namespace Faultify.MutationCollector.Mutation
             string memberName,
             int? parentMethodEntityHandle)
         {
+            // Logger.Debug("CONSTRUCTOR: ");
+            // foreach (var i in method.Body.Instructions)
+            // {
+            //     Logger.Debug(i);
+            // }
+            
             Original = original;
             Replacement = replacement;
             Scope = scope;
@@ -123,7 +130,7 @@ namespace Faultify.MutationCollector.Mutation
         ///     Index of the instruction in the method body
         /// </summary>
         private int InstructionIndex { get; }
-
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         /// <summary>
         ///     Generate a mutation equivalent to the current one for a
         ///     class in a different project.
@@ -143,6 +150,19 @@ namespace Faultify.MutationCollector.Mutation
         {
             var methodDefinition = (MethodDefinition) definition;
             var instruction = methodDefinition.Body.Instructions[InstructionIndex];
+            
+            // Logger.Debug("INSTRUCTIONS: ");
+            // foreach (var i in methodDefinition.Body.Instructions)
+            // {
+            //     Logger.Debug(i);
+            // }
+            // Logger.Debug("INSTRUCTIONS METHODSCOPE: ");
+            // foreach (var i in MethodScope.Body.Instructions)
+            // {
+            //     Logger.Debug(i);
+            // }
+            // Logger.Debug("OPCODE MUTATION, Scope:" + Scope + " , Instruction: " + instruction);
+            
             return new OpCodeMutation(
                 Original,
                 Replacement,

@@ -1,6 +1,7 @@
 ﻿using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using NLog;
 
 namespace Faultify.MutationCollector.Mutation
 {
@@ -121,7 +122,7 @@ namespace Faultify.MutationCollector.Mutation
         ///     Reference to the variable instruction that can be mutated.
         /// </summary>
         private Instruction Variable { get; set; }
-
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         /// <summary>
         ///     Generate a mutation equivalent to the current one for a
         ///     class in a different project.
@@ -140,7 +141,25 @@ namespace Faultify.MutationCollector.Mutation
             int? parentMethodEntityHandle)
         {
             var methodDefinition = (MethodDefinition) definition;
-            var instruction = methodDefinition.Body.Instructions[InstructionIndex];
+            var instruction = methodDefinition.Body.Instructions[InstructionIndex].Previous;
+            instruction.Operand = Instruction.Operand;
+            
+            Logger.Debug("INSTRUCTIONS: ");
+            foreach (var i in methodDefinition.Body.Instructions)
+            {
+                Logger.Debug(i);
+            }
+            Logger.Debug("INSTRUCTIONS METHODSCOPE: ");
+            foreach (var i in MethodScope.Body.Instructions)
+            {
+                Logger.Debug(i);
+            }
+            Logger.Debug("OPCODE MUTATION Variable, Instruction_old:" + Instruction + " , Instruction: " + instruction);
+            if (Instruction != instruction)
+            {
+                Logger.Debug("SAMEIDX");
+            }
+
             return new VariableMutation(
                 instruction,
                 InstructionIndex,
