@@ -269,7 +269,6 @@ namespace Faultify.Pipeline
                 = new MutationSessionRunner.MutationSessionRunner();
             return await mutationSessionRunner.StartMutationSession(
                 timeout,
-                _progressTracker,
                 testsPerGroup,
                 timedOutGroupsCopy,
                 _settings.TestHost,
@@ -476,8 +475,9 @@ namespace Faultify.Pipeline
         {
             _progressTracker.LogBeginPreBuilding();
             IProjectReader projectReader = new ProjectReader();
+            _progressTracker.Report($"Building {Path.GetFileName(projectPath)}");
             IProjectInfo projectInfo
-                = await projectReader.ReadAndBuildProjectAsync(projectPath, _progressTracker);
+                = await projectReader.ReadAndBuildProjectAsync(projectPath);
             _progressTracker.LogEndPreBuilding();
             return projectInfo;
         }

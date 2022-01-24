@@ -16,7 +16,6 @@ namespace Faultify.MutationSessionRunner
     {
         public async Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>> StartMutationSession(
             TimeSpan timeout,
-            IProgress<string> sessionProgressTracker,
             Dictionary<int, HashSet<string>> testsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
@@ -37,7 +36,7 @@ namespace Faultify.MutationSessionRunner
                 testProject.TestProjectFile.FullFilePath(), timeout, testHost);
 
             List<Tuple<string, TestOutcome>> testOutcomes =
-                await testRunner.RunTests(timeout, sessionProgressTracker, runningTests);
+                await testRunner.RunTests(timeout, runningTests);
 
             // Determine the timed out groups during this TestRun
             HashSet<int> newTimedOutGroups = new HashSet<int>();

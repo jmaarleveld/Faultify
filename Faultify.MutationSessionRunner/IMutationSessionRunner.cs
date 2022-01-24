@@ -16,7 +16,6 @@ namespace Faultify.MutationSessionRunner
         ///     Runs the mutation test and returns the test run results.
         /// </summary>
         /// <param name="timeout"></param>
-        /// <param name="sessionProgressTracker"></param>
         /// <param name="mutationsPerGroup"></param>
         /// <param name="timedOutGroups"></param>
         /// <param name="testHost"></param>
@@ -24,7 +23,6 @@ namespace Faultify.MutationSessionRunner
         /// <returns></returns>
         Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>> StartMutationSession(
             TimeSpan timeout,
-            IProgress<string> sessionProgressTracker,
             Dictionary<int, HashSet<string>> mutationsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
