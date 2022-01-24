@@ -21,14 +21,12 @@ namespace Faultify.TestHostRunner.TestHostRunners
         ///     Runs the given tests and returns the results.
         /// </summary>
         /// <param name="timeout"></param>
-        /// <param name="progress"></param>
         /// <param name="tests"></param>
         /// <returns>
         ///     A list of the test result from each test in the session.
         /// </returns>
         Task<List<Tuple<string, TestOutcome>>> RunTests(
             TimeSpan timeout,
-            IProgress<string> progress,
             IEnumerable<string> tests
         );
 

@@ -11,9 +11,9 @@ namespace Faultify.ProjectBuilder
     public class ProjectReader : IProjectReader
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public Task<IProjectInfo> ReadAndBuildProjectAsync(string path, IProgress<string> progress)
+        public Task<IProjectInfo> ReadAndBuildProjectAsync(string path)
         {
-            return Task.Run(() =>  AnalyzeProject(path, progress));
+            return Task.Run(() =>  AnalyzeProject(path));
         }
 
         /// <summary>
@@ -22,11 +22,10 @@ namespace Faultify.ProjectBuilder
         /// <param name="path"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        private static IProjectInfo AnalyzeProject(string path, IProgress<string> progress)
+        private static IProjectInfo AnalyzeProject(string path)
         {
             AnalyzerManager analyzerManager = new AnalyzerManager();
             IProjectAnalyzer projectAnalyzer = analyzerManager.GetProject(path);
-            progress.Report($"Building {Path.GetFileName(path)}");
 
             ProjectInfo result = null;
             

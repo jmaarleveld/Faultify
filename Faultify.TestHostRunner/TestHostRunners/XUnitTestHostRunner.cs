@@ -25,7 +25,7 @@ namespace Faultify.TestHostRunner.TestHostRunners
 
         public TestHost TestHost => TestHost.XUnit;
 
-        public async Task<List<Tuple<string, TestOutcome>>> RunTests(TimeSpan timeout, IProgress<string> progress, IEnumerable<string> tests)
+        public async Task<List<Tuple<string, TestOutcome>>> RunTests(TimeSpan timeout, IEnumerable<string> tests)
         {
             HashSet<string>? hashedTests = new HashSet<string>(tests);
 

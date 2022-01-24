@@ -6,9 +6,11 @@ using Faultify.MutationSessionProgressTracker;
 using Faultify.Pipeline;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Config;
 using NLog.Extensions.Logging;
+using MLog = Microsoft.Extensions.Logging.ILogger;
 
 namespace Faultify.Cli
 {
@@ -18,6 +20,9 @@ namespace Faultify.Cli
     internal class Program
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public static readonly MLog ConsoleLogger
+            = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Program>();
         
         /// <summary>
         /// Settings of the current program run
@@ -100,19 +105,7 @@ namespace Faultify.Cli
         /// <param name="progress"></param>
         private void PrintProgress(MutationRunProgress progress)
         {
-            if (progress.LogMessageType == LogMessageType.TestRunUpdate
-                || progress.LogMessageType != LogMessageType.Other)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"\n> [{progress.Progress}%] {progress.Message}");
-                Console.ForegroundColor = ConsoleColor.White;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"> [{progress.Progress}%] {progress.Message}");
-                Console.ForegroundColor = ConsoleColor.White;
-            }
+            ConsoleLogger.LogInformation($"> [{progress.Progress}%] {progress.Message}");
         }
 
         /// <summary>
@@ -137,11 +130,8 @@ namespace Faultify.Cli
             var pipeline = new Pipeline.Pipeline(progressTracker, ProgramSettings);
             await pipeline.Start(ProgramSettings.TestProjectPath);
             
-            // TestProjectReportModel testResult = await RunMutationTest(progressTracker);
-            //
-            // progressTracker.LogBeginReportBuilding(ProgramSettings.ReportType, ProgramSettings.ReportPath);
-            // await GenerateReport(testResult);
             progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
+            
             await Task.CompletedTask;
         }
 

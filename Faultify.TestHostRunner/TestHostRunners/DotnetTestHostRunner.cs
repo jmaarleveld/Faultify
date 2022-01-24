@@ -44,7 +44,6 @@ namespace Faultify.TestHostRunner.TestHostRunners
         /// <returns></returns>
         public async Task<List<Tuple<string, TestOutcome>>> RunTests(
             TimeSpan timeout,
-            IProgress<string> progress,
             IEnumerable<string> tests
         )
         {
