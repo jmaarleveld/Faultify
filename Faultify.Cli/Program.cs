@@ -130,7 +130,7 @@ namespace Faultify.Cli
             var pipeline = new Pipeline.Pipeline(progressTracker, ProgramSettings);
             await pipeline.Start(ProgramSettings.TestProjectPath);
             
-            progressTracker.LogEndFaultify(ProgramSettings.ReportPath);
+            await Task.Run(() => progressTracker.LogEndFaultify(ProgramSettings.ReportPath));
             
             await Task.CompletedTask;
         }
