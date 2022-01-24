@@ -118,7 +118,6 @@ namespace Faultify.Pipeline
             // Generate the report
             _progressTracker.LogBeginReportBuilding(_settings.ReportType, _settings.ReportPath);
             await GenerateReport(testProjectReportModel);
-            _progressTracker.LogEndFaultify(_settings.ReportPath);
         }
 
         /// <summary>
@@ -306,7 +305,7 @@ namespace Faultify.Pipeline
         private void HandleMutationTestRunException(Exception e)
         {
             _progressTracker.Log(
-                $"The test process encountered an unexpected error. Continuing without this test run. Please consider to submit an github issue. {e}"
+                $"The test process encountered an unexpected error. Continuing without this test run. Please consider to submit an github issue. {e}\n"
                 ,
                 LogMessageType.Error);
             lock (_failedRunsLock)
@@ -475,7 +474,7 @@ namespace Faultify.Pipeline
         {
             _progressTracker.LogBeginPreBuilding();
             IProjectReader projectReader = new ProjectReader();
-            _progressTracker.Report($"Building {Path.GetFileName(projectPath)}");
+            _progressTracker.Report($"Building {Path.GetFileName(projectPath)}\n");
             IProjectInfo projectInfo
                 = await projectReader.ReadAndBuildProjectAsync(projectPath);
             _progressTracker.LogEndPreBuilding();
