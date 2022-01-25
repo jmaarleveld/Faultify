@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Faultify.ProjectDuplicator;
 using Faultify.TestHostRunner;
 
 namespace Faultify.MutationSessionRunner

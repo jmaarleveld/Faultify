@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Faultify.ProjectDuplicator;
 using Faultify.TestHostRunner;
 using Faultify.TestHostRunner.TestHostRunners;
 
