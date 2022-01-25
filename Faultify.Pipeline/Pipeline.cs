@@ -271,7 +271,7 @@ namespace Faultify.Pipeline
                 testsPerGroup,
                 timedOutGroupsCopy,
                 _settings.TestHost,
-                testProjectDuplication);
+                testProjectDuplication.TestProjectFile.FullFilePath());
         }
 
         private HashSet<int> CopyTimedOutGroups()

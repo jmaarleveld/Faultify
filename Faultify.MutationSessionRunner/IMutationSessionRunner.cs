@@ -19,14 +19,14 @@ namespace Faultify.MutationSessionRunner
         /// <param name="mutationsPerGroup"></param>
         /// <param name="timedOutGroups"></param>
         /// <param name="testHost"></param>
-        /// <param name="testProject"></param>
+        /// <param name="testProjectPath"></param>
         /// <returns></returns>
         Task<Tuple<HashSet<int>, Dictionary<string, TestOutcome>>> StartMutationSession(
             TimeSpan timeout,
             Dictionary<int, HashSet<string>> mutationsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
-            ITestProjectDuplication testProject
+            string testProjectPath
         );
     }
 }

@@ -19,7 +19,7 @@ namespace Faultify.MutationSessionRunner
             Dictionary<int, HashSet<string>> testsPerGroup,
             HashSet<int> timedOutGroups,
             TestHost testHost,
-            ITestProjectDuplication testProject
+            string testProjectPath
         )
         {
             HashSet<string> runningTests = new HashSet<string>();
@@ -33,7 +33,7 @@ namespace Faultify.MutationSessionRunner
             }
 
             ITestHostRunner testRunner = TestHostRunnerFactory.CreateTestRunner(
-                testProject.TestProjectFile.FullFilePath(), timeout, testHost);
+                testProjectPath, timeout, testHost);
 
             List<Tuple<string, TestOutcome>> testOutcomes =
                 await testRunner.RunTests(timeout, runningTests);
