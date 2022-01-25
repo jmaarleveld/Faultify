@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Faultify.TestHostRunner.Results;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Faultify.TestHostRunner.TestHostRunners
