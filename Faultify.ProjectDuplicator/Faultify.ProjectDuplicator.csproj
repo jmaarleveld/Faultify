@@ -12,9 +12,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\Faultify.AssemblyDissection\Faultify.AssemblyDissection.csproj" />
       <ProjectReference Include="..\Faultify.ProjectBuilder\Faultify.ProjectBuilder.csproj" />
-      <ProjectReference Include="..\Faultify.TestHostRunner\Faultify.TestHostRunner.csproj" />
     </ItemGroup>
 
 </Project>

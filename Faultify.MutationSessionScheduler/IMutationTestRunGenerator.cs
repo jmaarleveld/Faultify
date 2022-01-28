@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Faultify.MutationCollector;
+﻿using System.Collections.Generic;
 using Faultify.MutationCollector.Mutation;
 
 namespace Faultify.MutationSessionScheduler
