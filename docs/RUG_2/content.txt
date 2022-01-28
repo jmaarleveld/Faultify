@@ -1,0 +1,9 @@
+This directory contains the following files:
+
+1) Report of the refactoring done to Faultify 
+2) The class diagram of Faultify before the refactoring 
+3) A diagram with the components encountered during the architecture recovery 
+4) The old class diagram, grouped per component 
+5) The new class diagram 
+6) Sequence diagram of the old version of Faultify 
+7) Sequence diagram of the new version of Faultify 
